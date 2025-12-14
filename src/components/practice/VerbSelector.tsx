@@ -1,35 +1,44 @@
 import React from 'react';
-import { VerbType } from '@/domain/models/practice/types';
+import { Verb } from '@/domain/models/practice/types';
 
 interface VerbSelectorProps {
-  selectedVerb: VerbType;
-  onChange: (verb: VerbType) => void;
+  selectedVerb: Verb;
+  onChange: (verb: Verb) => void;
+  disabled?: boolean;
 }
 
-export const VerbSelector: React.FC<VerbSelectorProps> = ({ selectedVerb, onChange }) => {
+const VERB_OPTIONS: { value: Verb; label: string }[] = [
+  { value: 'do', label: 'do (する)' },
+  { value: 'live', label: 'live (住む)' },
+  { value: 'go', label: 'go (行く)' },
+  { value: 'arrive', label: 'arrive (着く)' },
+  { value: 'talk', label: 'talk (話す)' },
+  { value: 'run', label: 'run (走る)' },
+  { value: 'walk', label: 'walk (歩く)' },
+  { value: 'smile', label: 'smile (笑う)' },
+  { value: 'laugh', label: 'laugh (笑う)' },
+];
+
+export const VerbSelector: React.FC<VerbSelectorProps> = ({ selectedVerb, onChange, disabled }) => {
   return (
-    <div className="flex space-x-1 pl-8 relative z-10 bottom-[-2px]"> 
-       {/* bottom-[-2px] ensures tabs overlap the page slightly to look connected */}
-      <button
-        onClick={() => onChange('do')}
-        className={`px-8 py-3 rounded-t-2xl font-handwriting text-xl font-bold transition-all border-t-2 border-l-2 border-r-2 ${
-          selectedVerb === 'do'
-            ? 'bg-blue-600 border-blue-700 text-white shadow-[0_-2px_4px_rgba(0,0,0,0.1)] translate-y-[2px]' 
-            : 'bg-gray-200 border-gray-300 text-gray-500 hover:bg-gray-300 mt-2 shadow-inner'
-        }`}
+    <div className="relative">
+      <select
+        value={selectedVerb}
+        onChange={(e) => onChange(e.target.value as Verb)}
+        disabled={disabled}
+        className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg disabled:opacity-50 disabled:bg-gray-100"
       >
-        Do Verbs
-      </button>
-      <button
-        onClick={() => onChange('be')}
-        className={`px-8 py-3 rounded-t-2xl font-handwriting text-xl font-bold transition-all border-t-2 border-l-2 border-r-2 ${
-          selectedVerb === 'be'
-            ? 'bg-blue-600 border-blue-700 text-white shadow-[0_-2px_4px_rgba(0,0,0,0.1)] translate-y-[2px]' 
-            : 'bg-gray-200 border-gray-300 text-gray-500 hover:bg-gray-300 mt-2 shadow-inner'
-        }`}
-      >
-        Be Verbs
-      </button>
+        {VERB_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+        </svg>
+      </div>
     </div>
   );
 };

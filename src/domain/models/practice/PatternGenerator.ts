@@ -7,7 +7,10 @@ export class PatternGenerator {
     if (verbType === 'be') {
       return this.generateBeVerb(sentenceType, subject, tense);
     } else {
-      return this.generateDoVerb(sentenceType, subject, tense);
+      // Use state.verb if available, otherwise default to 'live' if not set (though types enforce it now)
+      // or if for some reason it's 'be' but type is 'do' (should be handled by state management, but good for safety)
+      const verb = (state.verb && state.verb !== 'be') ? state.verb : 'live'; 
+      return this.generateDoVerb(sentenceType, subject, tense, verb);
     }
   }
 
@@ -55,38 +58,69 @@ export class PatternGenerator {
     return '';
   }
 
-  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense): string {
+  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string): string {
     const subjectText = this.getSubjectText(subject);
 
     if (tense === 'future') {
-        if (sentenceType === 'positive') return `${subjectText} will do`;
-        if (sentenceType === 'negative') return `${subjectText} won't do`;
-        if (sentenceType === 'question') return `Will ${subjectText} do`;
+        if (sentenceType === 'positive') return `${subjectText} will ${verbBase}`;
+        if (sentenceType === 'negative') return `${subjectText} won't ${verbBase}`;
+        if (sentenceType === 'question') return `Will ${subjectText} ${verbBase}`;
     }
 
     if (sentenceType === 'positive') {
-        // Past: I did
-        // Present: I do / He does
-        if (tense === 'past') return `${subjectText} did`;
+        // Past: I did -> I lived / went
+        // Present: I do / He does -> I live / He lives
+        if (tense === 'past') {
+            const pastForm = this.getPastForm(verbBase);
+            return `${subjectText} ${pastForm}`;
+        }
         if (tense === 'present') {
-            if (subject === 'third_s') return `${subjectText} does`;
-            return `${subjectText} do`;
+            if (subject === 'third_s') {
+                const thirdPersonForm = this.getThirdPersonForm(verbBase);
+                return `${subjectText} ${thirdPersonForm}`;
+            }
+            return `${subjectText} ${verbBase}`;
         }
     } else if (sentenceType === 'negative') {
-        if (tense === 'past') return `${subjectText} didn't do`;
+        if (tense === 'past') return `${subjectText} didn't ${verbBase}`;
         if (tense === 'present') {
-            if (subject === 'third_s') return `${subjectText} doesn't do`;
-            return `${subjectText} don't do`;
+            if (subject === 'third_s') return `${subjectText} doesn't ${verbBase}`;
+            return `${subjectText} don't ${verbBase}`;
         }
     } else if (sentenceType === 'question') {
-         if (tense === 'past') return `Did ${subjectText} do`;
+         if (tense === 'past') return `Did ${subjectText} ${verbBase}`;
          if (tense === 'present') {
-            if (subject === 'third_s') return `Does ${subjectText} do`;
-            return `Do ${subjectText} do`;
+            if (subject === 'third_s') return `Does ${subjectText} ${verbBase}`;
+            return `Do ${subjectText} ${verbBase}`;
          }
     }
 
     return '';
+  }
+
+  private static getPastForm(verb: string): string {
+    switch (verb) {
+        case 'live': return 'lived';
+        case 'do': return 'did';
+        case 'go': return 'went';
+        case 'arrive': return 'arrived';
+        case 'talk': return 'talked';
+        case 'run': return 'ran';
+        case 'walk': return 'walked';
+        case 'smile': return 'smiled';
+        case 'laugh': return 'laughed';
+        default: return verb + 'ed';
+    }
+  }
+
+  private static getThirdPersonForm(verb: string): string {
+     switch (verb) {
+        case 'do': return 'does';
+        case 'go': return 'goes';
+        case 'wash': return 'washes'; // example if added later
+        case 'catch': return 'catches';
+        default: return verb + 's';
+     }
   }
 
   private static getSubjectText(subject: Subject): string {

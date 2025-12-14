@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { NineKeyPanel } from '@/components/practice/NineKeyPanel';
+import { VerbTypeSelector } from '@/components/practice/VerbTypeSelector';
 import { VerbSelector } from '@/components/practice/VerbSelector';
 import { PatternGenerator } from '@/domain/models/practice/PatternGenerator';
 import {
@@ -11,18 +12,26 @@ import {
   Subject,
   Tense,
   VerbType,
+  Verb,
 } from '@/domain/models/practice/types';
 
 export default function PracticePage() {
   const [state, setState] = useState<PracticeState>({
     verbType: 'do',
+    verb: 'do',
     sentenceType: 'positive',
     subject: 'first_s',
     tense: 'present',
   });
 
-  const handleVerbChange = (verbType: VerbType) => {
-    setState((prev) => ({ ...prev, verbType }));
+  const handleVerbTypeChange = (verbType: VerbType) => {
+    // When switching types, reset verb to default
+    const defaultVerb: Verb = verbType === 'be' ? 'be' : 'do';
+    setState((prev) => ({ ...prev, verbType, verb: defaultVerb }));
+  };
+
+  const handleVerbChange = (verb: Verb) => {
+    setState((prev) => ({ ...prev, verb }));
   };
 
   const handleSentenceTypeChange = (sentenceType: SentenceType) => {
@@ -56,10 +65,10 @@ export default function PracticePage() {
             
             {/* 1. Tabs Area - Sits naturally on top of the notebook page */}
             <div className="w-full max-w-2xl px-8 flex justify-start">
-               {/* VerbSelector renders the tabs with bottom-[-2px] to connect */}
-               <VerbSelector
+               {/* VerbTypeSelector renders the tabs with bottom-[-2px] to connect */}
+               <VerbTypeSelector
                  selectedVerb={state.verbType}
-                 onChange={handleVerbChange}
+                 onChange={handleVerbTypeChange}
                />
             </div>
 
@@ -78,6 +87,17 @@ export default function PracticePage() {
                         onTenseChange={handleTenseChange}
                     />
                 </div>
+
+                {/* Verb Selector Dropdown - Moved here */}
+                {state.verbType === 'do' && (
+                    <div className="mt-8 mb-2 w-48 relative z-20">
+                        <VerbSelector
+                            selectedVerb={state.verb}
+                            onChange={handleVerbChange}
+                        />
+                    </div>
+                )}
+
 
                 <div className="mt-12 w-full max-w-lg relative">
                     {/* Handwritten style result box */}
