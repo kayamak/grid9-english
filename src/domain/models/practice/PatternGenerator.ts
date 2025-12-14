@@ -5,7 +5,14 @@ export class PatternGenerator {
     const { verbType, sentenceType, subject, tense } = state;
 
     if (verbType === 'be') {
-      return this.generateBeVerb(sentenceType, subject, tense);
+      const verb = (state.verb && state.verb !== 'do' && state.verb !== 'live') ? state.verb : 'be';
+      // Wait, if I switch type, state.verb might be 'do' until reset.
+      // But page.tsx resets it.
+      // Safe logic: check if verb is valid for be?
+      // For now, trust state or just pass it if not generic 'be'.
+      // Actually, 'live' is default for Do, 'be' or 'carpenter' for Be.
+      // Let's passed state.verb. The specific method will check if it's 'be'.
+      return this.generateBeVerb(sentenceType, subject, tense, state.verb);
     } else {
       // Use state.verb if available, otherwise default to 'live' if not set (though types enforce it now)
       // or if for some reason it's 'be' but type is 'do' (should be handled by state management, but good for safety)
@@ -14,48 +21,102 @@ export class PatternGenerator {
     }
   }
 
-  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense): string {
+  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string = 'be'): string {
     const subjectText = this.getSubjectText(subject);
-    let verb = '';
+    let beVerb = '';
 
+    // 1. Determine the Be-verb form (am, is, are, was, were)
     if (tense === 'past') {
       if (subject === 'first_s' || subject === 'third_s') {
-        verb = 'was';
+        beVerb = 'was';
       } else {
-        verb = 'were';
+        beVerb = 'were';
       }
     } else if (tense === 'present') {
       if (subject === 'first_s') {
-        verb = 'am';
+        beVerb = 'am';
       } else if (subject === 'third_s') {
-        verb = 'is';
+        beVerb = 'is';
       } else {
-        verb = 'are';
+        beVerb = 'are';
       }
     } else if (tense === 'future') {
        // Future Be: will be
-       if (sentenceType === 'positive') return `${subjectText} will be`;
-       if (sentenceType === 'negative') return `${subjectText} won't be`;
-       if (sentenceType === 'question') return `Will ${subjectText} be`;
+       // Logic handled below for full sentence construction usually, but let's separate standard "be" form vs auxiliary
+    }
+
+    // 2. Determine Complement (Noun/Adjective) with articles/pluralization
+    // If verbBase is 'be' (default), we just use empty or generic?
+    // Let's assume if it's 'be', we treat it as empty or specific logic needed?
+    // User flow: 'be' is not an option in dropdown. 'carpenter' is.
+    // If verbBase IS 'be', maybe show nothing extra?
+    // Spec doesn't say. Assuming 'be' shouldn't happen if UI works right, 
+    // but if it does, let's just not append complement.
+    
+    let complement = '';
+    if (verbBase !== 'be') {
+        complement = this.formatBeComplement(verbBase, subject);
+    }
+
+    // 3. Construct Sentence
+    if (tense === 'future') {
+        if (sentenceType === 'positive') return `${subjectText} will be ${complement}`;
+        if (sentenceType === 'negative') return `${subjectText} won't be ${complement}`;
+        if (sentenceType === 'question') return `Will ${subjectText} be ${complement}`;
     }
 
     if (sentenceType === 'positive') {
-      return `${subjectText} ${verb}`;
+      return `${subjectText} ${beVerb} ${complement}`;
     } else if (sentenceType === 'negative') {
         if (tense === 'past') {
-             if (subject === 'first_s' || subject === 'third_s') return `${subjectText} wasn't`;
-             return `${subjectText} weren't`;
+             if (subject === 'first_s' || subject === 'third_s') return `${subjectText} wasn't ${complement}`;
+             return `${subjectText} weren't ${complement}`;
         }
         if (tense === 'present') {
-            if (subject === 'first_s') return `${subjectText}'m not`;
-            if (subject === 'third_s') return `${subjectText} isn't`;
-            return `${subjectText} aren't`;
+            if (subject === 'first_s') return `${subjectText}'m not ${complement}`;
+            if (subject === 'third_s') return `${subjectText} isn't ${complement}`;
+            return `${subjectText} aren't ${complement}`;
         }
     } else if (sentenceType === 'question') {
-      return `${verb.charAt(0).toUpperCase() + verb.slice(1)} ${subjectText}`;
+      // Capitalize first letter of beVerb handled here?
+      // beVerb for Question is start.
+      const capBeVerb = beVerb.charAt(0).toUpperCase() + beVerb.slice(1);
+      return `${capBeVerb} ${subjectText} ${complement}`;
     }
     
     return '';
+  }
+
+  private static formatBeComplement(base: string, subject: Subject): string {
+    const isPluralSubject = subject === 'first_p' || subject === 'third_p' || subject === 'second'; // 'second' (you) is ambiguous but usually treated as plural grammar or "you are a carpenter" vs "you are carpenters".
+    // Wait, 'second' (you) is tricky. "You are a teacher" (singular you) vs "You are teachers" (plural you).
+    // The panel has only one 'second'.
+    // In typical basic English practice, 'you' often defaults to singular context unless context implies plural.
+    // BUT 'second' in `types.ts` is just 'second'.
+    // Let's default 'you' to singular for occupations? OR plural?
+    // "You are a carpenter" feels more standard for a single user interaction?
+    // Actually, let's check current 'subject' definitions.
+    // 'first_s', 'first_p', 'third_s', 'third_p'.
+    // 'second' is just 'second'.
+    // Let's assume singular for 'you' to hold "a carpenter".
+
+    const nouns = ['carpenter', 'hairdresser', 'nurse', 'teacher', 'chef', 'farmer', 'photographer'];
+    
+    if (nouns.includes(base)) {
+        // It's a noun
+        if (isPluralSubject && subject !== 'second') { 
+            // Pluralize
+            // All current nouns just add 's'
+            return base + 's';
+        } else {
+            // Singular: add a/an
+            // All current nouns start with consonant -> 'a'
+            return `a ${base}`;
+        }
+    }
+    
+    // Adjectives (happy, etc) -> return as is
+    return base;
   }
 
   private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string): string {

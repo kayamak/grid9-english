@@ -3,7 +3,11 @@ export type SentenceType = 'positive' | 'negative' | 'question';
 export type Subject = 'first_s' | 'first_p' | 'second' | 'third_s' | 'third_p';
 export type Tense = 'past' | 'present' | 'future';
 
-export type Verb = 'be' | 'do' | 'live' | 'go' | 'arrive' | 'talk' | 'run' | 'walk' | 'smile' | 'laugh';
+export type Verb = 
+  | 'be' | 'do' // Defaults
+  | 'live' | 'go' | 'arrive' | 'talk' | 'run' | 'walk' | 'smile' | 'laugh' // Do verbs
+  | 'carpenter' | 'hairdresser' | 'nurse' | 'teacher' | 'chef' | 'farmer' | 'photographer' // Be Nouns
+  | 'happy' | 'sleepy' | 'angry' | 'tired' | 'fine'; // Be Adjectives
 
 export interface PracticeState {
   verbType: VerbType;

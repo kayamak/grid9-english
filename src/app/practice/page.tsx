@@ -26,7 +26,7 @@ export default function PracticePage() {
 
   const handleVerbTypeChange = (verbType: VerbType) => {
     // When switching types, reset verb to default
-    const defaultVerb: Verb = verbType === 'be' ? 'be' : 'do';
+    const defaultVerb: Verb = verbType === 'be' ? 'carpenter' : 'do';
     setState((prev) => ({ ...prev, verbType, verb: defaultVerb }));
   };
 
@@ -45,6 +45,12 @@ export default function PracticePage() {
   const handleTenseChange = (tense: Tense) => {
     setState((prev) => ({ ...prev, tense }));
   };
+
+  const [sessionId, setSessionId] = useState('');
+
+  React.useEffect(() => {
+    setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
+  }, []);
 
   const generatedText = PatternGenerator.generate(state);
 
@@ -88,15 +94,14 @@ export default function PracticePage() {
                     />
                 </div>
 
-                {/* Verb Selector Dropdown - Moved here */}
-                {state.verbType === 'do' && (
-                    <div className="mt-8 mb-2 w-48 relative z-20">
-                        <VerbSelector
-                            selectedVerb={state.verb}
-                            onChange={handleVerbChange}
-                        />
-                    </div>
-                )}
+                {/* Verb Selector Dropdown - Always visible now */}
+                <div className="mt-8 mb-2 w-48 relative z-20">
+                    <VerbSelector
+                        verbType={state.verbType}
+                        selectedVerb={state.verb}
+                        onChange={handleVerbChange}
+                    />
+                </div>
 
 
                 <div className="mt-12 w-full max-w-lg relative">
@@ -113,7 +118,7 @@ export default function PracticePage() {
         </div>
         
         <div className="mt-12 text-center opacity-30 text-xs font-mono">
-           SESSION_ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}
+           SESSION_ID: {sessionId}
         </div>
       </div>
     </main>

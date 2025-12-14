@@ -1,13 +1,14 @@
 import React from 'react';
-import { Verb } from '@/domain/models/practice/types';
+import { Verb, VerbType } from '@/domain/models/practice/types';
 
 interface VerbSelectorProps {
+  verbType: VerbType;
   selectedVerb: Verb;
   onChange: (verb: Verb) => void;
   disabled?: boolean;
 }
 
-const VERB_OPTIONS: { value: Verb; label: string }[] = [
+const DO_VERB_OPTIONS: { value: Verb; label: string }[] = [
   { value: 'do', label: 'do (する)' },
   { value: 'live', label: 'live (住む)' },
   { value: 'go', label: 'go (行く)' },
@@ -19,7 +20,26 @@ const VERB_OPTIONS: { value: Verb; label: string }[] = [
   { value: 'laugh', label: 'laugh (笑う)' },
 ];
 
-export const VerbSelector: React.FC<VerbSelectorProps> = ({ selectedVerb, onChange, disabled }) => {
+const BE_VERB_OPTIONS: { value: Verb; label: string }[] = [
+  // Nouns
+  { value: 'carpenter', label: 'carpenter (大工)' },
+  { value: 'hairdresser', label: 'hairdresser (美容師)' },
+  { value: 'nurse', label: 'nurse (看護師)' },
+  { value: 'teacher', label: 'teacher (先生)' },
+  { value: 'chef', label: 'chef (シェフ)' },
+  { value: 'farmer', label: 'farmer (農家)' },
+  { value: 'photographer', label: 'photographer (写真家)' },
+  // Adjectives
+  { value: 'happy', label: 'happy (幸せ)' },
+  { value: 'sleepy', label: 'sleepy (眠い)' },
+  { value: 'angry', label: 'angry (怒った)' },
+  { value: 'tired', label: 'tired (疲れた)' },
+  { value: 'fine', label: 'fine (元気)' },
+];
+
+export const VerbSelector: React.FC<VerbSelectorProps> = ({ verbType, selectedVerb, onChange, disabled }) => {
+  const options = verbType === 'do' ? DO_VERB_OPTIONS : BE_VERB_OPTIONS;
+
   return (
     <div className="relative">
       <select
@@ -28,7 +48,7 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({ selectedVerb, onChan
         disabled={disabled}
         className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg disabled:opacity-50 disabled:bg-gray-100"
       >
-        {VERB_OPTIONS.map((option) => (
+        {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
