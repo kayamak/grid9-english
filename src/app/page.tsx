@@ -7,6 +7,7 @@ export default function Home() {
       <ul className="list-disc list-inside">
         <li><Link href="/users" className="text-blue-600 hover:underline">Users</Link></li>
         <li><Link href="/circles" className="text-blue-600 hover:underline">Circles</Link></li>
+        <li><Link href="/practice" className="text-blue-600 hover:underline font-bold">Practice Mode (New)</Link></li>
       </ul>
     </main>
   );
