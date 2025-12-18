@@ -97,23 +97,13 @@ export class PatternGenerator {
   }
 
   private static formatBeComplement(base: string, subject: Subject): string {
-    const isPluralSubject = subject === 'first_p' || subject === 'third_p' || subject === 'second'; // 'second' (you) is ambiguous but usually treated as plural grammar or "you are a carpenter" vs "you are carpenters".
-    // Wait, 'second' (you) is tricky. "You are a teacher" (singular you) vs "You are teachers" (plural you).
-    // The panel has only one 'second'.
-    // In typical basic English practice, 'you' often defaults to singular context unless context implies plural.
-    // BUT 'second' in `types.ts` is just 'second'.
-    // Let's default 'you' to singular for occupations? OR plural?
-    // "You are a carpenter" feels more standard for a single user interaction?
-    // Actually, let's check current 'subject' definitions.
-    // 'first_s', 'first_p', 'third_s', 'third_p'.
-    // 'second' is just 'second'.
-    // Let's assume singular for 'you' to hold "a carpenter".
+    const isPluralSubject = subject === 'first_p' || subject === 'third_p' || subject === 'second_p'; 
 
     const nouns = ['carpenter', 'hairdresser', 'nurse', 'teacher', 'chef', 'farmer', 'photographer'];
     
     if (nouns.includes(base)) {
         // It's a noun
-        if (isPluralSubject && subject !== 'second') { 
+        if (isPluralSubject) { 
             // Pluralize
             // All current nouns just add 's'
             return base + 's';
@@ -201,6 +191,7 @@ export class PatternGenerator {
       // "Does he" -> "he" is lower. "We weren't" -> "We" is upper.
       // So subject text should be lower (except I), and capitalization happens at usage.
       case 'second': return 'you';
+      case 'second_p': return 'you';
       case 'third_s': return 'he'; // default to he
       case 'third_p': return 'they';
       default: return '';

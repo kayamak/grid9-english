@@ -35,6 +35,7 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
       if (targetSubject === 'first_s') return '1';
       if (targetSubject === 'first_p') return '11';
       if (targetSubject === 'second') return '2';
+      if (targetSubject === 'second_p') return '22';
       if (targetSubject === 'third_s') return '3';
       if (targetSubject === 'third_p') return '33';
       return label; 
@@ -81,24 +82,24 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
       {/* Row 2: Subject */}
       <RowContainer title="主語">
           <div
-            className={getCellClass(subject === 'second')}
-            onClick={() => onSubjectChange('second')}
+            className={getCellClass(subject === 'second' || subject === 'second_p')}
+            onClick={() => onSubjectChange(subject === 'second' ? 'second_p' : 'second')}
           >
-            2
+            {renderSubjectContent(subject === 'second_p' ? 'second_p' : 'second', '2 / 22')}
             {renderTooltip('二人称')}
           </div>
           <div
             className={getCellClass(subject === 'first_s' || subject === 'first_p')}
             onClick={() => onSubjectChange(subject === 'first_s' ? 'first_p' : 'first_s')}
           >
-            {renderSubjectContent(subject === 'first_s' ? 'first_s' : 'first_p', '1 / 11')}
+            {renderSubjectContent(subject === 'first_p' ? 'first_p' : 'first_s', '1 / 11')}
             {renderTooltip('一人称')}
           </div>
           <div
             className={getCellClass(subject === 'third_s' || subject === 'third_p')}
              onClick={() => onSubjectChange(subject === 'third_s' ? 'third_p' : 'third_s')}
           >
-            {renderSubjectContent(subject === 'third_s' ? 'third_s' : 'third_p', '3 / 33')}
+            {renderSubjectContent(subject === 'third_p' ? 'third_p' : 'third_s', '3 / 33')}
             {renderTooltip('三人称')}
           </div>
       </RowContainer>
