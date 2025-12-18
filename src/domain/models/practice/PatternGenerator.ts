@@ -3,6 +3,7 @@ import { PracticeState, SentenceType, Subject, Tense } from './types';
 export class PatternGenerator {
   static generate(state: PracticeState): string {
     const { verbType, sentenceType, subject, tense } = state;
+    let rawSentence = '';
 
     if (verbType === 'be') {
       const verb = (state.verb && state.verb !== 'do' && state.verb !== 'live') ? state.verb : 'be';
@@ -12,13 +13,21 @@ export class PatternGenerator {
       // For now, trust state or just pass it if not generic 'be'.
       // Actually, 'live' is default for Do, 'be' or 'carpenter' for Be.
       // Let's passed state.verb. The specific method will check if it's 'be'.
-      return this.generateBeVerb(sentenceType, subject, tense, state.verb);
+      rawSentence = this.generateBeVerb(sentenceType, subject, tense, state.verb);
     } else {
       // Use state.verb if available, otherwise default to 'live' if not set (though types enforce it now)
       // or if for some reason it's 'be' but type is 'do' (should be handled by state management, but good for safety)
       const verb = (state.verb && state.verb !== 'be') ? state.verb : 'live'; 
-      return this.generateDoVerb(sentenceType, subject, tense, verb);
+      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb);
     }
+
+    if (!rawSentence) return '';
+
+    const firstChar = rawSentence.charAt(0).toUpperCase();
+    const rest = rawSentence.slice(1);
+    const punctuation = sentenceType === 'question' ? '?' : '.';
+
+    return `${firstChar}${rest}${punctuation}`;
   }
 
   private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string = 'be'): string {
