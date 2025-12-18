@@ -21,6 +21,7 @@ const DO_VERB_OPTIONS: { value: Verb; label: string }[] = [
 ];
 
 const BE_VERB_OPTIONS: { value: Verb; label: string }[] = [
+  { value: 'something', label: 'something (何か)' },
   // Nouns
   { value: 'carpenter', label: 'carpenter (大工)' },
   { value: 'hairdresser', label: 'hairdresser (美容師)' },

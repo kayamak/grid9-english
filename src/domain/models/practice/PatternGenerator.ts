@@ -99,6 +99,11 @@ export class PatternGenerator {
   private static formatBeComplement(base: string, subject: Subject): string {
     const isPluralSubject = subject === 'first_p' || subject === 'third_p' || subject === 'second_p'; 
 
+    // Handle 'something' - it's a pronoun, no article or pluralization
+    if (base === 'something') {
+        return 'something';
+    }
+
     const nouns = ['carpenter', 'hairdresser', 'nurse', 'teacher', 'chef', 'farmer', 'photographer'];
     
     if (nouns.includes(base)) {

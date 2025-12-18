@@ -26,7 +26,7 @@ export default function PracticePage() {
 
   const handleVerbTypeChange = (verbType: VerbType) => {
     // When switching types, reset verb to default
-    const defaultVerb: Verb = verbType === 'be' ? 'carpenter' : 'do';
+    const defaultVerb: Verb = verbType === 'be' ? 'something' : 'do';
     setState((prev) => ({ ...prev, verbType, verb: defaultVerb }));
   };
 
