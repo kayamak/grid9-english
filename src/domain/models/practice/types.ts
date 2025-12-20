@@ -3,7 +3,7 @@ export type SentenceType = 'positive' | 'negative' | 'question';
 export type Subject = 'first_s' | 'first_p' | 'second' | 'second_p' | 'third_s' | 'third_p';
 export type Tense = 'past' | 'present' | 'future';
 export type FiveSentencePattern = 'SV' | 'SVC' | 'SVO' | 'SVOO' | 'SVOC';
-export type NumberForm = 'singular' | 'plural' | 'uncountable';
+export type NumberForm = 'none' | 'a' | 'an' | 'the' | 'plural';
 
 export type Verb = 
   | 'be' | 'do' // Defaults

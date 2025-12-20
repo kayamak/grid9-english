@@ -20,7 +20,7 @@ export class PatternGenerator {
       const verb = (state.verb && state.verb !== 'be') ? state.verb : 'live'; 
       const pattern = state.fiveSentencePattern || 'SVO';
       const object = state.object || 'something';
-      const numberForm = state.numberForm || 'singular';
+      const numberForm = state.numberForm || 'a';
       rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, pattern, object, numberForm);
     }
 
@@ -126,7 +126,7 @@ export class PatternGenerator {
     return base;
   }
 
-  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO', object: Object = 'something', numberForm: NumberForm = 'singular'): string {
+  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO', object: Object = 'something', numberForm: NumberForm = 'a'): string {
     const subjectText = this.getSubjectText(subject);
     const complement = this.getPatternComplement(pattern, subject, object, numberForm);
 
@@ -167,7 +167,7 @@ export class PatternGenerator {
     return '';
   }
 
-  private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject, object: Object = 'something', numberForm: NumberForm = 'singular'): string {
+  private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject, object: Object = 'something', numberForm: NumberForm = 'a'): string {
     // For now, provide simple examples for SV and SVO patterns
     switch (pattern) {
       case 'SV':
@@ -178,9 +178,22 @@ export class PatternGenerator {
       case 'SVO':
         // Subject + Verb + Object
         // Use the selected object from state
-        // Add article for singular countable nouns
-        if (numberForm === 'singular' && object !== 'something') {
-          return this.addArticle(object);
+        // Apply article based on numberForm selection
+        if (numberForm === 'none') {
+          // No article (for uncountable nouns or when user selects 'none')
+          return object;
+        } else if (numberForm === 'a') {
+          // Indefinite article 'a'
+          return `a ${object}`;
+        } else if (numberForm === 'an') {
+          // Indefinite article 'an'
+          return `an ${object}`;
+        } else if (numberForm === 'the') {
+          // Definite article 'the'
+          return `the ${object}`;
+        } else if (numberForm === 'plural') {
+          // Plural form (no article needed, object should already be plural)
+          return object;
         }
         return object;
       case 'SVOO':

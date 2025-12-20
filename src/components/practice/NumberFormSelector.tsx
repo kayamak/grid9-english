@@ -8,8 +8,10 @@ interface NumberFormSelectorProps {
 }
 
 const NUMBER_FORM_OPTIONS: { value: NumberForm; label: string }[] = [
-  { value: 'uncountable', label: '不可算' },
-  { value: 'singular', label: '単数' },
+  { value: 'none', label: '不可算' },
+  { value: 'a', label: 'a' },
+  { value: 'an', label: 'an' },
+  { value: 'the', label: 'the' },
   { value: 'plural', label: '複数' },
 ];
 

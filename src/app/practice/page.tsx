@@ -30,7 +30,7 @@ export default function PracticePage() {
     tense: 'present',
     fiveSentencePattern: 'SV',
     object: 'something',
-    numberForm: 'uncountable',
+    numberForm: 'none',
   });
 
   const handleVerbTypeChange = (verbType: VerbType) => {
@@ -140,10 +140,10 @@ export default function PracticePage() {
                       <ObjectSelector
                         selectedObject={state.object || 'something'}
                         onChange={handleObjectChange}
-                        numberForm={state.numberForm || 'singular'}
+                        numberForm={state.numberForm || 'a'}
                       >
                         <NumberFormSelector
-                          selectedNumberForm={state.numberForm || 'singular'}
+                          selectedNumberForm={state.numberForm || 'a'}
                           onChange={handleNumberFormChange}
                         />
                       </ObjectSelector>
