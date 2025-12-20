@@ -13,6 +13,13 @@ const NUMBER_FORM_OPTIONS: { value: NumberForm; label: string }[] = [
   { value: 'an', label: 'an' },
   { value: 'plural', label: '複数' },
   { value: 'the', label: 'the' },
+  { value: 'my', label: 'my' },
+  { value: 'our', label: 'our' },
+  { value: 'your', label: 'your' },
+  { value: 'his', label: 'his' },
+  { value: 'her', label: 'her' },
+  { value: 'their', label: 'their' },
+  { value: 'no_article', label: '無し' },
 ];
 
 export const NumberFormSelector: React.FC<NumberFormSelectorProps> = ({ 

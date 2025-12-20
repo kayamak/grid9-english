@@ -32,6 +32,7 @@ const DO_VERB_SVO_OPTIONS: { value: Verb; label: string }[] = [
   { value: 'like', label: 'like (気に入る)' },
   { value: 'take', label: 'take (取る、持っていく)' },
   { value: 'see', label: 'see (見える)' },
+  { value: 'hear', label: 'hear (聞こえる)' },
   { value: 'play', label: 'play (遊ぶ、演奏する)' },
   { value: 'sing', label: 'sing (歌う)' },
   { value: 'study', label: 'study (勉強する)' },

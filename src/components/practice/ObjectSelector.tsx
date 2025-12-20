@@ -32,11 +32,11 @@ const OBJECT_OPTIONS: { value: Object; label: string; numberForm: NumberForm }[]
   { value: 'keys', label: 'keys (鍵)', numberForm: 'plural' },
   { value: 'taxi', label: 'taxi (タクシー)', numberForm: 'a' },
   { value: 'taxis', label: 'taxis (タクシー)', numberForm: 'plural' },
-  { value: 'airplay', label: 'airplay (空港)', numberForm: 'an' },
-  { value: 'airplays', label: 'airplays (空港)', numberForm: 'plural' },
+  { value: 'airplane', label: 'airplane (飛行機)', numberForm: 'an' },
+  { value: 'airplanes', label: 'airplanes (飛行機)', numberForm: 'plural' },
   { value: 'sound', label: 'sound (音)', numberForm: 'a' },
   { value: 'sounds', label: 'sounds (音)', numberForm: 'plural' },
-  { value: 'soccker', label: 'soccker (サッカー)', numberForm: 'a' },
+  { value: 'soccer', label: 'soccer (サッカー)', numberForm: 'none' },
   { value: 'violin', label: 'violin (バイオリン)', numberForm: 'a' },
   { value: 'violins', label: 'violins (バイオリン)', numberForm: 'plural' },
   { value: 'song', label: 'song (歌)', numberForm: 'a' },
@@ -47,10 +47,10 @@ const OBJECT_OPTIONS: { value: Object; label: string; numberForm: NumberForm }[]
   { value: 'letter', label: 'letter (手紙)', numberForm: 'a' },
   { value: 'letters', label: 'letters (手紙)', numberForm: 'plural' },
   { value: 'coffee', label: 'coffee (コーヒー)', numberForm: 'none' },
+  { value: 'pizza', label: 'pizza (ピザ)', numberForm: 'none' },
   { value: 'pizza', label: 'pizza (ピザ)', numberForm: 'a' },
   { value: 'pizzas', label: 'pizzas (ピザ)', numberForm: 'plural' },
-  { value: 'dinner', label: 'dinner (夕食)', numberForm: 'a' },
-  { value: 'dinners', label: 'dinners (夕食)', numberForm: 'plural' },
+  { value: 'dinner', label: 'dinner (夕食)', numberForm: 'none' },
   { value: 'car', label: 'car (車)', numberForm: 'a' },
   { value: 'cars', label: 'cars (車)', numberForm: 'plural' },
   { value: 'water', label: 'water (水)', numberForm: 'none' },
@@ -68,8 +68,10 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
   children 
 }) => {
   // Filter options based on numberForm
-  // When 'the' is selected, show all objects except 'something' since 'the something' is not natural
-  const filteredOptions = numberForm === 'the' 
+  // When 'the', possessive determiners, or 'no_article' are selected, show all objects except 'something'
+  // since these can be used with any noun (singular, plural, countable, uncountable)
+  const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
+  const filteredOptions = showAllExceptSomething
     ? OBJECT_OPTIONS.filter(option => option.value !== 'something')
     : OBJECT_OPTIONS.filter(option => option.numberForm === numberForm);
   

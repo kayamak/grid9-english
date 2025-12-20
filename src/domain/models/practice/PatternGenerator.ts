@@ -194,6 +194,12 @@ export class PatternGenerator {
         } else if (numberForm === 'plural') {
           // Plural form (no article needed, object should already be plural)
           return object;
+        } else if (['my', 'our', 'your', 'his', 'her', 'their'].includes(numberForm)) {
+          // Possessive determiners
+          return `${numberForm} ${object}`;
+        } else if (numberForm === 'no_article') {
+          // No article/determiner - just the bare noun
+          return object;
         }
         return object;
       case 'SVOO':
@@ -226,6 +232,7 @@ export class PatternGenerator {
         case 'like': return 'liked';
         case 'take': return 'took';
         case 'see': return 'saw';
+        case 'hear': return 'heard';
         case 'play': return 'played';
         case 'sing': return 'sang';
         case 'study': return 'studied';
