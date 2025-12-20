@@ -199,12 +199,24 @@ export class PatternGenerator {
         case 'walk': return 'walked';
         case 'smile': return 'smiled';
         case 'laugh': return 'laughed';
+        case 'have': return 'had';
+        case 'know': return 'knew';
+        case 'get': return 'got';
+        case 'make': return 'made';
+        case 'catch': return 'caught';
+        case 'love': return 'loved';
+        case 'like': return 'liked';
+        case 'take': return 'took';
+        case 'see': return 'saw';
+        case 'play': return 'played';
         case 'sing': return 'sang';
+        case 'study': return 'studied';
         case 'teach': return 'taught';
         case 'read': return 'read';
         case 'write': return 'wrote';
         case 'drink': return 'drank';
         case 'eat': return 'ate';
+        case 'cook': return 'cooked';
         case 'drive': return 'drove';
         default: return verb + 'ed';
     }
