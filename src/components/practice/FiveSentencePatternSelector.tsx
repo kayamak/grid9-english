@@ -19,13 +19,13 @@ export const FiveSentencePatternSelector: React.FC<FiveSentencePatternSelectorPr
             <input
               type="radio"
               name="sentencePattern"
-              value="SVC"
-              checked={selectedPattern === 'SVC'}
-              onChange={() => onChange('SVC')}
+              value="SV"
+              checked={selectedPattern === 'SV'}
+              onChange={() => onChange('SV')}
               className="w-4 h-4 text-green-600 focus:ring-green-500 cursor-pointer"
             />
-            <span className={`font-handwriting text-lg ${selectedPattern === 'SVC' ? 'font-bold text-green-700' : 'text-gray-600'}`}>
-              SVC
+            <span className={`font-handwriting text-lg ${selectedPattern === 'SV' ? 'font-bold text-green-700' : 'text-gray-600'}`}>
+              SV
             </span>
           </label>
           

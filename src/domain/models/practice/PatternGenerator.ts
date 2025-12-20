@@ -166,21 +166,20 @@ export class PatternGenerator {
   }
 
   private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject): string {
-    // For now, provide simple examples for SVC and SVO patterns
+    // For now, provide simple examples for SV and SVO patterns
     switch (pattern) {
-      case 'SVC':
-        // Subject + Verb + Complement (adjective/noun)
-        // Example: "I am happy" - but this is more for Be verbs
-        // For Do verbs with SVC, it's less common, but we can use "become", "seem", etc.
-        // For simplicity, return empty for now as SVC is primarily for Be verbs
+      case 'SV':
+        // Subject + Verb (intransitive verb, no object)
+        // Example: "I live", "He runs"
+        // No complement needed for SV pattern
         return '';
       case 'SVO':
         // Subject + Verb + Object
         // Example: "I do something", "He eats an apple"
         return 'something';
-      case 'SV':
       case 'SVOO':
       case 'SVOC':
+      case 'SVC':
         // Not implemented yet
         return '';
       default:

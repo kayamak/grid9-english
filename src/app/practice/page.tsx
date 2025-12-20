@@ -24,7 +24,7 @@ export default function PracticePage() {
     sentenceType: 'positive',
     subject: 'first_s',
     tense: 'present',
-    fiveSentencePattern: 'SVO',
+    fiveSentencePattern: 'SV',
   });
 
   const handleVerbTypeChange = (verbType: VerbType) => {
