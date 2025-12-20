@@ -32,7 +32,7 @@
 
 | 要素 | UI要素 | 操作 | 動作 |
 | :--- | :--- | :--- | :--- |
-| **主語** | 9マスパネルの**中段（2行目）**のマスをクリックする。 | マスをクリックする。 | 1. `subject` のPropsがクリックされたマスに対応する値（例: `first_s`, `third_p`など）に更新される。2. **中段のアクティブなマスと記号**（1, 11, 2, 3, 33）が切り替わる。3. **対応する文章**が生成・表示される。 |
+| **主語** | 9マスパネルの**中段（2行目）**のマスをクリックする。 | マスをクリックする。 | 1. `subject` のPropsがクリックされたマスに対応する値（例: `first_s`, `third_p`など）に更新される。2. 同じマスを再度クリックすると、同じ人称内で単数と複数が切り替わる(例: `second` ↔ `second_p`)。3. **中段のアクティブなマスと記号**（1, 11, 2, 22, 3, 33）が切り替わる。4. **対応する文章**が生成・表示される。 |
 
 ### 4.4. **時制**の選択
 
@@ -47,10 +47,37 @@
 | **動詞** | `VerbSelector` (プルダウン) | プルダウンから動詞を選択する。 | 1. `verb` のPropsが選択された値に更新される。2. これに基づき、**9マスパネルの表示**が更新される。3. **対応する文章（英文の出だし）**が生成・表示される。 
 
 ### 4.5.1. 動詞タイプがDo動詞の場合の選択肢
-- `live`, `go`, `arrive`, `talk`, `run`, `walk`, `smile`, `laugh` |
+
+- `do` (する)
+- `live` (住む)
+- `go` (行く)
+- `arrive` (着く)
+- `talk` (話す)
+- `run` (走る)
+- `walk` (歩く)
+- `smile` (笑う)
+- `laugh` (笑う)
+
 ### 4.5.2. 動詞タイプがBe動詞の場合の選択肢
-- `carpenter`, `hairdresser`, `nurse`, `teacher`, `chef`, `farmer`, `photographer` |
-- `happy`, `sleepy`, `angry`, `tired`, `fine` |
+
+**代名詞:**
+- `something` (何か)
+
+**職業(名詞):**
+- `carpenter` (大工)
+- `hairdresser` (美容師)
+- `nurse` (看護師)
+- `teacher` (先生)
+- `chef` (シェフ)
+- `farmer` (農家)
+- `photographer` (写真家)
+
+**形容詞:**
+- `happy` (幸せ)
+- `sleepy` (眠い)
+- `angry` (怒った)
+- `tired` (疲れた)
+- `fine` (元気)
 
 ## 5. 文章生成ロジック
 
@@ -66,15 +93,32 @@
 
 | Current State | 生成される文章の例 |
 | :--- | :--- |
-| Do, live, Question, Third\_s, Present | **Does he live** |
-| Be, be, Negative, First\_p, Past | **We weren't** |
-| Do, go, Positive, First\_s, Future | **I will go** |
+| Do, live, Question, Third\_s, Present | **Does he live?** |
+| Be, something, Negative, First\_p, Past | **We weren't something.** |
+| Do, go, Positive, First\_s, Future | **I will go.** |
+
+### 5.3. 文章の書式設定
+
+生成された英文は、以下のルールで自動的に書式設定されます:
+
+1. **大文字化**: 文頭の最初の文字は常に大文字になります。
+2. **句読点**: 文末には適切な句読点が付加されます:
+   - 疑問文(`question`)の場合: `?`
+   - 肯定文(`positive`)および否定文(`negative`)の場合: `.`
 
 ## 6. 実装上の考慮事項
 
-* **状態の初期値とデフォルト:** 練習モード開始時、および**動詞**が未選択の場合（または`VerbType`の変更時）、`verb`の値は以下のルールで決定されます。
-    * `verbType`が「Do動詞」の場合: `verb`は`live`（**リストの最初の動詞**）となる。（未選択時は、リストの先頭または`do`がデフォルトとして使われる）
-    * `verbType`が「Be動詞」の場合: `verb`は`be`（デフォルト動詞）となる。
-    * その他の要素には初期値（例: 肯定文、一人称単数、現在形）が設定されている必要があります。
-* **非アクティブ操作:** 既にアクティブなマスやタブをクリックした場合、状態は変化せず、文章も再生成されないものとします（または、クリックを無視します）。
+* **状態の初期値とデフォルト:** 練習モード開始時の初期値は以下の通りです:
+    * `verbType`: `do`
+    * `verb`: `do`
+    * `sentenceType`: `positive`
+    * `subject`: `first_s`
+    * `tense`: `present`
+* **動詞タイプ変更時の動詞リセット:** `VerbType`を変更した場合、`verb`の値は以下のルールで自動的にリセットされます:
+    * `verbType`が「Do動詞」(`do`)の場合: `verb`は`do`にリセットされる。
+    * `verbType`が「Be動詞」(`be`)の場合: `verb`は`something`にリセットされる。
+* **主語の切り替え:** 主語のマスをクリックすると、同じ人称内で単数と複数が切り替わります:
+    * 二人称: `second` ↔ `second_p`
+    * 一人称: `first_s` ↔ `first_p`
+    * 三人称: `third_s` ↔ `third_p`
 

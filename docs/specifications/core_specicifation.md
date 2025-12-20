@@ -22,7 +22,7 @@
 
 システムは主に以下のコンポーネントで構成されます。
 
-1. **タブ UI コンポーネント (`VerbSelector`):** 動詞の種類（Do/Be）を切り替えるためのUI。
+1. **タブ UI コンポーネント (`VerbTypeSelector`):** 動詞の種類（Do/Be）を切り替えるためのUI。
 2. **コア UI コンポーネント (`NineKeyPanel`):** 9マスグリッドを描画し、パターンを表示する中心的なUIコンポーネント。
 3. **表示ロジック (Active Cell Logic):** 4つのPropsに基づいて、9マスのうちどのセルをアクティブにするか決定するロジック。
 
@@ -34,7 +34,7 @@
 | :--- | :--- | :--- | :--- |
 | **`verbType`** | String | `do`, `be` | 文頭表現が **Do動詞パターン** か **Be動詞パターン** かを決定します。 |
 | **`sentenceType`** | String | `positive`, `negative`, `question` | 表現したい文の**形式**（肯定文、否定文、疑問文）を決定します。 |
-| **`subject`** | String | `first_s`, `first_p`, `second`, `third_s`, `third_p` | 文の**主語の種類と数**（単数・複数）を厳密に決定します。 |
+| **`subject`** | String | `first_s`, `first_p`, `second`, `second_p`, `third_s`, `third_p` | 文の**主語の種類と数**（単数・複数）を厳密に決定します。 |
 | **`tense`** | String | `past`, `present`, `future` | 表現したい文の**時制**を決定します。 |
 
 **主語の分類定義とパネル表示記号:**
@@ -43,7 +43,8 @@
 | :--- | :--- | :--- |
 | `first_s` (一人称単数) | I | **1** |
 | `first_p` (一人称複数) | We | **11** |
-| `second` (二人称) | You | **2** |
+| `second` (二人称単数) | You | **2** |
+| `second_p` (二人称複数) | You | **22** |
 | `third_s` (三人称単数) | He, She, It | **3** |
 | `third_p` (三人称複数) | They | **33** |
 
@@ -81,5 +82,8 @@
 1. `subject` が `first_s` の場合 $\rightarrow$ **一人称のマス**をアクティブにし、**1** を表示。
 2. `subject` が `first_p` の場合 $\rightarrow$ **一人称のマス**をアクティブにし、**11** を表示。
 3. `subject` が `second` の場合 $\rightarrow$ **二人称のマス**をアクティブにし、**2** を表示。
-4. `subject` が `third_s` の場合 $\rightarrow$ **三人称のマス**をアクティブにし、**3** を表示。
-5. `subject` が `third_p` の場合 $\rightarrow$ **三人称のマス**をアクティブにし、**33** を表示。
+4. `subject` が `second_p` の場合 $\rightarrow$ **二人称のマス**をアクティブにし、**22** を表示。
+5. `subject` が `third_s` の場合 $\rightarrow$ **三人称のマス**をアクティブにし、**3** を表示。
+6. `subject` が `third_p` の場合 $\rightarrow$ **三人称のマス**をアクティブにし、**33** を表示。
+
+**注意:** 主語のマスをクリックすると、同じ人称内で単数と複数が切り替わります(例: `second` ↔ `second_p`)。
