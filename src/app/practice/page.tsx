@@ -123,12 +123,10 @@ export default function PracticePage() {
                 {state.verbType === 'do' && (
                   <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
                     <div className="flex gap-4">
-                      <div className="flex-1">
-                        <FiveSentencePatternSelector
-                          selectedPattern={state.fiveSentencePattern || 'SVO'}
-                          onChange={handleFiveSentencePatternChange}
-                        />
-                      </div>
+                      <FiveSentencePatternSelector
+                        selectedPattern={state.fiveSentencePattern || 'SVO'}
+                        onChange={handleFiveSentencePatternChange}
+                      />
                       <div className="flex-1">
                         <VerbSelector
                           verbType={state.verbType}
