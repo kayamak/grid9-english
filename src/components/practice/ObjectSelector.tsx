@@ -68,7 +68,10 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
   children 
 }) => {
   // Filter options based on numberForm
-  const filteredOptions = OBJECT_OPTIONS.filter(option => option.numberForm === numberForm);
+  // When 'the' is selected, show all objects except 'something' since 'the something' is not natural
+  const filteredOptions = numberForm === 'the' 
+    ? OBJECT_OPTIONS.filter(option => option.value !== 'something')
+    : OBJECT_OPTIONS.filter(option => option.numberForm === numberForm);
   
   // Auto-select first option if current selection is not in filtered list
   React.useEffect(() => {

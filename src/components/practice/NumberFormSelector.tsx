@@ -11,8 +11,8 @@ const NUMBER_FORM_OPTIONS: { value: NumberForm; label: string }[] = [
   { value: 'none', label: '不可算' },
   { value: 'a', label: 'a' },
   { value: 'an', label: 'an' },
-  { value: 'the', label: 'the' },
   { value: 'plural', label: '複数' },
+  { value: 'the', label: 'the' },
 ];
 
 export const NumberFormSelector: React.FC<NumberFormSelectorProps> = ({ 
