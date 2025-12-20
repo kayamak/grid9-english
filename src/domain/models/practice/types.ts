@@ -12,6 +12,11 @@ export type Verb =
   | 'something' | 'carpenter' | 'hairdresser' | 'nurse' | 'teacher' | 'chef' | 'farmer' | 'photographer' // Be Nouns
   | 'happy' | 'sleepy' | 'angry' | 'tired' | 'fine'; // Be Adjectives
 
+export type Object = 
+  | 'something' | 'dog' | 'story' | 'soccer player' | 'gold medal' | 'passport' | 'chair' | 'butterfly'
+  | 'parents' | 'fruit' | 'key' | 'taxi' | 'airplay' | 'sound' | 'soccker' | 'violin'
+  | 'song' | 'English' | 'newspaper' | 'letter' | 'coffee' | 'pizza' | 'dinner' | 'car';
+
 export interface PracticeState {
   verbType: VerbType;
   verb: Verb;
@@ -19,4 +24,5 @@ export interface PracticeState {
   subject: Subject;
   tense: Tense;
   fiveSentencePattern?: FiveSentencePattern; // Optional: only used for Do verbs
+  object?: Object; // Optional: only used for SVO pattern
 }

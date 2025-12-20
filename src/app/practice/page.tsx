@@ -6,6 +6,7 @@ import { NineKeyPanel } from '@/components/practice/NineKeyPanel';
 import { VerbTypeSelector } from '@/components/practice/VerbTypeSelector';
 import { FiveSentencePatternSelector } from '@/components/practice/FiveSentencePatternSelector';
 import { VerbSelector } from '@/components/practice/VerbSelector';
+import { ObjectSelector } from '@/components/practice/ObjectSelector';
 import { PatternGenerator } from '@/domain/models/practice/PatternGenerator';
 import {
   PracticeState,
@@ -15,6 +16,7 @@ import {
   VerbType,
   Verb,
   FiveSentencePattern,
+  Object,
 } from '@/domain/models/practice/types';
 
 export default function PracticePage() {
@@ -25,6 +27,7 @@ export default function PracticePage() {
     subject: 'first_s',
     tense: 'present',
     fiveSentencePattern: 'SV',
+    object: 'something',
   });
 
   const handleVerbTypeChange = (verbType: VerbType) => {
@@ -55,6 +58,10 @@ export default function PracticePage() {
       // This prevents having an SV-only verb selected when switching to SVO, and vice versa
       return { ...prev, fiveSentencePattern, verb: 'do' };
     });
+  };
+
+  const handleObjectChange = (object: Object) => {
+    setState((prev) => ({ ...prev, object }));
   };
 
   const [sessionId, setSessionId] = useState('');
@@ -113,15 +120,27 @@ export default function PracticePage() {
                     />
                 </div>
 
-                {/* Verb Selector Dropdown - Always visible now */}
-                <div className="mt-8 mb-2 w-48 relative z-20">
-                    <VerbSelector
+                {/* Verb and Object Selector Dropdowns - Only shown for Do verbs */}
+                {state.verbType === 'do' && (
+                  <div className="mt-8 mb-2 flex gap-4 justify-center items-center relative z-20">
+                    <div className="w-48">
+                      <VerbSelector
                         verbType={state.verbType}
                         selectedVerb={state.verb}
                         onChange={handleVerbChange}
                         fiveSentencePattern={state.fiveSentencePattern}
-                    />
-                </div>
+                      />
+                    </div>
+                    {state.fiveSentencePattern === 'SVO' && (
+                      <div className="w-48">
+                        <ObjectSelector
+                          selectedObject={state.object || 'something'}
+                          onChange={handleObjectChange}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
 
 
                 <div className="mt-12 w-full max-w-lg relative">

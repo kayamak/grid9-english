@@ -1,4 +1,4 @@
-import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern } from './types';
+import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern, Object } from './types';
 
 export class PatternGenerator {
   static generate(state: PracticeState): string {
@@ -19,7 +19,8 @@ export class PatternGenerator {
       // or if for some reason it's 'be' but type is 'do' (should be handled by state management, but good for safety)
       const verb = (state.verb && state.verb !== 'be') ? state.verb : 'live'; 
       const pattern = state.fiveSentencePattern || 'SVO';
-      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, pattern);
+      const object = state.object || 'something';
+      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, pattern, object);
     }
 
     if (!rawSentence) return '';
@@ -124,9 +125,9 @@ export class PatternGenerator {
     return base;
   }
 
-  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO'): string {
+  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO', object: Object = 'something'): string {
     const subjectText = this.getSubjectText(subject);
-    const complement = this.getPatternComplement(pattern, subject);
+    const complement = this.getPatternComplement(pattern, subject, object);
 
     if (tense === 'future') {
         if (sentenceType === 'positive') return `${subjectText} will ${verbBase}${complement ? ' ' + complement : ''}`;
@@ -165,7 +166,7 @@ export class PatternGenerator {
     return '';
   }
 
-  private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject): string {
+  private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject, object: Object = 'something'): string {
     // For now, provide simple examples for SV and SVO patterns
     switch (pattern) {
       case 'SV':
@@ -175,8 +176,8 @@ export class PatternGenerator {
         return '';
       case 'SVO':
         // Subject + Verb + Object
-        // Example: "I do something", "He eats an apple"
-        return 'something';
+        // Use the selected object from state
+        return object;
       case 'SVOO':
       case 'SVOC':
       case 'SVC':
