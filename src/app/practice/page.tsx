@@ -31,6 +31,20 @@ interface NounWord {
   sortOrder: number;
 }
 
+interface AdjectiveWord {
+  id: string;
+  value: string;
+  label: string;
+  sortOrder: number;
+}
+
+interface AdverbWord {
+  id: string;
+  value: string;
+  label: string;
+  sortOrder: number;
+}
+
 export default function PracticePage() {
   const [state, setState] = useState<PracticeState>({
     verbType: 'do',
@@ -45,6 +59,8 @@ export default function PracticePage() {
   });
 
   const [nounWords, setNounWords] = useState<NounWord[]>([]);
+  const [adjectiveWords, setAdjectiveWords] = useState<AdjectiveWord[]>([]);
+  const [adverbWords, setAdverbWords] = useState<AdverbWord[]>([]);
   const [isLoadingNouns, setIsLoadingNouns] = useState(true);
 
   // Fetch noun words from API
@@ -52,12 +68,28 @@ export default function PracticePage() {
     const fetchNounWords = async () => {
       try {
         const response = await fetch('/api/noun-words');
-        if (response.ok) {
-          const data = await response.json();
-          setNounWords(data);
-        } else {
-          console.error('Failed to fetch noun words');
-        }
+          if (response.ok) {
+            const data = await response.json();
+            setNounWords(data);
+          } else {
+            console.error('Failed to fetch noun words');
+          }
+
+          const responseAdj = await fetch('/api/adjective-words');
+          if (responseAdj.ok) {
+            const data = await responseAdj.json();
+            setAdjectiveWords(data);
+          } else {
+            console.error('Failed to fetch adjective words');
+          }
+
+          const responseAdv = await fetch('/api/adverb-words');
+          if (responseAdv.ok) {
+            const data = await responseAdv.json();
+            setAdverbWords(data);
+          } else {
+            console.error('Failed to fetch adverb words');
+          }
       } catch (error) {
         console.error('Error fetching noun words:', error);
       } finally {
@@ -220,6 +252,8 @@ export default function PracticePage() {
                         pattern={state.fiveSentencePattern || 'SV'}
                         numberForm={state.numberForm || 'a'}
                         nounWords={nounWords}
+                        adjectiveWords={adjectiveWords}
+                        adverbWords={adverbWords}
                         disabled={isLoadingNouns}
                       >
                         <NumberFormSelector
@@ -233,6 +267,8 @@ export default function PracticePage() {
                         onChange={handleBeComplementChange}
                         pattern={state.fiveSentencePattern || 'SV'}
                         nounWords={nounWords}
+                        adjectiveWords={adjectiveWords}
+                        adverbWords={adverbWords}
                         disabled={isLoadingNouns}
                       />
                     )}

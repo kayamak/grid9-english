@@ -222,6 +222,35 @@ async function main() {
     });
   }
 
+  console.log('Seeding AdverbWord data...');
+
+  // Adverb Words - migrated from SV pattern location/state options
+  const adverbWords = [
+    { value: 'here', label: 'here (ここに)', sortOrder: 1 },
+    { value: 'there', label: 'there (そこに)', sortOrder: 2 },
+    { value: 'at home', label: 'at home (家に)', sortOrder: 3 },
+    { value: 'at school', label: 'at school (学校に)', sortOrder: 4 },
+    { value: 'in the park', label: 'in the park (公園に)', sortOrder: 5 },
+    { value: 'in Tokyo', label: 'in Tokyo (東京に)', sortOrder: 6 },
+    { value: 'upstairs', label: 'upstairs (上の階に)', sortOrder: 7 },
+    { value: 'downstairs', label: 'downstairs (下の階に)', sortOrder: 8 },
+  ];
+
+  for (const adverb of adverbWords) {
+    await prisma.adverbWord.upsert({
+      where: { value: adverb.value },
+      update: {
+        label: adverb.label,
+        sortOrder: adverb.sortOrder,
+      },
+      create: {
+        value: adverb.value,
+        label: adverb.label,
+        sortOrder: adverb.sortOrder,
+      },
+    });
+  }
+
   console.log('Seeding completed!');
 }
 

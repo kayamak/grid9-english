@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -51,6 +52,13 @@ model NounWord {
 }
 
 model AdjectiveWord {
+  id        String @id @default(cuid())
+  value     String @unique
+  label     String
+  sortOrder Int
+}
+
+model AdverbWord {
   id        String @id @default(cuid())
   value     String @unique
   label     String

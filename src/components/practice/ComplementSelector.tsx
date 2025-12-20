@@ -9,6 +9,20 @@ interface NounWord {
   sortOrder: number;
 }
 
+interface AdjectiveWord {
+  id: string;
+  value: string;
+  label: string;
+  sortOrder: number;
+}
+
+interface AdverbWord {
+  id: string;
+  value: string;
+  label: string;
+  sortOrder: number;
+}
+
 interface ComplementSelectorProps {
   selectedComplement: BeComplement;
   onChange: (complement: BeComplement) => void;
@@ -17,28 +31,11 @@ interface ComplementSelectorProps {
   disabled?: boolean;
   children?: React.ReactNode; // For NumberFormSelector
   nounWords: NounWord[];
+  adjectiveWords: AdjectiveWord[];
+  adverbWords: AdverbWord[];
 }
 
-// Adverbial phrases for SV pattern (location/state)
-const SV_ADVERBIAL_OPTIONS: { value: BeComplement; label: string }[] = [
-  { value: 'here', label: 'here (ここに)' },
-  { value: 'there', label: 'there (そこに)' },
-  { value: 'at home', label: 'at home (家に)' },
-  { value: 'at school', label: 'at school (学校に)' },
-  { value: 'in the park', label: 'in the park (公園に)' },
-  { value: 'in Tokyo', label: 'in Tokyo (東京に)' },
-  { value: 'upstairs', label: 'upstairs (上の階に)' },
-  { value: 'downstairs', label: 'downstairs (下の階に)' },
-];
 
-// Adjectives for SVC pattern
-const ADJECTIVE_OPTIONS: { value: BeComplement; label: string; numberForm: 'adjective' }[] = [
-  { value: 'happy', label: 'happy (幸せ)', numberForm: 'adjective' },
-  { value: 'sleepy', label: 'sleepy (眠い)', numberForm: 'adjective' },
-  { value: 'angry', label: 'angry (怒った)', numberForm: 'adjective' },
-  { value: 'tired', label: 'tired (疲れた)', numberForm: 'adjective' },
-  { value: 'fine', label: 'fine (元気)', numberForm: 'adjective' },
-];
 
 export const ComplementSelector: React.FC<ComplementSelectorProps> = ({ 
   selectedComplement, 
@@ -47,13 +44,18 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
   numberForm,
   disabled,
   children,
-  nounWords
+  nounWords,
+  adjectiveWords,
+  adverbWords
 }) => {
   // Choose options based on pattern
   let options: { value: BeComplement; label: string }[];
   
   if (pattern === 'SV') {
-    options = SV_ADVERBIAL_OPTIONS;
+    options = adverbWords.map(word => ({
+      value: word.value as BeComplement,
+      label: word.label
+    }));
   } else {
     // For SVC pattern, combine nouns and adjectives
     // Convert nounWords to the format we need
@@ -62,9 +64,16 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
       label: noun.label,
       numberForm: noun.numberForm as NumberForm
     }));
+
+    // Convert adjectiveWords to the format we need
+    const adjectiveOptions = adjectiveWords.map(adj => ({
+      value: adj.value as BeComplement,
+      label: adj.label,
+      numberForm: 'adjective' as const
+    }));
     
     // Combine all SVC options (nouns from database + adjectives)
-    const allSVCOptions = [...nounOptions, ...ADJECTIVE_OPTIONS];
+    const allSVCOptions = [...nounOptions, ...adjectiveOptions];
     
     // Filter by numberForm if provided
     if (numberForm) {
