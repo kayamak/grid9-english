@@ -26,8 +26,17 @@ export type BeComplement =
   // Adverbial phrases for SV pattern
   | 'here' | 'there' | 'at home' | 'at school' | 'in the park' | 'in Tokyo' 
   | 'upstairs' | 'downstairs'
-  // Nouns and adjectives for SVC pattern (reuse Verb type values)
-  | 'something' | 'carpenter' | 'hairdresser' | 'nurse' | 'teacher' | 'chef' | 'farmer' | 'photographer'
+  // Nouns for SVC pattern (all objects from Object type)
+  | 'something' | 'dog' | 'dogs' | 'story' | 'stories' | 'soccer player' | 'soccer players' 
+  | 'gold medal' | 'gold medals' | 'passport' | 'passports' | 'chair' | 'chairs' 
+  | 'butterfly' | 'butterflies' | 'parents' | 'fruit' | 'fruits' | 'key' | 'keys' 
+  | 'taxi' | 'taxis' | 'airplane' | 'airplanes' | 'sound' | 'sounds' | 'soccer' 
+  | 'violin' | 'violins' | 'song' | 'songs' | 'English' | 'newspaper' | 'newspapers' 
+  | 'letter' | 'letters' | 'coffee' | 'pizza' | 'pizzas' | 'dinner' 
+  | 'car' | 'cars' | 'water' | 'music' | 'information' | 'advice' | 'homework'
+  // Occupations (previously in Verb type)
+  | 'carpenter' | 'hairdresser' | 'nurse' | 'teacher' | 'chef' | 'farmer' | 'photographer'
+  // Adjectives for SVC pattern
   | 'happy' | 'sleepy' | 'angry' | 'tired' | 'fine';
 
 export interface PracticeState {
