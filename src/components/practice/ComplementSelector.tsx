@@ -1,11 +1,13 @@
 import React from 'react';
-import { BeComplement, FiveSentencePattern } from '@/domain/models/practice/types';
+import { BeComplement, FiveSentencePattern, NumberForm } from '@/domain/models/practice/types';
 
 interface ComplementSelectorProps {
   selectedComplement: BeComplement;
   onChange: (complement: BeComplement) => void;
   pattern: FiveSentencePattern;
+  numberForm?: NumberForm;
   disabled?: boolean;
+  children?: React.ReactNode; // For NumberFormSelector
 }
 
 // Adverbial phrases for SV pattern (location/state)
@@ -20,33 +22,50 @@ const SV_ADVERBIAL_OPTIONS: { value: BeComplement; label: string }[] = [
   { value: 'downstairs', label: 'downstairs (下の階に)' },
 ];
 
-// Complements for SVC pattern (nouns and adjectives)
-const SVC_COMPLEMENT_OPTIONS: { value: BeComplement; label: string }[] = [
-  { value: 'something', label: 'something (何か)' },
+// Complements for SVC pattern (nouns and adjectives) with numberForm metadata
+const SVC_COMPLEMENT_OPTIONS: { value: BeComplement; label: string; numberForm: NumberForm }[] = [
+  { value: 'something', label: 'something (何か)', numberForm: 'none' },
   // Nouns
-  { value: 'carpenter', label: 'carpenter (大工)' },
-  { value: 'hairdresser', label: 'hairdresser (美容師)' },
-  { value: 'nurse', label: 'nurse (看護師)' },
-  { value: 'teacher', label: 'teacher (先生)' },
-  { value: 'chef', label: 'chef (シェフ)' },
-  { value: 'farmer', label: 'farmer (農家)' },
-  { value: 'photographer', label: 'photographer (写真家)' },
+  { value: 'carpenter', label: 'carpenter (大工)', numberForm: 'a' },
+  { value: 'hairdresser', label: 'hairdresser (美容師)', numberForm: 'a' },
+  { value: 'nurse', label: 'nurse (看護師)', numberForm: 'a' },
+  { value: 'teacher', label: 'teacher (先生)', numberForm: 'a' },
+  { value: 'chef', label: 'chef (シェフ)', numberForm: 'a' },
+  { value: 'farmer', label: 'farmer (農家)', numberForm: 'a' },
+  { value: 'photographer', label: 'photographer (写真家)', numberForm: 'a' },
   // Adjectives
-  { value: 'happy', label: 'happy (幸せ)' },
-  { value: 'sleepy', label: 'sleepy (眠い)' },
-  { value: 'angry', label: 'angry (怒った)' },
-  { value: 'tired', label: 'tired (疲れた)' },
-  { value: 'fine', label: 'fine (元気)' },
+  { value: 'happy', label: 'happy (幸せ)', numberForm: 'none' },
+  { value: 'sleepy', label: 'sleepy (眠い)', numberForm: 'none' },
+  { value: 'angry', label: 'angry (怒った)', numberForm: 'none' },
+  { value: 'tired', label: 'tired (疲れた)', numberForm: 'none' },
+  { value: 'fine', label: 'fine (元気)', numberForm: 'none' },
 ];
 
 export const ComplementSelector: React.FC<ComplementSelectorProps> = ({ 
   selectedComplement, 
   onChange, 
   pattern,
-  disabled 
+  numberForm,
+  disabled,
+  children
 }) => {
   // Choose options based on pattern
-  const options = pattern === 'SV' ? SV_ADVERBIAL_OPTIONS : SVC_COMPLEMENT_OPTIONS;
+  let options: { value: BeComplement; label: string }[];
+  
+  if (pattern === 'SV') {
+    options = SV_ADVERBIAL_OPTIONS;
+  } else {
+    // For SVC pattern, filter by numberForm if provided
+    if (numberForm) {
+      // When 'the', possessive determiners, or 'no_article' are selected, show all complements except 'something'
+      const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
+      options = showAllExceptSomething
+        ? SVC_COMPLEMENT_OPTIONS.filter(option => option.value !== 'something')
+        : SVC_COMPLEMENT_OPTIONS.filter(option => option.numberForm === numberForm);
+    } else {
+      options = SVC_COMPLEMENT_OPTIONS;
+    }
+  }
   
   // Auto-select first option if current selection is not in the list
   React.useEffect(() => {
@@ -54,13 +73,14 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
     if (!isCurrentSelectionValid && options.length > 0) {
       onChange(options[0].value);
     }
-  }, [pattern, selectedComplement, onChange, options]);
+  }, [pattern, numberForm, selectedComplement, onChange, options]);
 
   return (
     <div className="flex items-center gap-3">
       <label className="text-gray-700 font-medium whitespace-nowrap">
         {pattern === 'SV' ? '場所・状態' : '補語'}
       </label>
+      {children}
       <div className="relative flex-1">
         <select
           value={selectedComplement}

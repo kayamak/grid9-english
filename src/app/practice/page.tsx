@@ -39,7 +39,7 @@ export default function PracticePage() {
   const handleVerbTypeChange = (verbType: VerbType) => {
     // When switching types, reset verb and pattern to defaults
     if (verbType === 'be') {
-      setState((prev) => ({ ...prev, verbType, verb: 'be', fiveSentencePattern: 'SV', beComplement: 'here' }));
+      setState((prev) => ({ ...prev, verbType, verb: 'be', fiveSentencePattern: 'SV', beComplement: 'here', numberForm: 'a' }));
     } else {
       setState((prev) => ({ ...prev, verbType, verb: 'do', fiveSentencePattern: 'SV' }));
     }
@@ -179,11 +179,25 @@ export default function PracticePage() {
                         />
                       </div>
                     </div>
-                    <ComplementSelector
-                      selectedComplement={state.beComplement || 'here'}
-                      onChange={handleBeComplementChange}
-                      pattern={state.fiveSentencePattern || 'SV'}
-                    />
+                    {state.fiveSentencePattern === 'SVC' ? (
+                      <ComplementSelector
+                        selectedComplement={state.beComplement || 'carpenter'}
+                        onChange={handleBeComplementChange}
+                        pattern={state.fiveSentencePattern || 'SV'}
+                        numberForm={state.numberForm || 'a'}
+                      >
+                        <NumberFormSelector
+                          selectedNumberForm={state.numberForm || 'a'}
+                          onChange={handleNumberFormChange}
+                        />
+                      </ComplementSelector>
+                    ) : (
+                      <ComplementSelector
+                        selectedComplement={state.beComplement || 'here'}
+                        onChange={handleBeComplementChange}
+                        pattern={state.fiveSentencePattern || 'SV'}
+                      />
+                    )}
                   </div>
                 )}
 
