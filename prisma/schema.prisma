@@ -28,3 +28,14 @@ model Circle {
   
   members User[] @relation("CircleMembers")
 }
+
+model VerbWord {
+  id              String  @id @default(cuid())
+  value           String  @unique
+  label           String
+  verbType        String  // "do" | "be"
+  sentencePattern String? // "SV" | "SVO" | "SVC" | null (for be verbs)
+  sortOrder       Int
+  
+  @@index([verbType, sentencePattern])
+}
