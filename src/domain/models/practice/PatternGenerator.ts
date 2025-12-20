@@ -198,6 +198,13 @@ export class PatternGenerator {
         case 'walk': return 'walked';
         case 'smile': return 'smiled';
         case 'laugh': return 'laughed';
+        case 'sing': return 'sang';
+        case 'teach': return 'taught';
+        case 'read': return 'read';
+        case 'write': return 'wrote';
+        case 'drink': return 'drank';
+        case 'eat': return 'ate';
+        case 'drive': return 'drove';
         default: return verb + 'ed';
     }
   }
@@ -208,6 +215,8 @@ export class PatternGenerator {
         case 'go': return 'goes';
         case 'wash': return 'washes'; // example if added later
         case 'catch': return 'catches';
+        case 'study': return 'studies';
+        case 'teach': return 'teaches';
         default: return verb + 's';
      }
   }

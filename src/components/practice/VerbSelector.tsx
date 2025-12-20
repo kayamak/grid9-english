@@ -32,7 +32,16 @@ const DO_VERB_SVO_OPTIONS: { value: Verb; label: string }[] = [
   { value: 'like', label: 'like (気に入る)' },
   { value: 'take', label: 'take (取る、持っていく)' },
   { value: 'see', label: 'see (見える)' },
-  { value: 'hear', label: 'hear (聞こえる)' },
+  { value: 'play', label: 'play (遊ぶ、演奏する)' },
+  { value: 'sing', label: 'sing (歌う)' },
+  { value: 'study', label: 'study (勉強する)' },
+  { value: 'teach', label: 'teach (教える)' },
+  { value: 'read', label: 'read (読む)' },
+  { value: 'write', label: 'write (書く)' },
+  { value: 'drink', label: 'drink (飲む)' },
+  { value: 'eat', label: 'eat (食べる)' },
+  { value: 'cook', label: 'cook (料理する)' },
+  { value: 'drive', label: 'drive (運転する)' },
 ];
 
 const BE_VERB_OPTIONS: { value: Verb; label: string }[] = [
