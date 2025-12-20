@@ -54,11 +54,11 @@
 
 | 要素 | UI要素 | 操作 | 動作 | 説明 |
 | :--- | :--- | :--- | :--- | :--- |
-| **数** | `NumberFormSelector` (プルダウン) | プルダウンから「単数形」または「複数形」を選択する。 | 1. `numberForm` のPropsが選択された値に更新される。2. 目的語プルダウンの選択肢が選択された数に応じてフィルタリングされる。3. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。初期値は「単数形」です。目的語プルダウンの左隣に配置されます。プルダウンの左に見出しとして数を表示します。|
+| **冠詞・限定詞** | `NumberFormSelector` (プルダウン) | プルダウンから冠詞・限定詞の種類を選択する。選択肢: 不可算 (`none`), a (`a`), an (`an`), 複数 (`plural`), the (`the`), my (`my`), our (`our`), your (`your`), his (`his`), her (`her`), their (`their`), 無し (`no_article`), 形容詞 (`adjective`) | 1. `numberForm` のPropsが選択された値に更新される。2. 目的語プルダウンの選択肢が選択された冠詞・限定詞に応じてフィルタリングされる。3. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。初期値は「不可算」(`none`)です。目的語プルダウンの左隣に配置されます。プルダウンにはラベルがありません。|
 
 | 要素 | UI要素 | 操作 | 動作 | 説明 |
 | :--- | :--- | :--- | :--- | :--- |
-| **目的語** | `ObjectSelector` (プルダウン) | プルダウンから目的語を選択する。 | 1. `object` のPropsが選択された値に更新される。2. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。表示位置は数プルダウンの右隣に配置されます。プルダウンの左に見出しとして目的語を表示します。選択肢は数プルダウンで選択された単数形/複数形に応じてフィルタリングされます。|
+| **目的語** | `ObjectSelector` (プルダウン) | プルダウンから目的語を選択する。 | 1. `object` のPropsが選択された値に更新される。2. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。表示位置は冠詞・限定詞プルダウンの右隣に配置されます。プルダウンの左に見出しとして目的語を表示します。選択肢は冠詞・限定詞プルダウンで選択された値に応じてフィルタリングされます。`the`、所有格(`my`, `our`, `your`, `his`, `her`, `their`)、または`無し`(`no_article`)を選択した場合、`something`を除く全ての目的語が選択可能になります。|
 
 ### 4.6.1. 動詞タイプがDo動詞の場合
 
@@ -145,12 +145,99 @@
 - `dinners` (夕食)
 - `cars` (車)
 
+#### 不可算名詞の目的語
+- `soccer` (サッカー)
+- `English` (英語)
+- `coffee` (コーヒー)
+- `pizza` (ピザ) ※可算名詞としても使用可能
+- `dinner` (夕食)
+- `water` (水)
+- `music` (音楽)
+- `information` (情報)
+- `advice` (助言)
+- `homework` (宿題)
+
 ### 4.6.2. 動詞タイプがBe動詞の場合の選択肢
 
-**代名詞:**
+動詞タイプがBe動詞の場合、動詞セレクターは常に`be`を表示し、無効化されています。文型セレクターで`SV`または`SVC`を選択でき、それぞれ異なる補語セレクターが表示されます。
+
+#### 4.6.2.1. SV文型の場合
+
+SV文型では、場所や状態を表す副詞句を選択します。`ComplementSelector`コンポーネントが表示され、以下の選択肢から選べます:
+
+**場所・状態の副詞句:**
+- `here` (ここに)
+- `there` (そこに)
+- `at home` (家に)
+- `at school` (学校に)
+- `in the park` (公園に)
+- `in Tokyo` (東京に)
+- `upstairs` (上の階に)
+- `downstairs` (下の階に)
+
+#### 4.6.2.2. SVC文型の場合
+
+SVC文型では、補語として名詞または形容詞を選択します。`ComplementSelector`コンポーネントと`NumberFormSelector`コンポーネントが表示されます。
+
+**冠詞・限定詞の選択:**
+
+NumberFormSelectorで以下の選択肢から選べます:
+- `不可算` (`none`)
+- `a` (`a`)
+- `an` (`an`)
+- `複数` (`plural`)
+- `the` (`the`)
+- `my` (`my`)
+- `our` (`our`)
+- `your` (`your`)
+- `his` (`his`)
+- `her` (`her`)
+- `their` (`their`)
+- `無し` (`no_article`)
+- `形容詞` (`adjective`)
+
+初期値は`a`です。NumberFormSelectorは補語セレクターの左隣に配置され、ラベルはありません。
+
+**補語の選択:**
+
+ComplementSelectorで選択できる補語は、NumberFormの選択に応じてフィルタリングされます。`the`、所有格(`my`, `our`, `your`, `his`, `her`, `their`)、または`無し`(`no_article`)を選択した場合、`something`を除く全ての補語が選択可能になります。
+
+**補語の選択肢:**
+
+代名詞:
 - `something` (何か)
 
-**職業(名詞):**
+名詞 - Do動詞のObjectSelectorと同じ全ての名詞:
+- `dog` (犬) / `dogs` (犬)
+- `story` (物語) / `stories` (物語)
+- `soccer player` (サッカー選手) / `soccer players` (サッカー選手)
+- `gold medal` (金メダル) / `gold medals` (金メダル)
+- `passport` (パスポート) / `passports` (パスポート)
+- `chair` (椅子) / `chairs` (椅子)
+- `butterfly` (蝶) / `butterflies` (蝶)
+- `parents` (両親)
+- `fruit` (果物) / `fruits` (果物)
+- `key` (鍵) / `keys` (鍵)
+- `taxi` (タクシー) / `taxis` (タクシー)
+- `airplane` (飛行機) / `airplanes` (飛行機)
+- `sound` (音) / `sounds` (音)
+- `soccer` (サッカー)
+- `violin` (バイオリン) / `violins` (バイオリン)
+- `song` (歌) / `songs` (歌)
+- `English` (英語)
+- `newspaper` (新聞) / `newspapers` (新聞)
+- `letter` (手紙) / `letters` (手紙)
+- `coffee` (コーヒー)
+- `pizza` (ピザ) / `pizzas` (ピザ)
+- `dinner` (夕食)
+- `car` (車) / `cars` (車)
+- `water` (水)
+- `music` (音楽)
+- `information` (情報)
+- `advice` (助言)
+- `homework` (宿題)
+
+職業(名詞):
 - `carpenter` (大工)
 - `hairdresser` (美容師)
 - `nurse` (看護師)
@@ -159,7 +246,7 @@
 - `farmer` (農家)
 - `photographer` (写真家)
 
-**形容詞:**
+形容詞:
 - `happy` (幸せ)
 - `sleepy` (眠い)
 - `angry` (怒った)
@@ -172,7 +259,19 @@
 
 アプリケーションは、以下の要素を合わせた**現在の状態 (Current State)**を保持します。
 
-`Current State` = { `verbType`, `verb`, `sentenceType`, `subject`, `tense`, `fiveSentencePattern`, `object`, `numberForm` }
+`Current State` = { `verbType`, `verb`, `sentenceType`, `subject`, `tense`, `fiveSentencePattern`, `object`, `numberForm`, `beComplement` }
+
+**型定義:**
+
+- `verbType`: `'do' | 'be'`
+- `verb`: 動詞の文字列 (Do動詞の場合は動詞名、Be動詞の場合は常に`'be'`)
+- `sentenceType`: `'positive' | 'negative' | 'question'`
+- `subject`: `'first_s' | 'first_p' | 'second' | 'second_p' | 'third_s' | 'third_p'`
+- `tense`: `'past' | 'present' | 'future'`
+- `fiveSentencePattern`: `'SV' | 'SVC' | 'SVO' | 'SVOO' | 'SVOC'` (オプション)
+- `object`: 目的語の文字列 (オプション、SVO文型の場合のみ使用)
+- `numberForm`: `'none' | 'a' | 'an' | 'plural' | 'the' | 'my' | 'our' | 'your' | 'his' | 'her' | 'their' | 'no_article' | 'adjective'` (オプション、SVO文型またはBe動詞SVC文型の場合のみ使用)
+- `beComplement`: Be動詞の補語の文字列 (オプション、Be動詞のSVまたはSVC文型の場合のみ使用)
 
 ### 5.2. 文章生成 (Text Generation)
 
@@ -203,10 +302,11 @@
     * `tense`: `present`
     * `fiveSentencePattern`: `SV`
     * `object`: `something`
-    * `numberForm`: `singular`
-* **動詞タイプ変更時の動詞リセット:** `VerbType`を変更した場合、`verb`の値は以下のルールで自動的にリセットされます:
-    * `verbType`が「Do動詞」(`do`)の場合: `verb`は`do`にリセットされる。
-    * `verbType`が「Be動詞」(`be`)の場合: `verb`は`something`にリセットされる。
+    * `numberForm`: `none`
+    * `beComplement`: `here`
+* **動詞タイプ変更時の動詞リセット:** `VerbType`を変更した場合、`verb`と関連する状態の値は以下のルールで自動的にリセットされます:
+    * `verbType`が「Do動詞」(`do`)の場合: `verb`は`do`、`fiveSentencePattern`は`SV`にリセットされる。
+    * `verbType`が「Be動詞」(`be`)の場合: `verb`は`be`、`fiveSentencePattern`は`SV`、`beComplement`は`here`、`numberForm`は`a`にリセットされる。
 * **主語の切り替え:** 主語のマスをクリックすると、同じ人称内で単数と複数が切り替わります:
     * 二人称: `second` ↔ `second_p`
     * 一人称: `first_s` ↔ `first_p`
