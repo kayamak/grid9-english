@@ -33,6 +33,7 @@
 | 属性名 | 型 | 許容される値 | 説明 |
 | :--- | :--- | :--- | :--- |
 | **`verbType`** | String | `do`, `be` | 文頭表現が **Do動詞パターン** か **Be動詞パターン** かを決定します。 |
+| **`fiveSentencePattern`** | String | `SV`, `SVC`, `SVO`, `SVOO`, `SVOC` | 文型が **第1文型(主語＋動 詞)**、**第2文型(主語＋動詞＋補語)**、**第3文型(主語＋動詞＋目的語)**、**第4文型(主語＋動詞＋間接目的語＋直接目的語)**、**第5文型(主語＋動詞＋目的語＋補語)** かを決定します。ただし、文頭表現が **Do動詞パターン**に限って使用する。 |
 | **`sentenceType`** | String | `positive`, `negative`, `question` | 表現したい文の**形式**（肯定文、否定文、疑問文）を決定します。 |
 | **`subject`** | String | `first_s`, `first_p`, `second`, `second_p`, `third_s`, `third_p` | 文の**主語の種類と数**（単数・複数）を厳密に決定します。 |
 | **`tense`** | String | `past`, `present`, `future` | 表現したい文の**時制**を決定します。 |
