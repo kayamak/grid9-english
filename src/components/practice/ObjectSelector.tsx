@@ -1,40 +1,76 @@
 import React from 'react';
-import { Object } from '@/domain/models/practice/types';
+import { Object, NumberForm } from '@/domain/models/practice/types';
 
 interface ObjectSelectorProps {
   selectedObject: Object;
   onChange: (object: Object) => void;
+  numberForm: NumberForm;
   disabled?: boolean;
 }
 
-const OBJECT_OPTIONS: { value: Object; label: string }[] = [
-  { value: 'something', label: 'something (何か)' },
-  { value: 'dog', label: 'dog (犬)' },
-  { value: 'story', label: 'story (物語)' },
-  { value: 'soccer player', label: 'soccer player (サッカー選手)' },
-  { value: 'gold medal', label: 'gold medal (金メダル)' },
-  { value: 'passport', label: 'passport (パスポート)' },
-  { value: 'chair', label: 'chair (椅子)' },
-  { value: 'butterfly', label: 'butterfly (蝶)' },
-  { value: 'parents', label: 'parents (両親)' },
-  { value: 'fruit', label: 'fruit (果物)' },
-  { value: 'key', label: 'key (鍵)' },
-  { value: 'taxi', label: 'taxi (タクシー)' },
-  { value: 'airplay', label: 'airplay (空港)' },
-  { value: 'sound', label: 'sound (音)' },
-  { value: 'soccker', label: 'soccker (サッカー)' },
-  { value: 'violin', label: 'violin (バイオリン)' },
-  { value: 'song', label: 'song (歌)' },
-  { value: 'English', label: 'English (英語)' },
-  { value: 'newspaper', label: 'newspaper (新聞)' },
-  { value: 'letter', label: 'letter (手紙)' },
-  { value: 'coffee', label: 'coffee (コーヒー)' },
-  { value: 'pizza', label: 'pizza (ピザ)' },
-  { value: 'dinner', label: 'dinner (夕食)' },
-  { value: 'car', label: 'car (車)' },
+const OBJECT_OPTIONS: { value: Object; label: string; numberForm: NumberForm }[] = [
+  { value: 'something', label: 'something (何か)', numberForm: 'singular' },
+  { value: 'dog', label: 'dog (犬)', numberForm: 'singular' },
+  { value: 'dogs', label: 'dogs (犬)', numberForm: 'plural' },
+  { value: 'story', label: 'story (物語)', numberForm: 'singular' },
+  { value: 'stories', label: 'stories (物語)', numberForm: 'plural' },
+  { value: 'soccer player', label: 'soccer player (サッカー選手)', numberForm: 'singular' },
+  { value: 'soccer players', label: 'soccer players (サッカー選手)', numberForm: 'plural' },
+  { value: 'gold medal', label: 'gold medal (金メダル)', numberForm: 'singular' },
+  { value: 'gold medals', label: 'gold medals (金メダル)', numberForm: 'plural' },
+  { value: 'passport', label: 'passport (パスポート)', numberForm: 'singular' },
+  { value: 'passports', label: 'passports (パスポート)', numberForm: 'plural' },
+  { value: 'chair', label: 'chair (椅子)', numberForm: 'singular' },
+  { value: 'chairs', label: 'chairs (椅子)', numberForm: 'plural' },
+  { value: 'butterfly', label: 'butterfly (蝶)', numberForm: 'singular' },
+  { value: 'butterflies', label: 'butterflies (蝶)', numberForm: 'plural' },
+  { value: 'parents', label: 'parents (両親)', numberForm: 'plural' },
+  { value: 'fruit', label: 'fruit (果物)', numberForm: 'singular' },
+  { value: 'fruits', label: 'fruits (果物)', numberForm: 'plural' },
+  { value: 'key', label: 'key (鍵)', numberForm: 'singular' },
+  { value: 'keys', label: 'keys (鍵)', numberForm: 'plural' },
+  { value: 'taxi', label: 'taxi (タクシー)', numberForm: 'singular' },
+  { value: 'taxis', label: 'taxis (タクシー)', numberForm: 'plural' },
+  { value: 'airplay', label: 'airplay (空港)', numberForm: 'singular' },
+  { value: 'airplays', label: 'airplays (空港)', numberForm: 'plural' },
+  { value: 'sound', label: 'sound (音)', numberForm: 'singular' },
+  { value: 'sounds', label: 'sounds (音)', numberForm: 'plural' },
+  { value: 'soccker', label: 'soccker (サッカー)', numberForm: 'singular' },
+  { value: 'violin', label: 'violin (バイオリン)', numberForm: 'singular' },
+  { value: 'violins', label: 'violins (バイオリン)', numberForm: 'plural' },
+  { value: 'song', label: 'song (歌)', numberForm: 'singular' },
+  { value: 'songs', label: 'songs (歌)', numberForm: 'plural' },
+  { value: 'English', label: 'English (英語)', numberForm: 'singular' },
+  { value: 'newspaper', label: 'newspaper (新聞)', numberForm: 'singular' },
+  { value: 'newspapers', label: 'newspapers (新聞)', numberForm: 'plural' },
+  { value: 'letter', label: 'letter (手紙)', numberForm: 'singular' },
+  { value: 'letters', label: 'letters (手紙)', numberForm: 'plural' },
+  { value: 'coffee', label: 'coffee (コーヒー)', numberForm: 'singular' },
+  { value: 'pizza', label: 'pizza (ピザ)', numberForm: 'singular' },
+  { value: 'pizzas', label: 'pizzas (ピザ)', numberForm: 'plural' },
+  { value: 'dinner', label: 'dinner (夕食)', numberForm: 'singular' },
+  { value: 'dinners', label: 'dinners (夕食)', numberForm: 'plural' },
+  { value: 'car', label: 'car (車)', numberForm: 'singular' },
+  { value: 'cars', label: 'cars (車)', numberForm: 'plural' },
 ];
 
-export const ObjectSelector: React.FC<ObjectSelectorProps> = ({ selectedObject, onChange, disabled }) => {
+export const ObjectSelector: React.FC<ObjectSelectorProps> = ({ 
+  selectedObject, 
+  onChange, 
+  numberForm,
+  disabled 
+}) => {
+  // Filter options based on numberForm
+  const filteredOptions = OBJECT_OPTIONS.filter(option => option.numberForm === numberForm);
+  
+  // Auto-select first option if current selection is not in filtered list
+  React.useEffect(() => {
+    const isCurrentSelectionValid = filteredOptions.some(option => option.value === selectedObject);
+    if (!isCurrentSelectionValid && filteredOptions.length > 0) {
+      onChange(filteredOptions[0].value);
+    }
+  }, [numberForm, selectedObject, onChange, filteredOptions]);
+
   return (
     <div className="flex items-center gap-3">
       <label className="text-gray-700 font-medium whitespace-nowrap">目的語</label>
@@ -45,7 +81,7 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({ selectedObject, 
           disabled={disabled}
           className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg disabled:opacity-50 disabled:bg-gray-100"
         >
-          {OBJECT_OPTIONS.map((option) => (
+          {filteredOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

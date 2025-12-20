@@ -7,6 +7,7 @@ import { VerbTypeSelector } from '@/components/practice/VerbTypeSelector';
 import { FiveSentencePatternSelector } from '@/components/practice/FiveSentencePatternSelector';
 import { VerbSelector } from '@/components/practice/VerbSelector';
 import { ObjectSelector } from '@/components/practice/ObjectSelector';
+import { NumberFormSelector } from '@/components/practice/NumberFormSelector';
 import { PatternGenerator } from '@/domain/models/practice/PatternGenerator';
 import {
   PracticeState,
@@ -17,6 +18,7 @@ import {
   Verb,
   FiveSentencePattern,
   Object,
+  NumberForm,
 } from '@/domain/models/practice/types';
 
 export default function PracticePage() {
@@ -28,6 +30,7 @@ export default function PracticePage() {
     tense: 'present',
     fiveSentencePattern: 'SV',
     object: 'something',
+    numberForm: 'singular',
   });
 
   const handleVerbTypeChange = (verbType: VerbType) => {
@@ -62,6 +65,10 @@ export default function PracticePage() {
 
   const handleObjectChange = (object: Object) => {
     setState((prev) => ({ ...prev, object }));
+  };
+
+  const handleNumberFormChange = (numberForm: NumberForm) => {
+    setState((prev) => ({ ...prev, numberForm }));
   };
 
   const [sessionId, setSessionId] = useState('');
@@ -132,10 +139,21 @@ export default function PracticePage() {
                       </div>
                     </div>
                     {state.fiveSentencePattern === 'SVO' && (
-                      <ObjectSelector
-                        selectedObject={state.object || 'something'}
-                        onChange={handleObjectChange}
-                      />
+                      <div className="flex gap-4">
+                        <div className="flex-1">
+                          <NumberFormSelector
+                            selectedNumberForm={state.numberForm || 'singular'}
+                            onChange={handleNumberFormChange}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <ObjectSelector
+                            selectedObject={state.object || 'something'}
+                            onChange={handleObjectChange}
+                            numberForm={state.numberForm || 'singular'}
+                          />
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}

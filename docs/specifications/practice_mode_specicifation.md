@@ -54,7 +54,11 @@
 
 | 要素 | UI要素 | 操作 | 動作 | 説明 |
 | :--- | :--- | :--- | :--- | :--- |
-| **目的語** | `ObjectSelector` (プルダウン) | プルダウンから目的語を選択する。 | 1. `object` のPropsが選択された値に更新される。2. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。表示位置は動詞プルダウンの直下に配置されます。 プルダウンの左に見出しとして目的語を表示します。|
+| **数** | `NumberFormSelector` (プルダウン) | プルダウンから「単数形」または「複数形」を選択する。 | 1. `numberForm` のPropsが選択された値に更新される。2. 目的語プルダウンの選択肢が選択された数に応じてフィルタリングされる。3. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。初期値は「単数形」です。目的語プルダウンの左隣に配置されます。プルダウンの左に見出しとして数を表示します。|
+
+| 要素 | UI要素 | 操作 | 動作 | 説明 |
+| :--- | :--- | :--- | :--- | :--- |
+| **目的語** | `ObjectSelector` (プルダウン) | プルダウンから目的語を選択する。 | 1. `object` のPropsが選択された値に更新される。2. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。表示位置は数プルダウンの右隣に配置されます。プルダウンの左に見出しとして目的語を表示します。選択肢は数プルダウンで選択された単数形/複数形に応じてフィルタリングされます。|
 
 ### 4.6.1. 動詞タイプがDo動詞の場合
 
@@ -92,6 +96,8 @@
 - `drive` (運転する)
 
 ### 4.6.1.2.2 文型がSVOの目的語選択肢
+
+#### 単数形の目的語
 - `something` (何か)
 - `dog` (犬)
 - `story` (物語)
@@ -100,7 +106,6 @@
 - `passport` (パスポート)
 - `chair` (椅子)
 - `butterfly` (蝶)
-- `parents` (両親)
 - `fruit` (果物)
 - `key` (鍵)
 - `taxi` (タクシー)
@@ -116,6 +121,28 @@
 - `pizza` (ピザ)
 - `dinner` (夕食)
 - `car` (車)
+
+#### 複数形の目的語
+- `parents` (両親)
+- `dogs` (犬)
+- `stories` (物語)
+- `soccer players` (サッカー選手)
+- `gold medals` (金メダル)
+- `passports` (パスポート)
+- `chairs` (椅子)
+- `butterflies` (蝶)
+- `fruits` (果物)
+- `keys` (鍵)
+- `taxis` (タクシー)
+- `airplays` (空港)
+- `sounds` (音)
+- `violins` (バイオリン)
+- `songs` (歌)
+- `newspapers` (新聞)
+- `letters` (手紙)
+- `pizzas` (ピザ)
+- `dinners` (夕食)
+- `cars` (車)
 
 ### 4.6.2. 動詞タイプがBe動詞の場合の選択肢
 
@@ -142,9 +169,9 @@
 
 ### 5.1. 状態管理
 
-アプリケーションは、以下の**5つ**の要素を合わせた**現在の状態 (Current State)**を保持します。
+アプリケーションは、以下の要素を合わせた**現在の状態 (Current State)**を保持します。
 
-`Current State` = { `verbType`, `verb`, `sentenceType`, `subject`, `tense` }
+`Current State` = { `verbType`, `verb`, `sentenceType`, `subject`, `tense`, `fiveSentencePattern`, `object`, `numberForm` }
 
 ### 5.2. 文章生成 (Text Generation)
 
@@ -173,6 +200,9 @@
     * `sentenceType`: `positive`
     * `subject`: `first_s`
     * `tense`: `present`
+    * `fiveSentencePattern`: `SV`
+    * `object`: `something`
+    * `numberForm`: `singular`
 * **動詞タイプ変更時の動詞リセット:** `VerbType`を変更した場合、`verb`の値は以下のルールで自動的にリセットされます:
     * `verbType`が「Do動詞」(`do`)の場合: `verb`は`do`にリセットされる。
     * `verbType`が「Be動詞」(`be`)の場合: `verb`は`something`にリセットされる。

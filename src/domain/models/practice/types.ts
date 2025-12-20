@@ -3,6 +3,7 @@ export type SentenceType = 'positive' | 'negative' | 'question';
 export type Subject = 'first_s' | 'first_p' | 'second' | 'second_p' | 'third_s' | 'third_p';
 export type Tense = 'past' | 'present' | 'future';
 export type FiveSentencePattern = 'SV' | 'SVC' | 'SVO' | 'SVOO' | 'SVOC';
+export type NumberForm = 'singular' | 'plural';
 
 export type Verb = 
   | 'be' | 'do' // Defaults
@@ -13,9 +14,13 @@ export type Verb =
   | 'happy' | 'sleepy' | 'angry' | 'tired' | 'fine'; // Be Adjectives
 
 export type Object = 
-  | 'something' | 'dog' | 'story' | 'soccer player' | 'gold medal' | 'passport' | 'chair' | 'butterfly'
-  | 'parents' | 'fruit' | 'key' | 'taxi' | 'airplay' | 'sound' | 'soccker' | 'violin'
-  | 'song' | 'English' | 'newspaper' | 'letter' | 'coffee' | 'pizza' | 'dinner' | 'car';
+  | 'something' | 'dog' | 'dogs' | 'story' | 'stories' | 'soccer player' | 'soccer players' 
+  | 'gold medal' | 'gold medals' | 'passport' | 'passports' | 'chair' | 'chairs' 
+  | 'butterfly' | 'butterflies' | 'parents' | 'fruit' | 'fruits' | 'key' | 'keys' 
+  | 'taxi' | 'taxis' | 'airplay' | 'airplays' | 'sound' | 'sounds' | 'soccker' 
+  | 'violin' | 'violins' | 'song' | 'songs' | 'English' | 'newspaper' | 'newspapers' 
+  | 'letter' | 'letters' | 'coffee' | 'pizza' | 'pizzas' | 'dinner' | 'dinners' 
+  | 'car' | 'cars';
 
 export interface PracticeState {
   verbType: VerbType;
@@ -25,4 +30,5 @@ export interface PracticeState {
   tense: Tense;
   fiveSentencePattern?: FiveSentencePattern; // Optional: only used for Do verbs
   object?: Object; // Optional: only used for SVO pattern
+  numberForm?: NumberForm; // Optional: only used for SVO pattern
 }
