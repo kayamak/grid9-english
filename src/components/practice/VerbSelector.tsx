@@ -46,6 +46,7 @@ const DO_VERB_SVO_OPTIONS: { value: Verb; label: string }[] = [
 ];
 
 const BE_VERB_OPTIONS: { value: Verb; label: string }[] = [
+  { value: 'be', label: 'be (である)' },
   { value: 'something', label: 'something (何か)' },
   // Nouns
   { value: 'carpenter', label: 'carpenter (大工)' },

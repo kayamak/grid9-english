@@ -8,6 +8,7 @@ import { FiveSentencePatternSelector } from '@/components/practice/FiveSentenceP
 import { VerbSelector } from '@/components/practice/VerbSelector';
 import { ObjectSelector } from '@/components/practice/ObjectSelector';
 import { NumberFormSelector } from '@/components/practice/NumberFormSelector';
+import { ComplementSelector } from '@/components/practice/ComplementSelector';
 import { PatternGenerator } from '@/domain/models/practice/PatternGenerator';
 import {
   PracticeState,
@@ -19,6 +20,7 @@ import {
   FiveSentencePattern,
   Object,
   NumberForm,
+  BeComplement,
 } from '@/domain/models/practice/types';
 
 export default function PracticePage() {
@@ -31,12 +33,16 @@ export default function PracticePage() {
     fiveSentencePattern: 'SV',
     object: 'something',
     numberForm: 'none',
+    beComplement: 'here',
   });
 
   const handleVerbTypeChange = (verbType: VerbType) => {
-    // When switching types, reset verb to default
-    const defaultVerb: Verb = verbType === 'be' ? 'something' : 'do';
-    setState((prev) => ({ ...prev, verbType, verb: defaultVerb }));
+    // When switching types, reset verb and pattern to defaults
+    if (verbType === 'be') {
+      setState((prev) => ({ ...prev, verbType, verb: 'be', fiveSentencePattern: 'SV', beComplement: 'here' }));
+    } else {
+      setState((prev) => ({ ...prev, verbType, verb: 'do', fiveSentencePattern: 'SV' }));
+    }
   };
 
   const handleVerbChange = (verb: Verb) => {
@@ -69,6 +75,10 @@ export default function PracticePage() {
 
   const handleNumberFormChange = (numberForm: NumberForm) => {
     setState((prev) => ({ ...prev, numberForm }));
+  };
+
+  const handleBeComplementChange = (beComplement: BeComplement) => {
+    setState((prev) => ({ ...prev, beComplement }));
   };
 
   const [sessionId, setSessionId] = useState('');
@@ -126,6 +136,7 @@ export default function PracticePage() {
                       <FiveSentencePatternSelector
                         selectedPattern={state.fiveSentencePattern || 'SVO'}
                         onChange={handleFiveSentencePatternChange}
+                        verbType={state.verbType}
                       />
                       <div className="flex-1">
                         <VerbSelector
@@ -149,8 +160,32 @@ export default function PracticePage() {
                       </ObjectSelector>
                     )}
                   </div>
+                )}\n\n                {/* Verb and Sentence Pattern Selector Dropdowns - Only shown for Be verbs */}
+                {state.verbType === 'be' && (
+                  <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
+                    <div className="flex gap-4">
+                      <FiveSentencePatternSelector
+                        selectedPattern={state.fiveSentencePattern || 'SV'}
+                        onChange={handleFiveSentencePatternChange}
+                        verbType={state.verbType}
+                      />
+                      <div className="flex-1">
+                        <VerbSelector
+                          verbType={state.verbType}
+                          selectedVerb={state.verb}
+                          onChange={handleVerbChange}
+                          fiveSentencePattern={state.fiveSentencePattern}
+                          disabled={true}
+                        />
+                      </div>
+                    </div>
+                    <ComplementSelector
+                      selectedComplement={state.beComplement || 'here'}
+                      onChange={handleBeComplementChange}
+                      pattern={state.fiveSentencePattern || 'SV'}
+                    />
+                  </div>
                 )}
-
 
                 <div className="mt-12 w-full max-w-lg relative">
                     {/* Handwritten style result box */}

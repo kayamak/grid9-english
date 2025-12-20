@@ -1,20 +1,30 @@
 import React from 'react';
-import { FiveSentencePattern } from '@/domain/models/practice/types';
+import { FiveSentencePattern, VerbType } from '@/domain/models/practice/types';
 
 interface FiveSentencePatternSelectorProps {
   selectedPattern: FiveSentencePattern;
   onChange: (pattern: FiveSentencePattern) => void;
+  verbType?: VerbType;
 }
 
-const PATTERN_OPTIONS: { value: FiveSentencePattern; label: string }[] = [
+const ALL_PATTERN_OPTIONS: { value: FiveSentencePattern; label: string }[] = [
   { value: 'SV', label: 'SV' },
+  { value: 'SVC', label: 'SVC' },
   { value: 'SVO', label: 'SVO' },
 ];
 
 export const FiveSentencePatternSelector: React.FC<FiveSentencePatternSelectorProps> = ({ 
   selectedPattern, 
-  onChange 
+  onChange,
+  verbType
 }) => {
+  // Filter pattern options based on verb type
+  const patternOptions = verbType === 'be' 
+    ? ALL_PATTERN_OPTIONS.filter(opt => opt.value === 'SV' || opt.value === 'SVC')
+    : verbType === 'do'
+    ? ALL_PATTERN_OPTIONS.filter(opt => opt.value === 'SV' || opt.value === 'SVO')
+    : ALL_PATTERN_OPTIONS;
+
   return (
     <div className="flex items-center gap-3">
       <label className="text-gray-700 font-medium whitespace-nowrap">文型</label>
@@ -24,7 +34,7 @@ export const FiveSentencePatternSelector: React.FC<FiveSentencePatternSelectorPr
           onChange={(e) => onChange(e.target.value as FiveSentencePattern)}
           className="block appearance-none w-auto bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg"
         >
-          {PATTERN_OPTIONS.map((option) => (
+          {patternOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

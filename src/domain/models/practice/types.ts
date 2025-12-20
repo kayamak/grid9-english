@@ -22,13 +22,22 @@ export type Object =
   | 'letter' | 'letters' | 'coffee' | 'pizza' | 'pizzas' | 'dinner' 
   | 'car' | 'cars' | 'water' | 'music' | 'information' | 'advice' | 'homework';
 
+export type BeComplement = 
+  // Adverbial phrases for SV pattern
+  | 'here' | 'there' | 'at home' | 'at school' | 'in the park' | 'in Tokyo' 
+  | 'upstairs' | 'downstairs'
+  // Nouns and adjectives for SVC pattern (reuse Verb type values)
+  | 'something' | 'carpenter' | 'hairdresser' | 'nurse' | 'teacher' | 'chef' | 'farmer' | 'photographer'
+  | 'happy' | 'sleepy' | 'angry' | 'tired' | 'fine';
+
 export interface PracticeState {
   verbType: VerbType;
   verb: Verb;
   sentenceType: SentenceType;
   subject: Subject;
   tense: Tense;
-  fiveSentencePattern?: FiveSentencePattern; // Optional: only used for Do verbs
+  fiveSentencePattern?: FiveSentencePattern; // Optional: only used for Do verbs and Be verbs
   object?: Object; // Optional: only used for SVO pattern
   numberForm?: NumberForm; // Optional: only used for SVO pattern
+  beComplement?: BeComplement; // Optional: only used for Be verbs SV and SVC patterns
 }

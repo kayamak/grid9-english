@@ -1,4 +1,4 @@
-import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern, Object, NumberForm } from './types';
+import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern, Object, NumberForm, BeComplement } from './types';
 
 export class PatternGenerator {
   static generate(state: PracticeState): string {
@@ -6,14 +6,9 @@ export class PatternGenerator {
     let rawSentence = '';
 
     if (verbType === 'be') {
-      const verb = (state.verb && state.verb !== 'do' && state.verb !== 'live') ? state.verb : 'be';
-      // Wait, if I switch type, state.verb might be 'do' until reset.
-      // But page.tsx resets it.
-      // Safe logic: check if verb is valid for be?
-      // For now, trust state or just pass it if not generic 'be'.
-      // Actually, 'live' is default for Do, 'be' or 'carpenter' for Be.
-      // Let's passed state.verb. The specific method will check if it's 'be'.
-      rawSentence = this.generateBeVerb(sentenceType, subject, tense, state.verb);
+      const pattern = state.fiveSentencePattern || 'SV';
+      const beComplement = state.beComplement || 'here';
+      rawSentence = this.generateBeVerb(sentenceType, subject, tense, pattern, beComplement);
     } else {
       // Use state.verb if available, otherwise default to 'live' if not set (though types enforce it now)
       // or if for some reason it's 'be' but type is 'do' (should be handled by state management, but good for safety)
@@ -33,7 +28,7 @@ export class PatternGenerator {
     return `${firstChar}${rest}${punctuation}`;
   }
 
-  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string = 'be'): string {
+  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, pattern: FiveSentencePattern, beComplement: BeComplement): string {
     const subjectText = this.getSubjectText(subject);
     let beVerb = '';
 
@@ -52,29 +47,23 @@ export class PatternGenerator {
       } else {
         beVerb = 'are';
       }
-    } else if (tense === 'future') {
-       // Future Be: will be
-       // Logic handled below for full sentence construction usually, but let's separate standard "be" form vs auxiliary
     }
 
-    // 2. Determine Complement (Noun/Adjective) with articles/pluralization
-    // If verbBase is 'be' (default), we just use empty or generic?
-    // Let's assume if it's 'be', we treat it as empty or specific logic needed?
-    // User flow: 'be' is not an option in dropdown. 'carpenter' is.
-    // If verbBase IS 'be', maybe show nothing extra?
-    // Spec doesn't say. Assuming 'be' shouldn't happen if UI works right, 
-    // but if it does, let's just not append complement.
-    
+    // 2. Format complement based on pattern
     let complement = '';
-    if (verbBase !== 'be') {
-        complement = this.formatBeComplement(verbBase, subject);
+    if (pattern === 'SV') {
+      // SV pattern: use adverbial phrase directly (no formatting needed)
+      complement = beComplement;
+    } else if (pattern === 'SVC') {
+      // SVC pattern: format complement (noun/adjective) with articles
+      complement = this.formatBeComplement(beComplement, subject);
     }
 
     // 3. Construct Sentence
     if (tense === 'future') {
         if (sentenceType === 'positive') return `${subjectText} will be ${complement}`;
         if (sentenceType === 'negative') return `${subjectText} won't be ${complement}`;
-        if (sentenceType === 'question') return `Will ${subjectText} be ${complement}`;
+        if (sentenceType === 'question') return `will ${subjectText} be ${complement}`;
     }
 
     if (sentenceType === 'positive') {
@@ -90,8 +79,6 @@ export class PatternGenerator {
             return `${subjectText} aren't ${complement}`;
         }
     } else if (sentenceType === 'question') {
-      // Capitalize first letter of beVerb handled here?
-      // beVerb for Question is start.
       const capBeVerb = beVerb.charAt(0).toUpperCase() + beVerb.slice(1);
       return `${capBeVerb} ${subjectText} ${complement}`;
     }
