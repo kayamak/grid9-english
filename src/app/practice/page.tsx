@@ -122,22 +122,18 @@ export default function PracticePage() {
 
                 {/* Verb and Object Selector Dropdowns - Only shown for Do verbs */}
                 {state.verbType === 'do' && (
-                  <div className="mt-8 mb-2 flex gap-4 justify-center items-center relative z-20">
-                    <div className="w-48">
-                      <VerbSelector
-                        verbType={state.verbType}
-                        selectedVerb={state.verb}
-                        onChange={handleVerbChange}
-                        fiveSentencePattern={state.fiveSentencePattern}
-                      />
-                    </div>
+                  <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
+                    <VerbSelector
+                      verbType={state.verbType}
+                      selectedVerb={state.verb}
+                      onChange={handleVerbChange}
+                      fiveSentencePattern={state.fiveSentencePattern}
+                    />
                     {state.fiveSentencePattern === 'SVO' && (
-                      <div className="w-48">
-                        <ObjectSelector
-                          selectedObject={state.object || 'something'}
-                          onChange={handleObjectChange}
-                        />
-                      </div>
+                      <ObjectSelector
+                        selectedObject={state.object || 'something'}
+                        onChange={handleObjectChange}
+                      />
                     )}
                   </div>
                 )}
