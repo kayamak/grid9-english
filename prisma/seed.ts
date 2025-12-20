@@ -175,6 +175,14 @@ async function main() {
     { value: 'information', label: 'information (情報)', numberForm: 'none', sortOrder: 46 },
     { value: 'advice', label: 'advice (助言)', numberForm: 'none', sortOrder: 47 },
     { value: 'homework', label: 'homework (宿題)', numberForm: 'none', sortOrder: 48 },
+    // Occupations (for Be verb complements)
+    { value: 'carpenter', label: 'carpenter (大工)', numberForm: 'a', sortOrder: 49 },
+    { value: 'hairdresser', label: 'hairdresser (美容師)', numberForm: 'a', sortOrder: 50 },
+    { value: 'nurse', label: 'nurse (看護師)', numberForm: 'a', sortOrder: 51 },
+    { value: 'teacher', label: 'teacher (先生)', numberForm: 'a', sortOrder: 52 },
+    { value: 'chef', label: 'chef (シェフ)', numberForm: 'a', sortOrder: 53 },
+    { value: 'farmer', label: 'farmer (農家)', numberForm: 'a', sortOrder: 54 },
+    { value: 'photographer', label: 'photographer (写真家)', numberForm: 'a', sortOrder: 55 },
   ];
 
   for (const noun of nounWords) {

@@ -40,17 +40,6 @@ const ADJECTIVE_OPTIONS: { value: BeComplement; label: string; numberForm: 'adje
   { value: 'fine', label: 'fine (元気)', numberForm: 'adjective' },
 ];
 
-// Occupations for SVC pattern (these are not in NounWord table as they're specific to Be verbs)
-const OCCUPATION_OPTIONS: { value: BeComplement; label: string; numberForm: NumberForm }[] = [
-  { value: 'carpenter', label: 'carpenter (大工)', numberForm: 'a' },
-  { value: 'hairdresser', label: 'hairdresser (美容師)', numberForm: 'a' },
-  { value: 'nurse', label: 'nurse (看護師)', numberForm: 'a' },
-  { value: 'teacher', label: 'teacher (先生)', numberForm: 'a' },
-  { value: 'chef', label: 'chef (シェフ)', numberForm: 'a' },
-  { value: 'farmer', label: 'farmer (農家)', numberForm: 'a' },
-  { value: 'photographer', label: 'photographer (写真家)', numberForm: 'a' },
-];
-
 export const ComplementSelector: React.FC<ComplementSelectorProps> = ({ 
   selectedComplement, 
   onChange, 
@@ -66,7 +55,7 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
   if (pattern === 'SV') {
     options = SV_ADVERBIAL_OPTIONS;
   } else {
-    // For SVC pattern, combine nouns, occupations, and adjectives
+    // For SVC pattern, combine nouns and adjectives
     // Convert nounWords to the format we need
     const nounOptions = nounWords.map(noun => ({
       value: noun.value as BeComplement,
@@ -74,8 +63,8 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
       numberForm: noun.numberForm as NumberForm
     }));
     
-    // Combine all SVC options
-    const allSVCOptions = [...nounOptions, ...OCCUPATION_OPTIONS, ...ADJECTIVE_OPTIONS];
+    // Combine all SVC options (nouns from database + adjectives)
+    const allSVCOptions = [...nounOptions, ...ADJECTIVE_OPTIONS];
     
     // Filter by numberForm if provided
     if (numberForm) {
