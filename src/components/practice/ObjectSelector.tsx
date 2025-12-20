@@ -10,7 +10,7 @@ interface ObjectSelectorProps {
 }
 
 const OBJECT_OPTIONS: { value: Object; label: string; numberForm: NumberForm }[] = [
-  { value: 'something', label: 'something (何か)', numberForm: 'singular' },
+  { value: 'something', label: 'something (何か)', numberForm: 'uncountable' },
   { value: 'dog', label: 'dog (犬)', numberForm: 'singular' },
   { value: 'dogs', label: 'dogs (犬)', numberForm: 'plural' },
   { value: 'story', label: 'story (物語)', numberForm: 'singular' },

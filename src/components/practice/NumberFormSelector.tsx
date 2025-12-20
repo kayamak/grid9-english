@@ -8,9 +8,9 @@ interface NumberFormSelectorProps {
 }
 
 const NUMBER_FORM_OPTIONS: { value: NumberForm; label: string }[] = [
+  { value: 'uncountable', label: '不可算' },
   { value: 'singular', label: '単数' },
   { value: 'plural', label: '複数' },
-  { value: 'uncountable', label: '不可算' },
 ];
 
 export const NumberFormSelector: React.FC<NumberFormSelectorProps> = ({ 

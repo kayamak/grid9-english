@@ -30,7 +30,7 @@ export default function PracticePage() {
     tense: 'present',
     fiveSentencePattern: 'SV',
     object: 'something',
-    numberForm: 'singular',
+    numberForm: 'uncountable',
   });
 
   const handleVerbTypeChange = (verbType: VerbType) => {
