@@ -20,6 +20,7 @@ const NUMBER_FORM_OPTIONS: { value: NumberForm; label: string }[] = [
   { value: 'her', label: 'her' },
   { value: 'their', label: 'their' },
   { value: 'no_article', label: '無し' },
+  { value: 'adjective', label: '形容詞' },
 ];
 
 export const NumberFormSelector: React.FC<NumberFormSelectorProps> = ({ 

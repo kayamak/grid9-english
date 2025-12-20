@@ -82,11 +82,11 @@ const SVC_COMPLEMENT_OPTIONS: { value: BeComplement; label: string; numberForm: 
   { value: 'farmer', label: 'farmer (農家)', numberForm: 'a' },
   { value: 'photographer', label: 'photographer (写真家)', numberForm: 'a' },
   // Adjectives
-  { value: 'happy', label: 'happy (幸せ)', numberForm: 'none' },
-  { value: 'sleepy', label: 'sleepy (眠い)', numberForm: 'none' },
-  { value: 'angry', label: 'angry (怒った)', numberForm: 'none' },
-  { value: 'tired', label: 'tired (疲れた)', numberForm: 'none' },
-  { value: 'fine', label: 'fine (元気)', numberForm: 'none' },
+  { value: 'happy', label: 'happy (幸せ)', numberForm: 'adjective' },
+  { value: 'sleepy', label: 'sleepy (眠い)', numberForm: 'adjective' },
+  { value: 'angry', label: 'angry (怒った)', numberForm: 'adjective' },
+  { value: 'tired', label: 'tired (疲れた)', numberForm: 'adjective' },
+  { value: 'fine', label: 'fine (元気)', numberForm: 'adjective' },
 ];
 
 export const ComplementSelector: React.FC<ComplementSelectorProps> = ({ 
