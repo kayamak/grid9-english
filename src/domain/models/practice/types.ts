@@ -2,6 +2,7 @@ export type VerbType = 'do' | 'be';
 export type SentenceType = 'positive' | 'negative' | 'question';
 export type Subject = 'first_s' | 'first_p' | 'second' | 'second_p' | 'third_s' | 'third_p';
 export type Tense = 'past' | 'present' | 'future';
+export type FiveSentencePattern = 'SV' | 'SVC' | 'SVO' | 'SVOO' | 'SVOC';
 
 export type Verb = 
   | 'be' | 'do' // Defaults
@@ -15,4 +16,5 @@ export interface PracticeState {
   sentenceType: SentenceType;
   subject: Subject;
   tense: Tense;
+  fiveSentencePattern?: FiveSentencePattern; // Optional: only used for Do verbs
 }

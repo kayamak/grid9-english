@@ -1,4 +1,4 @@
-import { PracticeState, SentenceType, Subject, Tense } from './types';
+import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern } from './types';
 
 export class PatternGenerator {
   static generate(state: PracticeState): string {
@@ -18,7 +18,8 @@ export class PatternGenerator {
       // Use state.verb if available, otherwise default to 'live' if not set (though types enforce it now)
       // or if for some reason it's 'be' but type is 'do' (should be handled by state management, but good for safety)
       const verb = (state.verb && state.verb !== 'be') ? state.verb : 'live'; 
-      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb);
+      const pattern = state.fiveSentencePattern || 'SVO';
+      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, pattern);
     }
 
     if (!rawSentence) return '';
@@ -123,13 +124,14 @@ export class PatternGenerator {
     return base;
   }
 
-  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string): string {
+  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO'): string {
     const subjectText = this.getSubjectText(subject);
+    const complement = this.getPatternComplement(pattern, subject);
 
     if (tense === 'future') {
-        if (sentenceType === 'positive') return `${subjectText} will ${verbBase}`;
-        if (sentenceType === 'negative') return `${subjectText} won't ${verbBase}`;
-        if (sentenceType === 'question') return `Will ${subjectText} ${verbBase}`;
+        if (sentenceType === 'positive') return `${subjectText} will ${verbBase}${complement ? ' ' + complement : ''}`;
+        if (sentenceType === 'negative') return `${subjectText} won't ${verbBase}${complement ? ' ' + complement : ''}`;
+        if (sentenceType === 'question') return `Will ${subjectText} ${verbBase}${complement ? ' ' + complement : ''}`;
     }
 
     if (sentenceType === 'positive') {
@@ -137,30 +139,53 @@ export class PatternGenerator {
         // Present: I do / He does -> I live / He lives
         if (tense === 'past') {
             const pastForm = this.getPastForm(verbBase);
-            return `${subjectText} ${pastForm}`;
+            return `${subjectText} ${pastForm}${complement ? ' ' + complement : ''}`;
         }
         if (tense === 'present') {
             if (subject === 'third_s') {
                 const thirdPersonForm = this.getThirdPersonForm(verbBase);
-                return `${subjectText} ${thirdPersonForm}`;
+                return `${subjectText} ${thirdPersonForm}${complement ? ' ' + complement : ''}`;
             }
-            return `${subjectText} ${verbBase}`;
+            return `${subjectText} ${verbBase}${complement ? ' ' + complement : ''}`;
         }
     } else if (sentenceType === 'negative') {
-        if (tense === 'past') return `${subjectText} didn't ${verbBase}`;
+        if (tense === 'past') return `${subjectText} didn't ${verbBase}${complement ? ' ' + complement : ''}`;
         if (tense === 'present') {
-            if (subject === 'third_s') return `${subjectText} doesn't ${verbBase}`;
-            return `${subjectText} don't ${verbBase}`;
+            if (subject === 'third_s') return `${subjectText} doesn't ${verbBase}${complement ? ' ' + complement : ''}`;
+            return `${subjectText} don't ${verbBase}${complement ? ' ' + complement : ''}`;
         }
     } else if (sentenceType === 'question') {
-         if (tense === 'past') return `Did ${subjectText} ${verbBase}`;
+         if (tense === 'past') return `Did ${subjectText} ${verbBase}${complement ? ' ' + complement : ''}`;
          if (tense === 'present') {
-            if (subject === 'third_s') return `Does ${subjectText} ${verbBase}`;
-            return `Do ${subjectText} ${verbBase}`;
+            if (subject === 'third_s') return `Does ${subjectText} ${verbBase}${complement ? ' ' + complement : ''}`;
+            return `Do ${subjectText} ${verbBase}${complement ? ' ' + complement : ''}`;
          }
     }
 
     return '';
+  }
+
+  private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject): string {
+    // For now, provide simple examples for SVC and SVO patterns
+    switch (pattern) {
+      case 'SVC':
+        // Subject + Verb + Complement (adjective/noun)
+        // Example: "I am happy" - but this is more for Be verbs
+        // For Do verbs with SVC, it's less common, but we can use "become", "seem", etc.
+        // For simplicity, return empty for now as SVC is primarily for Be verbs
+        return '';
+      case 'SVO':
+        // Subject + Verb + Object
+        // Example: "I do something", "He eats an apple"
+        return 'something';
+      case 'SV':
+      case 'SVOO':
+      case 'SVOC':
+        // Not implemented yet
+        return '';
+      default:
+        return '';
+    }
   }
 
   private static getPastForm(verb: string): string {

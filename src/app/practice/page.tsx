@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { NineKeyPanel } from '@/components/practice/NineKeyPanel';
 import { VerbTypeSelector } from '@/components/practice/VerbTypeSelector';
+import { FiveSentencePatternSelector } from '@/components/practice/FiveSentencePatternSelector';
 import { VerbSelector } from '@/components/practice/VerbSelector';
 import { PatternGenerator } from '@/domain/models/practice/PatternGenerator';
 import {
@@ -13,6 +14,7 @@ import {
   Tense,
   VerbType,
   Verb,
+  FiveSentencePattern,
 } from '@/domain/models/practice/types';
 
 export default function PracticePage() {
@@ -22,6 +24,7 @@ export default function PracticePage() {
     sentenceType: 'positive',
     subject: 'first_s',
     tense: 'present',
+    fiveSentencePattern: 'SVO',
   });
 
   const handleVerbTypeChange = (verbType: VerbType) => {
@@ -44,6 +47,10 @@ export default function PracticePage() {
 
   const handleTenseChange = (tense: Tense) => {
     setState((prev) => ({ ...prev, tense }));
+  };
+
+  const handleFiveSentencePatternChange = (fiveSentencePattern: FiveSentencePattern) => {
+    setState((prev) => ({ ...prev, fiveSentencePattern }));
   };
 
   const [sessionId, setSessionId] = useState('');
@@ -79,7 +86,15 @@ export default function PracticePage() {
             </div>
 
             {/* 2. Notebook Page Container */}
-            <section className="relative w-full max-w-3xl bg-[#fdfbf7] p-12 pt-12 rounded-lg rounded-tl-none shadow-[2px_10px_20px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] flex flex-col items-center min-h-[600px]">
+            <section className="relative w-full max-w-3xl bg-[#fdfbf7] p-8 rounded-lg rounded-tl-none shadow-[2px_10px_20px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] flex flex-col items-center min-h-[600px]">
+                
+                {/* FiveSentencePatternSelector - Only shown for Do verbs */}
+                {state.verbType === 'do' && (
+                  <FiveSentencePatternSelector
+                    selectedPattern={state.fiveSentencePattern || 'SVO'}
+                    onChange={handleFiveSentencePatternChange}
+                  />
+                )}
                 
                 {/* Paper Texture Overlay (optional css trick or just stick to color) */}
                 
