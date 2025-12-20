@@ -87,7 +87,7 @@ async function main() {
     });
   }
 
-  // Be Verbs (Complements and Adjectives)
+  // Be Verbs (Complements - Nouns only)
   const beVerbs = [
     { value: 'be', label: 'be (である)', sortOrder: 1 },
     { value: 'something', label: 'something (何か)', sortOrder: 2 },
@@ -99,12 +99,6 @@ async function main() {
     { value: 'chef', label: 'chef (シェフ)', sortOrder: 7 },
     { value: 'farmer', label: 'farmer (農家)', sortOrder: 8 },
     { value: 'photographer', label: 'photographer (写真家)', sortOrder: 9 },
-    // Adjectives
-    { value: 'happy', label: 'happy (幸せ)', sortOrder: 10 },
-    { value: 'sleepy', label: 'sleepy (眠い)', sortOrder: 11 },
-    { value: 'angry', label: 'angry (怒った)', sortOrder: 12 },
-    { value: 'tired', label: 'tired (疲れた)', sortOrder: 13 },
-    { value: 'fine', label: 'fine (元気)', sortOrder: 14 },
   ];
 
   for (const verb of beVerbs) {
@@ -186,12 +180,44 @@ async function main() {
   ];
 
   for (const noun of nounWords) {
-    await prisma.nounWord.create({
-      data: {
+    await prisma.nounWord.upsert({
+      where: { value: noun.value },
+      update: {
+        label: noun.label,
+        numberForm: noun.numberForm,
+        sortOrder: noun.sortOrder,
+      },
+      create: {
         value: noun.value,
         label: noun.label,
         numberForm: noun.numberForm,
         sortOrder: noun.sortOrder,
+      },
+    });
+  }
+
+  console.log('Seeding AdjectiveWord data...');
+
+  // Adjective Words - migrated from Be verb complements
+  const adjectiveWords = [
+    { value: 'happy', label: 'happy (幸せ)', sortOrder: 1 },
+    { value: 'sleepy', label: 'sleepy (眠い)', sortOrder: 2 },
+    { value: 'angry', label: 'angry (怒った)', sortOrder: 3 },
+    { value: 'tired', label: 'tired (疲れた)', sortOrder: 4 },
+    { value: 'fine', label: 'fine (元気)', sortOrder: 5 },
+  ];
+
+  for (const adjective of adjectiveWords) {
+    await prisma.adjectiveWord.upsert({
+      where: { value: adjective.value },
+      update: {
+        label: adjective.label,
+        sortOrder: adjective.sortOrder,
+      },
+      create: {
+        value: adjective.value,
+        label: adjective.label,
+        sortOrder: adjective.sortOrder,
       },
     });
   }

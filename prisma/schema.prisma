@@ -42,10 +42,17 @@ model VerbWord {
 
 model NounWord {
   id         String @id @default(cuid())
-  value      String
+  value      String @unique
   label      String
   numberForm String // "none" | "a" | "an" | "plural"
   sortOrder  Int
   
   @@index([numberForm])
+}
+
+model AdjectiveWord {
+  id        String @id @default(cuid())
+  value     String @unique
+  label     String
+  sortOrder Int
 }
