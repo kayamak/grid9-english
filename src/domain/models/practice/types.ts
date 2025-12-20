@@ -6,7 +6,8 @@ export type FiveSentencePattern = 'SV' | 'SVC' | 'SVO' | 'SVOO' | 'SVOC';
 
 export type Verb = 
   | 'be' | 'do' // Defaults
-  | 'live' | 'go' | 'arrive' | 'talk' | 'run' | 'walk' | 'smile' | 'laugh' // Do verbs
+  | 'live' | 'go' | 'arrive' | 'talk' | 'run' | 'walk' | 'smile' | 'laugh' // Do verbs (SV - intransitive)
+  | 'have' | 'know' | 'get' | 'make' | 'catch' | 'love' | 'like' | 'take' | 'see' | 'hear' // Do verbs (SVO - transitive)
   | 'something' | 'carpenter' | 'hairdresser' | 'nurse' | 'teacher' | 'chef' | 'farmer' | 'photographer' // Be Nouns
   | 'happy' | 'sleepy' | 'angry' | 'tired' | 'fine'; // Be Adjectives
 

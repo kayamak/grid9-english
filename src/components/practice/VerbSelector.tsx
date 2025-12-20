@@ -1,14 +1,15 @@
 import React from 'react';
-import { Verb, VerbType } from '@/domain/models/practice/types';
+import { Verb, VerbType, FiveSentencePattern } from '@/domain/models/practice/types';
 
 interface VerbSelectorProps {
   verbType: VerbType;
   selectedVerb: Verb;
   onChange: (verb: Verb) => void;
+  fiveSentencePattern?: FiveSentencePattern;
   disabled?: boolean;
 }
 
-const DO_VERB_OPTIONS: { value: Verb; label: string }[] = [
+const DO_VERB_SV_OPTIONS: { value: Verb; label: string }[] = [
   { value: 'do', label: 'do (する)' },
   { value: 'live', label: 'live (住む)' },
   { value: 'go', label: 'go (行く)' },
@@ -18,6 +19,20 @@ const DO_VERB_OPTIONS: { value: Verb; label: string }[] = [
   { value: 'walk', label: 'walk (歩く)' },
   { value: 'smile', label: 'smile (笑う)' },
   { value: 'laugh', label: 'laugh (笑う)' },
+];
+
+const DO_VERB_SVO_OPTIONS: { value: Verb; label: string }[] = [
+  { value: 'do', label: 'do (する)' },
+  { value: 'have', label: 'have (持つ)' },
+  { value: 'know', label: 'know (知る)' },
+  { value: 'get', label: 'get (獲得する)' },
+  { value: 'make', label: 'make (作る)' },
+  { value: 'catch', label: 'catch (捕まえる)' },
+  { value: 'love', label: 'love (愛する)' },
+  { value: 'like', label: 'like (気に入る)' },
+  { value: 'take', label: 'take (取る、持っていく)' },
+  { value: 'see', label: 'see (見える)' },
+  { value: 'hear', label: 'hear (聞こえる)' },
 ];
 
 const BE_VERB_OPTIONS: { value: Verb; label: string }[] = [
@@ -38,8 +53,21 @@ const BE_VERB_OPTIONS: { value: Verb; label: string }[] = [
   { value: 'fine', label: 'fine (元気)' },
 ];
 
-export const VerbSelector: React.FC<VerbSelectorProps> = ({ verbType, selectedVerb, onChange, disabled }) => {
-  const options = verbType === 'do' ? DO_VERB_OPTIONS : BE_VERB_OPTIONS;
+export const VerbSelector: React.FC<VerbSelectorProps> = ({ verbType, selectedVerb, onChange, fiveSentencePattern, disabled }) => {
+  // Determine which options to show based on verb type and sentence pattern
+  let options: { value: Verb; label: string }[];
+  
+  if (verbType === 'be') {
+    options = BE_VERB_OPTIONS;
+  } else {
+    // For Do verbs, filter by sentence pattern
+    if (fiveSentencePattern === 'SV') {
+      options = DO_VERB_SV_OPTIONS;
+    } else {
+      // Default to SVO for other patterns (SVO, SVC, SVOO, SVOC)
+      options = DO_VERB_SVO_OPTIONS;
+    }
+  }
 
   return (
     <div className="relative">

@@ -50,7 +50,11 @@ export default function PracticePage() {
   };
 
   const handleFiveSentencePatternChange = (fiveSentencePattern: FiveSentencePattern) => {
-    setState((prev) => ({ ...prev, fiveSentencePattern }));
+    setState((prev) => {
+      // Reset verb to 'do' when changing pattern to ensure it's valid for the new pattern
+      // This prevents having an SV-only verb selected when switching to SVO, and vice versa
+      return { ...prev, fiveSentencePattern, verb: 'do' };
+    });
   };
 
   const [sessionId, setSessionId] = useState('');
@@ -115,6 +119,7 @@ export default function PracticePage() {
                         verbType={state.verbType}
                         selectedVerb={state.verb}
                         onChange={handleVerbChange}
+                        fiveSentencePattern={state.fiveSentencePattern}
                     />
                 </div>
 
