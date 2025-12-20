@@ -1,4 +1,4 @@
-import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern, Object } from './types';
+import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern, Object, NumberForm } from './types';
 
 export class PatternGenerator {
   static generate(state: PracticeState): string {
@@ -20,7 +20,8 @@ export class PatternGenerator {
       const verb = (state.verb && state.verb !== 'be') ? state.verb : 'live'; 
       const pattern = state.fiveSentencePattern || 'SVO';
       const object = state.object || 'something';
-      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, pattern, object);
+      const numberForm = state.numberForm || 'singular';
+      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, pattern, object, numberForm);
     }
 
     if (!rawSentence) return '';
@@ -125,9 +126,9 @@ export class PatternGenerator {
     return base;
   }
 
-  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO', object: Object = 'something'): string {
+  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO', object: Object = 'something', numberForm: NumberForm = 'singular'): string {
     const subjectText = this.getSubjectText(subject);
-    const complement = this.getPatternComplement(pattern, subject, object);
+    const complement = this.getPatternComplement(pattern, subject, object, numberForm);
 
     if (tense === 'future') {
         if (sentenceType === 'positive') return `${subjectText} will ${verbBase}${complement ? ' ' + complement : ''}`;
@@ -166,7 +167,7 @@ export class PatternGenerator {
     return '';
   }
 
-  private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject, object: Object = 'something'): string {
+  private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject, object: Object = 'something', numberForm: NumberForm = 'singular'): string {
     // For now, provide simple examples for SV and SVO patterns
     switch (pattern) {
       case 'SV':
@@ -177,6 +178,10 @@ export class PatternGenerator {
       case 'SVO':
         // Subject + Verb + Object
         // Use the selected object from state
+        // Add article for singular countable nouns
+        if (numberForm === 'singular' && object !== 'something') {
+          return this.addArticle(object);
+        }
         return object;
       case 'SVOO':
       case 'SVOC':
@@ -247,5 +252,13 @@ export class PatternGenerator {
       case 'third_p': return 'they';
       default: return '';
     }
+  }
+
+  private static addArticle(object: string): string {
+    // Determine if we need "a" or "an" based on the first letter
+    const firstChar = object.charAt(0).toLowerCase();
+    const vowels = ['a', 'e', 'i', 'o', 'u'];
+    const article = vowels.includes(firstChar) ? 'an' : 'a';
+    return `${article} ${object}`;
   }
 }
