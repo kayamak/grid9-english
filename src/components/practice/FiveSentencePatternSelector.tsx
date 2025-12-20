@@ -6,44 +6,36 @@ interface FiveSentencePatternSelectorProps {
   onChange: (pattern: FiveSentencePattern) => void;
 }
 
+const PATTERN_OPTIONS: { value: FiveSentencePattern; label: string }[] = [
+  { value: 'SV', label: 'SV' },
+  { value: 'SVO', label: 'SVO' },
+];
+
 export const FiveSentencePatternSelector: React.FC<FiveSentencePatternSelectorProps> = ({ 
   selectedPattern, 
   onChange 
 }) => {
   return (
-    <div className="mb-6">
-      <fieldset className="border border-gray-300 rounded-lg p-2 bg-white/50">
-        <legend className="text-sm font-semibold text-gray-700 px-2">文型</legend>
-        <div className="flex gap-6 mt-2">
-          <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded transition-colors">
-            <input
-              type="radio"
-              name="sentencePattern"
-              value="SV"
-              checked={selectedPattern === 'SV'}
-              onChange={() => onChange('SV')}
-              className="w-4 h-4 text-green-600 focus:ring-green-500 cursor-pointer"
-            />
-            <span className={`font-handwriting text-lg ${selectedPattern === 'SV' ? 'font-bold text-green-700' : 'text-gray-600'}`}>
-              SV
-            </span>
-          </label>
-          
-          <label className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded transition-colors">
-            <input
-              type="radio"
-              name="sentencePattern"
-              value="SVO"
-              checked={selectedPattern === 'SVO'}
-              onChange={() => onChange('SVO')}
-              className="w-4 h-4 text-green-600 focus:ring-green-500 cursor-pointer"
-            />
-            <span className={`font-handwriting text-lg ${selectedPattern === 'SVO' ? 'font-bold text-green-700' : 'text-gray-600'}`}>
-              SVO
-            </span>
-          </label>
+    <div className="flex items-center gap-3">
+      <label className="text-gray-700 font-medium whitespace-nowrap">文型</label>
+      <div className="relative flex-1">
+        <select
+          value={selectedPattern}
+          onChange={(e) => onChange(e.target.value as FiveSentencePattern)}
+          className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg"
+        >
+          {PATTERN_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+          </svg>
         </div>
-      </fieldset>
+      </div>
     </div>
   );
 };

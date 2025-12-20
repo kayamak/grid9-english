@@ -99,14 +99,6 @@ export default function PracticePage() {
             {/* 2. Notebook Page Container */}
             <section className="relative w-full max-w-3xl bg-[#fdfbf7] p-8 rounded-lg rounded-tl-none shadow-[2px_10px_20px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] flex flex-col items-center min-h-[600px]">
                 
-                {/* FiveSentencePatternSelector - Only shown for Do verbs */}
-                {state.verbType === 'do' && (
-                  <FiveSentencePatternSelector
-                    selectedPattern={state.fiveSentencePattern || 'SVO'}
-                    onChange={handleFiveSentencePatternChange}
-                  />
-                )}
-                
                 {/* Paper Texture Overlay (optional css trick or just stick to color) */}
                 
                 <div className="w-full max-w-xl">
@@ -120,15 +112,25 @@ export default function PracticePage() {
                     />
                 </div>
 
-                {/* Verb and Object Selector Dropdowns - Only shown for Do verbs */}
+                {/* Verb and Sentence Pattern Selector Dropdowns - Only shown for Do verbs */}
                 {state.verbType === 'do' && (
                   <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
-                    <VerbSelector
-                      verbType={state.verbType}
-                      selectedVerb={state.verb}
-                      onChange={handleVerbChange}
-                      fiveSentencePattern={state.fiveSentencePattern}
-                    />
+                    <div className="flex gap-4">
+                      <div className="flex-1">
+                        <VerbSelector
+                          verbType={state.verbType}
+                          selectedVerb={state.verb}
+                          onChange={handleVerbChange}
+                          fiveSentencePattern={state.fiveSentencePattern}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <FiveSentencePatternSelector
+                          selectedPattern={state.fiveSentencePattern || 'SVO'}
+                          onChange={handleFiveSentencePatternChange}
+                        />
+                      </div>
+                    </div>
                     {state.fiveSentencePattern === 'SVO' && (
                       <ObjectSelector
                         selectedObject={state.object || 'something'}
