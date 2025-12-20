@@ -6,6 +6,7 @@ interface ObjectSelectorProps {
   onChange: (object: Object) => void;
   numberForm: NumberForm;
   disabled?: boolean;
+  children?: React.ReactNode; // For NumberFormSelector
 }
 
 const OBJECT_OPTIONS: { value: Object; label: string; numberForm: NumberForm }[] = [
@@ -40,25 +41,31 @@ const OBJECT_OPTIONS: { value: Object; label: string; numberForm: NumberForm }[]
   { value: 'violins', label: 'violins (バイオリン)', numberForm: 'plural' },
   { value: 'song', label: 'song (歌)', numberForm: 'singular' },
   { value: 'songs', label: 'songs (歌)', numberForm: 'plural' },
-  { value: 'English', label: 'English (英語)', numberForm: 'singular' },
+  { value: 'English', label: 'English (英語)', numberForm: 'uncountable' },
   { value: 'newspaper', label: 'newspaper (新聞)', numberForm: 'singular' },
   { value: 'newspapers', label: 'newspapers (新聞)', numberForm: 'plural' },
   { value: 'letter', label: 'letter (手紙)', numberForm: 'singular' },
   { value: 'letters', label: 'letters (手紙)', numberForm: 'plural' },
-  { value: 'coffee', label: 'coffee (コーヒー)', numberForm: 'singular' },
+  { value: 'coffee', label: 'coffee (コーヒー)', numberForm: 'uncountable' },
   { value: 'pizza', label: 'pizza (ピザ)', numberForm: 'singular' },
   { value: 'pizzas', label: 'pizzas (ピザ)', numberForm: 'plural' },
   { value: 'dinner', label: 'dinner (夕食)', numberForm: 'singular' },
   { value: 'dinners', label: 'dinners (夕食)', numberForm: 'plural' },
   { value: 'car', label: 'car (車)', numberForm: 'singular' },
   { value: 'cars', label: 'cars (車)', numberForm: 'plural' },
+  { value: 'water', label: 'water (水)', numberForm: 'uncountable' },
+  { value: 'music', label: 'music (音楽)', numberForm: 'uncountable' },
+  { value: 'information', label: 'information (情報)', numberForm: 'uncountable' },
+  { value: 'advice', label: 'advice (助言)', numberForm: 'uncountable' },
+  { value: 'homework', label: 'homework (宿題)', numberForm: 'uncountable' },
 ];
 
 export const ObjectSelector: React.FC<ObjectSelectorProps> = ({ 
   selectedObject, 
   onChange, 
   numberForm,
-  disabled 
+  disabled,
+  children 
 }) => {
   // Filter options based on numberForm
   const filteredOptions = OBJECT_OPTIONS.filter(option => option.numberForm === numberForm);
@@ -74,6 +81,7 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
   return (
     <div className="flex items-center gap-3">
       <label className="text-gray-700 font-medium whitespace-nowrap">目的語</label>
+      {children}
       <div className="relative flex-1">
         <select
           value={selectedObject}

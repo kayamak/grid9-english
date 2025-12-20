@@ -3,7 +3,7 @@ export type SentenceType = 'positive' | 'negative' | 'question';
 export type Subject = 'first_s' | 'first_p' | 'second' | 'second_p' | 'third_s' | 'third_p';
 export type Tense = 'past' | 'present' | 'future';
 export type FiveSentencePattern = 'SV' | 'SVC' | 'SVO' | 'SVOO' | 'SVOC';
-export type NumberForm = 'singular' | 'plural';
+export type NumberForm = 'singular' | 'plural' | 'uncountable';
 
 export type Verb = 
   | 'be' | 'do' // Defaults
@@ -20,7 +20,7 @@ export type Object =
   | 'taxi' | 'taxis' | 'airplay' | 'airplays' | 'sound' | 'sounds' | 'soccker' 
   | 'violin' | 'violins' | 'song' | 'songs' | 'English' | 'newspaper' | 'newspapers' 
   | 'letter' | 'letters' | 'coffee' | 'pizza' | 'pizzas' | 'dinner' | 'dinners' 
-  | 'car' | 'cars';
+  | 'car' | 'cars' | 'water' | 'music' | 'information' | 'advice' | 'homework';
 
 export interface PracticeState {
   verbType: VerbType;
