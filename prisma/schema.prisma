@@ -39,3 +39,13 @@ model VerbWord {
   
   @@index([verbType, sentencePattern])
 }
+
+model NounWord {
+  id         String @id @default(cuid())
+  value      String
+  label      String
+  numberForm String // "none" | "a" | "an" | "plural"
+  sortOrder  Int
+  
+  @@index([numberForm])
+}

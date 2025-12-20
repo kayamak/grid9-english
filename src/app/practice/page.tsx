@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { NineKeyPanel } from '@/components/practice/NineKeyPanel';
 import { VerbTypeSelector } from '@/components/practice/VerbTypeSelector';
@@ -23,6 +23,14 @@ import {
   BeComplement,
 } from '@/domain/models/practice/types';
 
+interface NounWord {
+  id: string;
+  value: string;
+  label: string;
+  numberForm: string;
+  sortOrder: number;
+}
+
 export default function PracticePage() {
   const [state, setState] = useState<PracticeState>({
     verbType: 'do',
@@ -35,6 +43,30 @@ export default function PracticePage() {
     numberForm: 'none',
     beComplement: 'here',
   });
+
+  const [nounWords, setNounWords] = useState<NounWord[]>([]);
+  const [isLoadingNouns, setIsLoadingNouns] = useState(true);
+
+  // Fetch noun words from API
+  useEffect(() => {
+    const fetchNounWords = async () => {
+      try {
+        const response = await fetch('/api/noun-words');
+        if (response.ok) {
+          const data = await response.json();
+          setNounWords(data);
+        } else {
+          console.error('Failed to fetch noun words');
+        }
+      } catch (error) {
+        console.error('Error fetching noun words:', error);
+      } finally {
+        setIsLoadingNouns(false);
+      }
+    };
+
+    fetchNounWords();
+  }, []);
 
   const handleVerbTypeChange = (verbType: VerbType) => {
     // When switching types, reset verb and pattern to defaults
@@ -152,6 +184,8 @@ export default function PracticePage() {
                         selectedObject={state.object || 'something'}
                         onChange={handleObjectChange}
                         numberForm={state.numberForm || 'a'}
+                        nounWords={nounWords}
+                        disabled={isLoadingNouns}
                       >
                         <NumberFormSelector
                           selectedNumberForm={state.numberForm || 'a'}
@@ -185,6 +219,8 @@ export default function PracticePage() {
                         onChange={handleBeComplementChange}
                         pattern={state.fiveSentencePattern || 'SV'}
                         numberForm={state.numberForm || 'a'}
+                        nounWords={nounWords}
+                        disabled={isLoadingNouns}
                       >
                         <NumberFormSelector
                           selectedNumberForm={state.numberForm || 'a'}
@@ -196,6 +232,8 @@ export default function PracticePage() {
                         selectedComplement={state.beComplement || 'here'}
                         onChange={handleBeComplementChange}
                         pattern={state.fiveSentencePattern || 'SV'}
+                        nounWords={nounWords}
+                        disabled={isLoadingNouns}
                       />
                     )}
                   </div>

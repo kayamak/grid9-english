@@ -1,6 +1,14 @@
 import React from 'react';
 import { BeComplement, FiveSentencePattern, NumberForm } from '@/domain/models/practice/types';
 
+interface NounWord {
+  id: string;
+  value: string;
+  label: string;
+  numberForm: string;
+  sortOrder: number;
+}
+
 interface ComplementSelectorProps {
   selectedComplement: BeComplement;
   onChange: (complement: BeComplement) => void;
@@ -8,6 +16,7 @@ interface ComplementSelectorProps {
   numberForm?: NumberForm;
   disabled?: boolean;
   children?: React.ReactNode; // For NumberFormSelector
+  nounWords: NounWord[];
 }
 
 // Adverbial phrases for SV pattern (location/state)
@@ -22,58 +31,17 @@ const SV_ADVERBIAL_OPTIONS: { value: BeComplement; label: string }[] = [
   { value: 'downstairs', label: 'downstairs (下の階に)' },
 ];
 
-// Complements for SVC pattern (nouns and adjectives) with numberForm metadata
-const SVC_COMPLEMENT_OPTIONS: { value: BeComplement; label: string; numberForm: NumberForm }[] = [
-  { value: 'something', label: 'something (何か)', numberForm: 'none' },
-  // Nouns - All objects from ObjectSelector
-  { value: 'dog', label: 'dog (犬)', numberForm: 'a' },
-  { value: 'dogs', label: 'dogs (犬)', numberForm: 'plural' },
-  { value: 'story', label: 'story (物語)', numberForm: 'a' },
-  { value: 'stories', label: 'stories (物語)', numberForm: 'plural' },
-  { value: 'soccer player', label: 'soccer player (サッカー選手)', numberForm: 'a' },
-  { value: 'soccer players', label: 'soccer players (サッカー選手)', numberForm: 'plural' },
-  { value: 'gold medal', label: 'gold medal (金メダル)', numberForm: 'a' },
-  { value: 'gold medals', label: 'gold medals (金メダル)', numberForm: 'plural' },
-  { value: 'passport', label: 'passport (パスポート)', numberForm: 'a' },
-  { value: 'passports', label: 'passports (パスポート)', numberForm: 'plural' },
-  { value: 'chair', label: 'chair (椅子)', numberForm: 'a' },
-  { value: 'chairs', label: 'chairs (椅子)', numberForm: 'plural' },
-  { value: 'butterfly', label: 'butterfly (蝶)', numberForm: 'a' },
-  { value: 'butterflies', label: 'butterflies (蝶)', numberForm: 'plural' },
-  { value: 'parents', label: 'parents (両親)', numberForm: 'plural' },
-  { value: 'fruit', label: 'fruit (果物)', numberForm: 'a' },
-  { value: 'fruits', label: 'fruits (果物)', numberForm: 'plural' },
-  { value: 'key', label: 'key (鍵)', numberForm: 'a' },
-  { value: 'keys', label: 'keys (鍵)', numberForm: 'plural' },
-  { value: 'taxi', label: 'taxi (タクシー)', numberForm: 'a' },
-  { value: 'taxis', label: 'taxis (タクシー)', numberForm: 'plural' },
-  { value: 'airplane', label: 'airplane (飛行機)', numberForm: 'an' },
-  { value: 'airplanes', label: 'airplanes (飛行機)', numberForm: 'plural' },
-  { value: 'sound', label: 'sound (音)', numberForm: 'a' },
-  { value: 'sounds', label: 'sounds (音)', numberForm: 'plural' },
-  { value: 'soccer', label: 'soccer (サッカー)', numberForm: 'none' },
-  { value: 'violin', label: 'violin (バイオリン)', numberForm: 'a' },
-  { value: 'violins', label: 'violins (バイオリン)', numberForm: 'plural' },
-  { value: 'song', label: 'song (歌)', numberForm: 'a' },
-  { value: 'songs', label: 'songs (歌)', numberForm: 'plural' },
-  { value: 'English', label: 'English (英語)', numberForm: 'none' },
-  { value: 'newspaper', label: 'newspaper (新聞)', numberForm: 'a' },
-  { value: 'newspapers', label: 'newspapers (新聞)', numberForm: 'plural' },
-  { value: 'letter', label: 'letter (手紙)', numberForm: 'a' },
-  { value: 'letters', label: 'letters (手紙)', numberForm: 'plural' },
-  { value: 'coffee', label: 'coffee (コーヒー)', numberForm: 'none' },
-  { value: 'pizza', label: 'pizza (ピザ)', numberForm: 'none' },
-  { value: 'pizza', label: 'pizza (ピザ)', numberForm: 'a' },
-  { value: 'pizzas', label: 'pizzas (ピザ)', numberForm: 'plural' },
-  { value: 'dinner', label: 'dinner (夕食)', numberForm: 'none' },
-  { value: 'car', label: 'car (車)', numberForm: 'a' },
-  { value: 'cars', label: 'cars (車)', numberForm: 'plural' },
-  { value: 'water', label: 'water (水)', numberForm: 'none' },
-  { value: 'music', label: 'music (音楽)', numberForm: 'none' },
-  { value: 'information', label: 'information (情報)', numberForm: 'none' },
-  { value: 'advice', label: 'advice (助言)', numberForm: 'none' },
-  { value: 'homework', label: 'homework (宿題)', numberForm: 'none' },
-  // Occupations
+// Adjectives for SVC pattern
+const ADJECTIVE_OPTIONS: { value: BeComplement; label: string; numberForm: 'adjective' }[] = [
+  { value: 'happy', label: 'happy (幸せ)', numberForm: 'adjective' },
+  { value: 'sleepy', label: 'sleepy (眠い)', numberForm: 'adjective' },
+  { value: 'angry', label: 'angry (怒った)', numberForm: 'adjective' },
+  { value: 'tired', label: 'tired (疲れた)', numberForm: 'adjective' },
+  { value: 'fine', label: 'fine (元気)', numberForm: 'adjective' },
+];
+
+// Occupations for SVC pattern (these are not in NounWord table as they're specific to Be verbs)
+const OCCUPATION_OPTIONS: { value: BeComplement; label: string; numberForm: NumberForm }[] = [
   { value: 'carpenter', label: 'carpenter (大工)', numberForm: 'a' },
   { value: 'hairdresser', label: 'hairdresser (美容師)', numberForm: 'a' },
   { value: 'nurse', label: 'nurse (看護師)', numberForm: 'a' },
@@ -81,12 +49,6 @@ const SVC_COMPLEMENT_OPTIONS: { value: BeComplement; label: string; numberForm: 
   { value: 'chef', label: 'chef (シェフ)', numberForm: 'a' },
   { value: 'farmer', label: 'farmer (農家)', numberForm: 'a' },
   { value: 'photographer', label: 'photographer (写真家)', numberForm: 'a' },
-  // Adjectives
-  { value: 'happy', label: 'happy (幸せ)', numberForm: 'adjective' },
-  { value: 'sleepy', label: 'sleepy (眠い)', numberForm: 'adjective' },
-  { value: 'angry', label: 'angry (怒った)', numberForm: 'adjective' },
-  { value: 'tired', label: 'tired (疲れた)', numberForm: 'adjective' },
-  { value: 'fine', label: 'fine (元気)', numberForm: 'adjective' },
 ];
 
 export const ComplementSelector: React.FC<ComplementSelectorProps> = ({ 
@@ -95,7 +57,8 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
   pattern,
   numberForm,
   disabled,
-  children
+  children,
+  nounWords
 }) => {
   // Choose options based on pattern
   let options: { value: BeComplement; label: string }[];
@@ -103,15 +66,26 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
   if (pattern === 'SV') {
     options = SV_ADVERBIAL_OPTIONS;
   } else {
-    // For SVC pattern, filter by numberForm if provided
+    // For SVC pattern, combine nouns, occupations, and adjectives
+    // Convert nounWords to the format we need
+    const nounOptions = nounWords.map(noun => ({
+      value: noun.value as BeComplement,
+      label: noun.label,
+      numberForm: noun.numberForm as NumberForm
+    }));
+    
+    // Combine all SVC options
+    const allSVCOptions = [...nounOptions, ...OCCUPATION_OPTIONS, ...ADJECTIVE_OPTIONS];
+    
+    // Filter by numberForm if provided
     if (numberForm) {
       // When 'the', possessive determiners, or 'no_article' are selected, show all complements except 'something'
       const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
       options = showAllExceptSomething
-        ? SVC_COMPLEMENT_OPTIONS.filter(option => option.value !== 'something')
-        : SVC_COMPLEMENT_OPTIONS.filter(option => option.numberForm === numberForm);
+        ? allSVCOptions.filter(option => option.value !== 'something')
+        : allSVCOptions.filter(option => option.numberForm === numberForm);
     } else {
-      options = SVC_COMPLEMENT_OPTIONS;
+      options = allSVCOptions;
     }
   }
   

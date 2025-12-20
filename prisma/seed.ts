@@ -13,6 +13,9 @@ const adapter = new PrismaLibSql({
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  // VerbWord data is already seeded, skipping...
+  // Uncomment below if you need to re-seed VerbWord data
+  /*
   console.log('Seeding VerbWord data...');
 
   // Do Verbs - SV Pattern (Intransitive)
@@ -71,8 +74,10 @@ async function main() {
     // Skip 'do' as it's already created in SV section
     if (verb.value === 'do') continue;
     
-    await prisma.verbWord.create({
-      data: {
+    await prisma.verbWord.upsert({
+      where: { value: `${verb.value}_SVO` }, // Use composite key to allow same verb in different patterns
+      update: {},
+      create: {
         value: verb.value,
         label: verb.label,
         verbType: 'do',
@@ -112,6 +117,73 @@ async function main() {
         verbType: 'be',
         sentencePattern: null,
         sortOrder: verb.sortOrder,
+      },
+    });
+  }
+  */
+
+
+  console.log('Seeding NounWord data...');
+
+  // Noun Words - migrated from ObjectSelector.tsx
+  const nounWords = [
+    { value: 'something', label: 'something (何か)', numberForm: 'none', sortOrder: 1 },
+    { value: 'dog', label: 'dog (犬)', numberForm: 'a', sortOrder: 2 },
+    { value: 'dogs', label: 'dogs (犬)', numberForm: 'plural', sortOrder: 3 },
+    { value: 'story', label: 'story (物語)', numberForm: 'a', sortOrder: 4 },
+    { value: 'stories', label: 'stories (物語)', numberForm: 'plural', sortOrder: 5 },
+    { value: 'soccer player', label: 'soccer player (サッカー選手)', numberForm: 'a', sortOrder: 6 },
+    { value: 'soccer players', label: 'soccer players (サッカー選手)', numberForm: 'plural', sortOrder: 7 },
+    { value: 'gold medal', label: 'gold medal (金メダル)', numberForm: 'a', sortOrder: 8 },
+    { value: 'gold medals', label: 'gold medals (金メダル)', numberForm: 'plural', sortOrder: 9 },
+    { value: 'passport', label: 'passport (パスポート)', numberForm: 'a', sortOrder: 10 },
+    { value: 'passports', label: 'passports (パスポート)', numberForm: 'plural', sortOrder: 11 },
+    { value: 'chair', label: 'chair (椅子)', numberForm: 'a', sortOrder: 12 },
+    { value: 'chairs', label: 'chairs (椅子)', numberForm: 'plural', sortOrder: 13 },
+    { value: 'butterfly', label: 'butterfly (蝶)', numberForm: 'a', sortOrder: 14 },
+    { value: 'butterflies', label: 'butterflies (蝶)', numberForm: 'plural', sortOrder: 15 },
+    { value: 'parents', label: 'parents (両親)', numberForm: 'plural', sortOrder: 16 },
+    { value: 'fruit', label: 'fruit (果物)', numberForm: 'a', sortOrder: 17 },
+    { value: 'fruits', label: 'fruits (果物)', numberForm: 'plural', sortOrder: 18 },
+    { value: 'key', label: 'key (鍵)', numberForm: 'a', sortOrder: 19 },
+    { value: 'keys', label: 'keys (鍵)', numberForm: 'plural', sortOrder: 20 },
+    { value: 'taxi', label: 'taxi (タクシー)', numberForm: 'a', sortOrder: 21 },
+    { value: 'taxis', label: 'taxis (タクシー)', numberForm: 'plural', sortOrder: 22 },
+    { value: 'airplane', label: 'airplane (飛行機)', numberForm: 'an', sortOrder: 23 },
+    { value: 'airplanes', label: 'airplanes (飛行機)', numberForm: 'plural', sortOrder: 24 },
+    { value: 'sound', label: 'sound (音)', numberForm: 'a', sortOrder: 25 },
+    { value: 'sounds', label: 'sounds (音)', numberForm: 'plural', sortOrder: 26 },
+    { value: 'soccer', label: 'soccer (サッカー)', numberForm: 'none', sortOrder: 27 },
+    { value: 'violin', label: 'violin (バイオリン)', numberForm: 'a', sortOrder: 28 },
+    { value: 'violins', label: 'violins (バイオリン)', numberForm: 'plural', sortOrder: 29 },
+    { value: 'song', label: 'song (歌)', numberForm: 'a', sortOrder: 30 },
+    { value: 'songs', label: 'songs (歌)', numberForm: 'plural', sortOrder: 31 },
+    { value: 'English', label: 'English (英語)', numberForm: 'none', sortOrder: 32 },
+    { value: 'newspaper', label: 'newspaper (新聞)', numberForm: 'a', sortOrder: 33 },
+    { value: 'newspapers', label: 'newspapers (新聞)', numberForm: 'plural', sortOrder: 34 },
+    { value: 'letter', label: 'letter (手紙)', numberForm: 'a', sortOrder: 35 },
+    { value: 'letters', label: 'letters (手紙)', numberForm: 'plural', sortOrder: 36 },
+    { value: 'coffee', label: 'coffee (コーヒー)', numberForm: 'none', sortOrder: 37 },
+    { value: 'pizza', label: 'pizza (ピザ)', numberForm: 'none', sortOrder: 38 },
+    { value: 'pizza', label: 'pizza (ピザ)', numberForm: 'a', sortOrder: 39 },
+    { value: 'pizzas', label: 'pizzas (ピザ)', numberForm: 'plural', sortOrder: 40 },
+    { value: 'dinner', label: 'dinner (夕食)', numberForm: 'none', sortOrder: 41 },
+    { value: 'car', label: 'car (車)', numberForm: 'a', sortOrder: 42 },
+    { value: 'cars', label: 'cars (車)', numberForm: 'plural', sortOrder: 43 },
+    { value: 'water', label: 'water (水)', numberForm: 'none', sortOrder: 44 },
+    { value: 'music', label: 'music (音楽)', numberForm: 'none', sortOrder: 45 },
+    { value: 'information', label: 'information (情報)', numberForm: 'none', sortOrder: 46 },
+    { value: 'advice', label: 'advice (助言)', numberForm: 'none', sortOrder: 47 },
+    { value: 'homework', label: 'homework (宿題)', numberForm: 'none', sortOrder: 48 },
+  ];
+
+  for (const noun of nounWords) {
+    await prisma.nounWord.create({
+      data: {
+        value: noun.value,
+        label: noun.label,
+        numberForm: noun.numberForm,
+        sortOrder: noun.sortOrder,
       },
     });
   }
