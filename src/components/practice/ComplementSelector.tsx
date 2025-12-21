@@ -1,27 +1,5 @@
 import React from 'react';
-import { BeComplement, FiveSentencePattern, NumberForm } from '@/domain/models/practice/types';
-
-interface NounWord {
-  id: string;
-  value: string;
-  label: string;
-  numberForm: string;
-  sortOrder: number;
-}
-
-interface AdjectiveWord {
-  id: string;
-  value: string;
-  label: string;
-  sortOrder: number;
-}
-
-interface AdverbWord {
-  id: string;
-  value: string;
-  label: string;
-  sortOrder: number;
-}
+import { BeComplement, FiveSentencePattern, NumberForm, Word } from '@/domain/models/practice/types';
 
 interface ComplementSelectorProps {
   selectedComplement: BeComplement;
@@ -30,9 +8,9 @@ interface ComplementSelectorProps {
   numberForm?: NumberForm;
   disabled?: boolean;
   children?: React.ReactNode;
-  nounWords: NounWord[];
-  adjectiveWords: AdjectiveWord[];
-  adverbWords: AdverbWord[];
+  nounWords: Word[];
+  adjectiveWords: Word[];
+  adverbWords: Word[];
 }
 
 

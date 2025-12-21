@@ -9,8 +9,10 @@ export type NumberForm = 'none' | 'a' | 'an' | 'plural' | 'the' | 'my' | 'our' |
 export interface Word {
   id: string;
   value: string; // spelling
+  label: string; // display label (translation)
   type: string; // Part of Speech
   numberForm?: string; // For nouns
+  sortOrder?: number;
 }
 
 // Content types are now dynamic, resolved from database

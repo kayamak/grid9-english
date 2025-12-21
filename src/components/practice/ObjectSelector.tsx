@@ -1,13 +1,5 @@
 import React from 'react';
-import { Object, NumberForm } from '@/domain/models/practice/types';
-
-interface NounWord {
-  id: string;
-  value: string;
-  label: string;
-  numberForm: string;
-  sortOrder: number;
-}
+import { Object, NumberForm, Word } from '@/domain/models/practice/types';
 
 interface ObjectSelectorProps {
   selectedObject: Object;
@@ -15,7 +7,7 @@ interface ObjectSelectorProps {
   numberForm: NumberForm;
   disabled?: boolean;
   children?: React.ReactNode;
-  nounWords: NounWord[];
+  nounWords: Word[];
 }
 
 export const ObjectSelector: React.FC<ObjectSelectorProps> = ({ 

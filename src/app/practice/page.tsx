@@ -21,29 +21,9 @@ import {
   Object,
   NumberForm,
   BeComplement,
+  Word,
 } from '@/domain/models/practice/types';
-
-interface NounWord {
-  id: string;
-  value: string;
-  label: string;
-  numberForm: string;
-  sortOrder: number;
-}
-
-interface AdjectiveWord {
-  id: string;
-  value: string;
-  label: string;
-  sortOrder: number;
-}
-
-interface AdverbWord {
-  id: string;
-  value: string;
-  label: string;
-  sortOrder: number;
-}
+import { ApiWordRepository } from '@/infrastructure/repositories/ApiWordRepository';
 
 export default function PracticePage() {
   const [state, setState] = useState<PracticeState>({
@@ -58,46 +38,32 @@ export default function PracticePage() {
     beComplement: 'here',
   });
 
-  const [nounWords, setNounWords] = useState<NounWord[]>([]);
-  const [adjectiveWords, setAdjectiveWords] = useState<AdjectiveWord[]>([]);
-  const [adverbWords, setAdverbWords] = useState<AdverbWord[]>([]);
+  const [nounWords, setNounWords] = useState<Word[]>([]);
+  const [adjectiveWords, setAdjectiveWords] = useState<Word[]>([]);
+  const [adverbWords, setAdverbWords] = useState<Word[]>([]);
   const [isLoadingNouns, setIsLoadingNouns] = useState(true);
 
-  // Fetch noun words from API
+  // Fetch noun words from Repository
   useEffect(() => {
-    const fetchNounWords = async () => {
+    const fetchWords = async () => {
+      const repository = new ApiWordRepository();
       try {
-        const response = await fetch('/api/noun-words');
-          if (response.ok) {
-            const data = await response.json();
-            setNounWords(data);
-          } else {
-            console.error('Failed to fetch noun words');
-          }
+        const nouns = await repository.getNounWords();
+        setNounWords(nouns);
 
-          const responseAdj = await fetch('/api/adjective-words');
-          if (responseAdj.ok) {
-            const data = await responseAdj.json();
-            setAdjectiveWords(data);
-          } else {
-            console.error('Failed to fetch adjective words');
-          }
+        const adjectives = await repository.getAdjectiveWords();
+        setAdjectiveWords(adjectives);
 
-          const responseAdv = await fetch('/api/adverb-words');
-          if (responseAdv.ok) {
-            const data = await responseAdv.json();
-            setAdverbWords(data);
-          } else {
-            console.error('Failed to fetch adverb words');
-          }
+        const adverbs = await repository.getAdverbWords();
+        setAdverbWords(adverbs);
       } catch (error) {
-        console.error('Error fetching noun words:', error);
+        console.error('Error fetching words:', error);
       } finally {
         setIsLoadingNouns(false);
       }
     };
 
-    fetchNounWords();
+    fetchWords();
   }, []);
 
   const handleVerbTypeChange = (verbType: VerbType) => {
@@ -151,9 +117,7 @@ export default function PracticePage() {
     setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
   }, []);
 
-  // Decorate presentation data to Domain Entity (Word)
-  const domainNounWords = nounWords.map(n => ({ ...n, type: 'noun' }));
-  const generatedText = new GeneratePatternUseCase().execute(state, domainNounWords);
+  const generatedText = new GeneratePatternUseCase().execute(state, nounWords);
 
   return (
     <main className="min-h-screen bg-[#e3ded1] flex flex-col items-center p-8 font-sans">
