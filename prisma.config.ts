@@ -14,7 +14,7 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: process.env.TURSO_DATABASE_URL 
+    url: process.env.APP_ENV === 'staging'
       ? `${process.env.TURSO_DATABASE_URL}?authToken=${process.env.TURSO_AUTH_TOKEN}`
       : process.env.DATABASE_URL!,
   },

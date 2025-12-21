@@ -20,9 +20,9 @@
 `.env` ファイルに以下の環境変数を設定してください:
 
 ```env
-DATABASE_URL="libsql://[your-database-name]-[your-username].aws-ap-northeast-1.turso.io"
+DATABASE_URL="file:./dev.db"
 TURSO_AUTH_TOKEN="your-auth-token-here"
-TURSO_DATABASE_URL="libsql://[your-database-name]-[your-username].aws-ap-northeast-1.turso.io"
+TURSO_DATABASE_URL="your-turso-database-url"
 ```
 
 ### 設定ファイル
