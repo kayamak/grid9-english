@@ -9,7 +9,7 @@ import { VerbSelector } from '@/components/practice/VerbSelector';
 import { ObjectSelector } from '@/components/practice/ObjectSelector';
 import { NounDeterminerSelector } from '@/components/practice/NounDeterminerSelector';
 import { ComplementSelector } from '@/components/practice/ComplementSelector';
-import { PatternGenerator } from '@/domain/models/practice/PatternGenerator';
+import { GeneratePatternUseCase } from '@/application/usecases/practice/GeneratePatternUseCase';
 import {
   PracticeState,
   SentenceType,
@@ -151,7 +151,9 @@ export default function PracticePage() {
     setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
   }, []);
 
-  const generatedText = PatternGenerator.generate(state, nounWords);
+  // Decorate presentation data to Domain Entity (Word)
+  const domainNounWords = nounWords.map(n => ({ ...n, type: 'noun' }));
+  const generatedText = new GeneratePatternUseCase().execute(state, domainNounWords);
 
   return (
     <main className="min-h-screen bg-[#e3ded1] flex flex-col items-center p-8 font-sans">

@@ -5,9 +5,9 @@ import { PracticeState } from './types';
 
 // Mock noun data
 const mockNouns = [
-  { value: 'soccer', numberForm: 'none' }, // Uncountable
-  { value: 'cats', numberForm: 'plural' }, // Always plural
-  { value: 'dog', numberForm: 'singular' }, // Countable singular
+  { id: '1', value: 'soccer', type: 'noun', numberForm: 'none' }, // Uncountable
+  { id: '2', value: 'cats', type: 'noun', numberForm: 'plural' }, // Always plural
+  { id: '3', value: 'dog', type: 'noun', numberForm: 'singular' }, // Countable singular
 ];
 
 describe('PatternGenerator', () => {

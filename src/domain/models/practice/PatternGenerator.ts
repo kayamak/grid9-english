@@ -1,22 +1,26 @@
-import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern, Object, NumberForm, BeComplement } from './types';
+import { SentencePattern, SentenceType, Subject, Tense, FiveSentencePattern, Object, NumberForm, BeComplement, Word } from './types';
 
+/**
+ * Domain Service: PatternGenerator
+ * Responsible for generating the string representation of a sentence pattern
+ * based on the Domain Rules.
+ */
 export class PatternGenerator {
-  static generate(state: PracticeState, nounWords: { value: string; numberForm: string; }[] = []): string {
-    const { verbType, sentenceType, subject, tense } = state;
+  static generate(pattern: SentencePattern, nounWords: Word[] = []): string {
+    const { verbType, sentenceType, subject, tense } = pattern;
     let rawSentence = '';
 
     if (verbType === 'be') {
-      const pattern = state.fiveSentencePattern || 'SV';
-      const beComplement = state.beComplement || 'here';
-      rawSentence = this.generateBeVerb(sentenceType, subject, tense, pattern, beComplement, nounWords);
+      const fiveSentencePattern = pattern.fiveSentencePattern || 'SV';
+      const beComplement = pattern.beComplement || 'here';
+      rawSentence = this.generateBeVerb(sentenceType, subject, tense, fiveSentencePattern, beComplement, nounWords);
     } else {
-      // Use state.verb if available, otherwise default to 'live' if not set (though types enforce it now)
-      // or if for some reason it's 'be' but type is 'do' (should be handled by state management, but good for safety)
-      const verb = (state.verb && state.verb !== 'be') ? state.verb : 'live'; 
-      const pattern = state.fiveSentencePattern || 'SVO';
-      const object = state.object || 'something';
-      const numberForm = state.numberForm || 'a';
-      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, pattern, object, numberForm);
+      // Use pattern.verb if available, otherwise default to 'live'
+      const verb = (pattern.verb && pattern.verb !== 'be') ? pattern.verb : 'live'; 
+      const fiveSentencePattern = pattern.fiveSentencePattern || 'SVO';
+      const object = pattern.object || 'something';
+      const numberForm = pattern.numberForm || 'a';
+      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, fiveSentencePattern, object, numberForm);
     }
 
     if (!rawSentence) return '';
@@ -28,7 +32,7 @@ export class PatternGenerator {
     return `${firstChar}${rest}${punctuation}`;
   }
 
-  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, pattern: FiveSentencePattern, beComplement: BeComplement, nounWords: { value: string; numberForm: string; }[]): string {
+  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, pattern: FiveSentencePattern, beComplement: BeComplement, nounWords: Word[]): string {
     const subjectText = this.getSubjectText(subject);
     let beVerb = '';
 
@@ -86,7 +90,7 @@ export class PatternGenerator {
     return '';
   }
 
-  private static formatBeComplement(base: string, subject: Subject, nounWords: { value: string; numberForm: string; }[]): string {
+  private static formatBeComplement(base: string, subject: Subject, nounWords: Word[]): string {
     const isPluralSubject = subject === 'first_p' || subject === 'third_p' || subject === 'second_p'; 
     
     // Handle 'something' - it's a pronoun, no article or pluralization
@@ -106,16 +110,13 @@ export class PatternGenerator {
         }
 
         // If noun is 'none' (uncountable) -> return as is (e.g. "soccer")
-        // But the user might want "I like soccer". "Something is soccer".
-        // If subject is plural "We are soccer players". "We are soccer".
-        // Uncountable means no plural form usually.
         if (foundNoun.numberForm === 'none') {
              return base;
         }
 
         if (isPluralSubject) { 
             // Pluralize
-            // Only if it's singular countable (which involves "a", "an" or similar in numberForm? usually "a"/"an")
+            // Only if it's singular countable
             return base + 's';
         } else {
             // Singular: add a/an
@@ -141,8 +142,6 @@ export class PatternGenerator {
     }
 
     if (sentenceType === 'positive') {
-        // Past: I did -> I lived / went
-        // Present: I do / He does -> I live / He lives
         if (tense === 'past') {
             const pastForm = this.getPastForm(verbBase);
             return `${subjectText} ${pastForm}${complement ? ' ' + complement : ''}`;
@@ -172,44 +171,29 @@ export class PatternGenerator {
   }
 
   private static getPatternComplement(pattern: FiveSentencePattern, subject: Subject, object: Object = 'something', numberForm: NumberForm = 'a'): string {
-    // For now, provide simple examples for SV and SVO patterns
     switch (pattern) {
       case 'SV':
-        // Subject + Verb (intransitive verb, no object)
-        // Example: "I live", "He runs"
-        // No complement needed for SV pattern
         return '';
       case 'SVO':
-        // Subject + Verb + Object
-        // Use the selected object from state
-        // Apply article based on numberForm selection
         if (numberForm === 'none') {
-          // No article (for uncountable nouns or when user selects 'none')
           return object;
         } else if (numberForm === 'a') {
-          // Indefinite article 'a'
           return `a ${object}`;
         } else if (numberForm === 'an') {
-          // Indefinite article 'an'
           return `an ${object}`;
         } else if (numberForm === 'the') {
-          // Definite article 'the'
           return `the ${object}`;
         } else if (numberForm === 'plural') {
-          // Plural form (no article needed, object should already be plural)
           return object;
         } else if (['my', 'our', 'your', 'his', 'her', 'their'].includes(numberForm)) {
-          // Possessive determiners
           return `${numberForm} ${object}`;
         } else if (numberForm === 'no_article') {
-          // No article/determiner - just the bare noun
           return object;
         }
         return object;
       case 'SVOO':
       case 'SVOC':
       case 'SVC':
-        // Not implemented yet
         return '';
       default:
         return '';
@@ -255,7 +239,7 @@ export class PatternGenerator {
      switch (verb) {
         case 'do': return 'does';
         case 'go': return 'goes';
-        case 'wash': return 'washes'; // example if added later
+        case 'wash': return 'washes';
         case 'catch': return 'catches';
         case 'study': return 'studies';
         case 'teach': return 'teaches';
@@ -266,23 +250,12 @@ export class PatternGenerator {
   private static getSubjectText(subject: Subject): string {
     switch (subject) {
       case 'first_s': return 'I';
-      case 'first_p': return 'we'; // or We? usually lowercase if not start, but "We weren't" is start.
-      // Let's standardize on keeping it lowercase unless it's definitely start, but `generate` function handles capitalization?
-      // "Does he" -> "he" is lower. "We weren't" -> "We" is upper.
-      // So subject text should be lower (except I), and capitalization happens at usage.
+      case 'first_p': return 'we'; 
       case 'second': return 'you';
       case 'second_p': return 'you';
-      case 'third_s': return 'he'; // default to he
+      case 'third_s': return 'he'; 
       case 'third_p': return 'they';
       default: return '';
     }
-  }
-
-  private static addArticle(object: string): string {
-    // Determine if we need "a" or "an" based on the first letter
-    const firstChar = object.charAt(0).toLowerCase();
-    const vowels = ['a', 'e', 'i', 'o', 'u'];
-    const article = vowels.includes(firstChar) ? 'an' : 'a';
-    return `${article} ${object}`;
   }
 }
