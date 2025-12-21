@@ -1,15 +1,20 @@
+import { ICircleRepository } from '../../domain/models/circles/ICircleRepository';
+import { IUserRepository } from '../../domain/models/users/IUserRepository';
 import { PrismaCircleRepository } from '../../infrastructure/repositories/PrismaCircleRepository';
 import { PrismaUserRepository } from '../../infrastructure/repositories/PrismaUserRepository';
 import { Circle } from '../../domain/models/circles/Circle';
 import { CircleFullSpecification } from '../../domain/models/circles/CircleFullSpecification';
 
 export class CircleService {
-  private circleRepository: PrismaCircleRepository;
-  private userRepository: PrismaUserRepository;
+  private circleRepository: ICircleRepository;
+  private userRepository: IUserRepository;
 
-  constructor() {
-    this.circleRepository = new PrismaCircleRepository();
-    this.userRepository = new PrismaUserRepository();
+  constructor(
+    circleRepository?: ICircleRepository,
+    userRepository?: IUserRepository
+  ) {
+    this.circleRepository = circleRepository || new PrismaCircleRepository();
+    this.userRepository = userRepository || new PrismaUserRepository();
   }
 
   async create(name: string, ownerId: string): Promise<string> {

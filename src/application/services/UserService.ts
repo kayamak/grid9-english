@@ -1,11 +1,12 @@
+import { IUserRepository } from '../../domain/models/users/IUserRepository';
 import { PrismaUserRepository } from '../../infrastructure/repositories/PrismaUserRepository';
 import { User } from '../../domain/models/users/User';
 
 export class UserService {
-  public userRepository: PrismaUserRepository;
+  public userRepository: IUserRepository;
 
-  constructor() {
-    this.userRepository = new PrismaUserRepository();
+  constructor(userRepository?: IUserRepository) {
+    this.userRepository = userRepository || new PrismaUserRepository();
   }
 
   async register(name: string): Promise<string> {
