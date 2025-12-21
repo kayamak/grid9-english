@@ -3,7 +3,7 @@ import { PrismaLibSQL } from '@prisma/adapter-libsql';
 
 const globalForPrisma = global as unknown as { prisma_: PrismaClient };
 
-const url = process.env.DATABASE_URL;
+const url = process.env.APP_ENV === 'staging' ? process.env.TURSO_DATABASE_URL : process.env.DATABASE_URL;
 let prismaClient: PrismaClient;
 
 if (url?.startsWith('file:')) {
