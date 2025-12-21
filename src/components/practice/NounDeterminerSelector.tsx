@@ -1,7 +1,7 @@
 import React from 'react';
 import { NumberForm } from '@/domain/models/practice/types';
 
-interface NumberFormSelectorProps {
+interface NounDeterminerSelectorProps {
   selectedNumberForm: NumberForm;
   onChange: (numberForm: NumberForm) => void;
   disabled?: boolean;
@@ -47,7 +47,7 @@ export const SVC_COMPLEMENT_OPTIONS = [
   { value: 'adjective', label: '形容詞' },
 ];
 
-export const NumberFormSelector: React.FC<NumberFormSelectorProps> = ({ 
+export const NounDeterminerSelector: React.FC<NounDeterminerSelectorProps> = ({ 
   selectedNumberForm, 
   onChange, 
   disabled 

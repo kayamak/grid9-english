@@ -14,7 +14,7 @@ interface ObjectSelectorProps {
   onChange: (object: Object) => void;
   numberForm: NumberForm;
   disabled?: boolean;
-  children?: React.ReactNode; // For NumberFormSelector
+  children?: React.ReactNode;
   nounWords: NounWord[];
 }
 

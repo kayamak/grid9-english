@@ -54,7 +54,7 @@
 
 | 要素 | UI要素 | 操作 | 動作 | 説明 |
 | :--- | :--- | :--- | :--- | :--- |
-| **冠詞・限定詞** | `NumberFormSelector` (プルダウン) | プルダウンから冠詞・限定詞の種類を選択する。選択肢: 不可算 (`none`), a (`a`), an (`an`), 複数 (`plural`), the (`the`), my (`my`), our (`our`), your (`your`), his (`his`), her (`her`), their (`their`), 無し (`no_article`), 形容詞 (`adjective`) | 1. `numberForm` のPropsが選択された値に更新される。2. 目的語プルダウンの選択肢が選択された冠詞・限定詞に応じてフィルタリングされる。3. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。初期値は「不可算」(`none`)です。目的語プルダウンの左隣に配置されます。プルダウンにはラベルがありません。|
+| **冠詞・限定詞** | `NounDeterminerSelector` (プルダウン) | プルダウンから冠詞・限定詞の種類を選択する。選択肢: 不可算 (`none`), a (`a`), an (`an`), 複数 (`plural`), the (`the`), my (`my`), our (`our`), your (`your`), his (`his`), her (`her`), their (`their`), 無し (`no_article`), 形容詞 (`adjective`) | 1. `numberForm` のPropsが選択された値に更新される。2. 目的語プルダウンの選択肢が選択された冠詞・限定詞に応じてフィルタリングされる。3. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。初期値は「不可算」(`none`)です。目的語プルダウンの左隣に配置されます。プルダウンにはラベルがありません。|
 
 | 要素 | UI要素 | 操作 | 動作 | 説明 |
 | :--- | :--- | :--- | :--- | :--- |
@@ -177,11 +177,11 @@ SV文型では、場所や状態を表す副詞句を選択します。`Compleme
 
 #### 4.6.2.2. SVC文型の場合
 
-SVC文型では、補語として名詞または形容詞を選択します。`ComplementSelector`コンポーネントと`NumberFormSelector`コンポーネントが表示されます。
+SVC文型では、補語として名詞または形容詞を選択します。`ComplementSelector`コンポーネントと`NounDeterminerSelector`コンポーネントが表示されます。
 
 **冠詞・限定詞の選択:**
 
-NumberFormSelectorで以下の選択肢から選べます:
+NounDeterminerSelectorで以下の選択肢から選べます:
 - `不可算` (`none`)
 - `a` (`a`)
 - `an` (`an`)
@@ -196,7 +196,7 @@ NumberFormSelectorで以下の選択肢から選べます:
 - `無し` (`no_article`)
 - `形容詞` (`adjective`)
 
-初期値は`a`です。NumberFormSelectorは補語セレクターの左隣に配置され、ラベルはありません。
+初期値は`a`です。NounDeterminerSelectorは補語セレクターの左隣に配置され、ラベルはありません。
 
 **補語の選択:**
 

@@ -7,7 +7,7 @@ import { VerbTypeSelector } from '@/components/practice/VerbTypeSelector';
 import { FiveSentencePatternSelector } from '@/components/practice/FiveSentencePatternSelector';
 import { VerbSelector } from '@/components/practice/VerbSelector';
 import { ObjectSelector } from '@/components/practice/ObjectSelector';
-import { NumberFormSelector } from '@/components/practice/NumberFormSelector';
+import { NounDeterminerSelector } from '@/components/practice/NounDeterminerSelector';
 import { ComplementSelector } from '@/components/practice/ComplementSelector';
 import { PatternGenerator } from '@/domain/models/practice/PatternGenerator';
 import {
@@ -219,7 +219,7 @@ export default function PracticePage() {
                         nounWords={nounWords}
                         disabled={isLoadingNouns}
                       >
-                        <NumberFormSelector
+                        <NounDeterminerSelector
                           selectedNumberForm={state.numberForm || 'a'}
                           onChange={handleNumberFormChange}
                         />
@@ -256,7 +256,7 @@ export default function PracticePage() {
                         adverbWords={adverbWords}
                         disabled={isLoadingNouns}
                       >
-                        <NumberFormSelector
+                        <NounDeterminerSelector
                           selectedNumberForm={state.numberForm || 'a'}
                           onChange={handleNumberFormChange}
                         />
