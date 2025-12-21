@@ -259,6 +259,7 @@ export default function PracticePage() {
                         <NounDeterminerSelector
                           selectedNumberForm={state.numberForm || 'a'}
                           onChange={handleNumberFormChange}
+                          isAdjective={true}
                         />
                       </ComplementSelector>
                     ) : (

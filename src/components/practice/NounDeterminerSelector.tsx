@@ -5,6 +5,7 @@ interface NounDeterminerSelectorProps {
   selectedNumberForm: NumberForm;
   onChange: (numberForm: NumberForm) => void;
   disabled?: boolean;
+  isAdjective?: boolean;
 }
 
 export type NounDeterminer =
@@ -50,7 +51,8 @@ export const SVC_COMPLEMENT_OPTIONS = [
 export const NounDeterminerSelector: React.FC<NounDeterminerSelectorProps> = ({ 
   selectedNumberForm, 
   onChange, 
-  disabled 
+  disabled,
+  isAdjective,
 }) => {
   return (
     <div className="relative inline-block">
@@ -60,7 +62,7 @@ export const NounDeterminerSelector: React.FC<NounDeterminerSelectorProps> = ({
         disabled={disabled}
         className="block appearance-none bg-white border border-gray-300 text-gray-700 py-3 px-3 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg disabled:opacity-50 disabled:bg-gray-100 min-w-0"
       >
-        {NOUN_DETERMINER_OPTIONS.map((option) => (
+        {(isAdjective ? SVC_COMPLEMENT_OPTIONS : NOUN_DETERMINER_OPTIONS).map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
