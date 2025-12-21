@@ -18,6 +18,11 @@ if (url?.startsWith('file:')) {
   prismaClient = new PrismaClient({
     adapter,
     log: ['query'],
+    datasources: adapter ? undefined : {
+      db: {
+        url,
+      },
+    },
   });
 }
 

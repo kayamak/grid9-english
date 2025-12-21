@@ -8,12 +8,13 @@ export class GeneratePatternUseCase {
    * 
    * @param pattern The current sentence pattern configuration.
    * @param nounWords A list of helper noun words (from repository/presentation).
+   * @param verbWords A list of helper verb words (from repository/presentation).
    * @returns The generated sentence string.
    */
-  execute(pattern: SentencePattern, nounWords: Word[] = []): string {
+  execute(pattern: SentencePattern, nounWords: Word[] = [], verbWords: Word[] = []): string {
     // In a fuller implementation, this use case might validate inputs or 
     // fetch data from a repository if `nounWords` weren't passed in.
     // For now, it delegates pure domain logic to the PatternGenerator service.
-    return PatternGenerator.generate(pattern, nounWords);
+    return PatternGenerator.generate(pattern, nounWords, verbWords);
   }
 }

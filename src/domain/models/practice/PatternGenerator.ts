@@ -6,7 +6,7 @@ import { SentencePattern, SentenceType, Subject, Tense, FiveSentencePattern, Obj
  * based on the Domain Rules.
  */
 export class PatternGenerator {
-  static generate(pattern: SentencePattern, nounWords: Word[] = []): string {
+  static generate(pattern: SentencePattern, nounWords: Word[] = [], verbWords: Word[] = []): string {
     const { verbType, sentenceType, subject, tense } = pattern;
     let rawSentence = '';
 
@@ -20,7 +20,7 @@ export class PatternGenerator {
       const fiveSentencePattern = pattern.fiveSentencePattern || 'SVO';
       const object = pattern.object || 'something';
       const numberForm = pattern.numberForm || 'a';
-      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, fiveSentencePattern, object, numberForm);
+      rawSentence = this.generateDoVerb(sentenceType, subject, tense, verb, fiveSentencePattern, object, numberForm, verbWords);
     }
 
     if (!rawSentence) return '';
@@ -131,7 +131,7 @@ export class PatternGenerator {
     return base;
   }
 
-  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO', object: Object = 'something', numberForm: NumberForm = 'a'): string {
+  private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO', object: Object = 'something', numberForm: NumberForm = 'a', verbWords: Word[] = []): string {
     const subjectText = this.getSubjectText(subject);
     const complement = this.getPatternComplement(pattern, subject, object, numberForm);
 
@@ -143,7 +143,7 @@ export class PatternGenerator {
 
     if (sentenceType === 'positive') {
         if (tense === 'past') {
-            const pastForm = this.getPastForm(verbBase);
+            const pastForm = this.getPastForm(verbBase, verbWords);
             return `${subjectText} ${pastForm}${complement ? ' ' + complement : ''}`;
         }
         if (tense === 'present') {
@@ -200,7 +200,12 @@ export class PatternGenerator {
     }
   }
 
-  private static getPastForm(verb: string): string {
+  private static getPastForm(verb: string, verbWords: Word[]): string {
+    const foundVerb = verbWords.find(v => v.value === verb);
+    if (foundVerb && foundVerb.pastForm) {
+        return foundVerb.pastForm;
+    }
+    // Fallback if not found or pastForm missing
     switch (verb) {
         case 'live': return 'lived';
         case 'do': return 'did';

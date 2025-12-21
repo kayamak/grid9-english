@@ -12,6 +12,7 @@ export interface Word {
   label: string; // display label (translation)
   type: string; // Part of Speech
   numberForm?: string; // For nouns
+  pastForm?: string; // For verbs
   sortOrder?: number;
 }
 

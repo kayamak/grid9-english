@@ -39,6 +39,7 @@ export default function PracticePage() {
   });
 
   const [nounWords, setNounWords] = useState<Word[]>([]);
+  const [verbWords, setVerbWords] = useState<Word[]>([]);
   const [adjectiveWords, setAdjectiveWords] = useState<Word[]>([]);
   const [adverbWords, setAdverbWords] = useState<Word[]>([]);
   const [isLoadingNouns, setIsLoadingNouns] = useState(true);
@@ -50,6 +51,9 @@ export default function PracticePage() {
       try {
         const nouns = await repository.getNounWords();
         setNounWords(nouns);
+
+        const verbs = await repository.getVerbWords();
+        setVerbWords(verbs);
 
         const adjectives = await repository.getAdjectiveWords();
         setAdjectiveWords(adjectives);
@@ -117,7 +121,7 @@ export default function PracticePage() {
     setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
   }, []);
 
-  const generatedText = new GeneratePatternUseCase().execute(state, nounWords);
+  const generatedText = new GeneratePatternUseCase().execute(state, nounWords, verbWords);
 
   return (
     <main className="min-h-screen bg-[#e3ded1] flex flex-col items-center p-8 font-sans">

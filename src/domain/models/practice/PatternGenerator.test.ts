@@ -5,10 +5,17 @@ import { PracticeState } from './types';
 
 // Mock noun data
 const mockNouns = [
-  { id: '1', value: 'soccer', type: 'noun', numberForm: 'none' }, // Uncountable
-  { id: '2', value: 'cats', type: 'noun', numberForm: 'plural' }, // Always plural
-  { id: '3', value: 'dog', type: 'noun', numberForm: 'singular' }, // Countable singular
+  { id: '1', value: 'soccer', type: 'noun', numberForm: 'none', label: '' }, 
+  { id: '2', value: 'cats', type: 'noun', numberForm: 'plural', label: '' },
+  { id: '3', value: 'dog', type: 'noun', numberForm: 'singular', label: '' }, 
 ];
+
+// Mock verb data with custom past form
+const mockVerbs = [
+    { id: '1', value: 'customverb', type: 'verb', pastForm: 'customverbed_past', label: '' },
+    { id: '2', value: 'sing', type: 'verb', pastForm: 'sang', label: '' },
+];
+
 
 describe('PatternGenerator', () => {
     describe('Be Verb', () => {
@@ -22,7 +29,7 @@ describe('PatternGenerator', () => {
                 fiveSentencePattern: 'SV',
                 beComplement: 'here'
             };
-            expect(PatternGenerator.generate(state, mockNouns)).toBe('I am here.');
+            expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('I am here.');
         });
 
         it('should generate Past Negative SV sentence', () => {
@@ -35,7 +42,7 @@ describe('PatternGenerator', () => {
                 fiveSentencePattern: 'SV',
                 beComplement: 'there'
             };
-            expect(PatternGenerator.generate(state, mockNouns)).toBe('They weren\'t there.');
+            expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('They weren\'t there.');
         });
         
          it('should generate Future Question SV sentence', () => {
@@ -48,7 +55,7 @@ describe('PatternGenerator', () => {
                 fiveSentencePattern: 'SV',
                 beComplement: 'busy'
             };
-            expect(PatternGenerator.generate(state, mockNouns)).toBe('Will you be busy?'); // Adjective "busy" works as adverbial/complement roughly in this logic
+            expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('Will you be busy?');
         });
 
         describe('SVC Pattern (Complements)', () => {
@@ -62,8 +69,7 @@ describe('PatternGenerator', () => {
                     fiveSentencePattern: 'SVC',
                     beComplement: 'happy'
                 };
-                // "happy" is not in mockNouns, treated as adjective -> no article
-                expect(PatternGenerator.generate(state, mockNouns)).toBe('He is happy.');
+                expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('He is happy.');
             });
 
              it('should handle Countable Noun (Singular subject -> a/an)', () => {
@@ -76,8 +82,7 @@ describe('PatternGenerator', () => {
                     fiveSentencePattern: 'SVC',
                     beComplement: 'dog'
                 };
-                // "dog" is in mockNouns (singular). Subject is singular -> "a dog"
-                expect(PatternGenerator.generate(state, mockNouns)).toBe('He is a dog.');
+                expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('He is a dog.');
              });
              
              it('should handle Countable Noun (Plural subject -> add s)', () => {
@@ -90,8 +95,7 @@ describe('PatternGenerator', () => {
                     fiveSentencePattern: 'SVC',
                     beComplement: 'dog'
                 };
-                // "dog" is in mockNouns (singular). Subject is plural -> "dogs"
-                expect(PatternGenerator.generate(state, mockNouns)).toBe('They are dogs.');
+                expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('They are dogs.');
              });
              
              it('should handle Uncountable Noun (no article)', () => {
@@ -104,8 +108,7 @@ describe('PatternGenerator', () => {
                     fiveSentencePattern: 'SVC',
                     beComplement: 'soccer'
                 };
-                // "soccer" is none -> "soccer"
-                expect(PatternGenerator.generate(state, mockNouns)).toBe('I am soccer.'); // Nonsense semantically, but grammatical for this logic (Identity)
+                expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('I am soccer.');
              });
         });
     });
@@ -120,9 +123,9 @@ describe('PatternGenerator', () => {
                 tense: 'present',
                 fiveSentencePattern: 'SVO',
                 object: 'soccer',
-                numberForm: 'none' // User explicitly selected none/no article
+                numberForm: 'none'
             };
-            expect(PatternGenerator.generate(state, mockNouns)).toBe('I play soccer.');
+            expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('I play soccer.');
         });
 
          it('should handle Third Person Singular (Present)', () => {
@@ -136,24 +139,11 @@ describe('PatternGenerator', () => {
                 object: 'pizza',
                 numberForm: 'a'
             };
-            expect(PatternGenerator.generate(state, mockNouns)).toBe('He likes a pizza.');
+            expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('He likes a pizza.');
         });
         
          it('should handle Past Negative', () => {
-            const state: PracticeState = {
-                verbType: 'do',
-                verb: 'go',
-                sentenceType: 'negative',
-                subject: 'first_p', // We
-                tense: 'past',
-                fiveSentencePattern: 'SVO', // "go" is usually SV but user can force SVO in this app maybe? Or just testing logic
-                object: 'park', // "go park" is wrong, but "go to ...". 
-                // Wait, PatternGenerator doesn't add "to". It just joins verb + object.
-                // If the app expects "go to the park", the object/verb usually handles it or it's SV with adverb.
-                // Let's stick to "eat apple"
-            } as any; // Allow partial if needed, but PracticeState is strict.
-            
-            const stateEat: PracticeState = {
+             const stateEat: PracticeState = {
                 verbType: 'do',
                 verb: 'eat',
                 sentenceType: 'negative',
@@ -164,7 +154,7 @@ describe('PatternGenerator', () => {
                 numberForm: 'an'
             };
 
-            expect(PatternGenerator.generate(stateEat, mockNouns)).toBe('We didn\'t eat an apple.');
+            expect(PatternGenerator.generate(stateEat, mockNouns, mockVerbs)).toBe('We didn\'t eat an apple.');
         });
         
         it('should handle Future Question', () => {
@@ -178,7 +168,46 @@ describe('PatternGenerator', () => {
                 object: 'English',
                 numberForm: 'no_article'
             };
-            expect(PatternGenerator.generate(state, mockNouns)).toBe('Will you study English?');
+            expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('Will you study English?');
+        });
+
+        // New Test Case
+        it('should use pastForm from provided verbWords if available', () => {
+            const state: PracticeState = {
+                verbType: 'do',
+                verb: 'customverb',
+                sentenceType: 'positive',
+                subject: 'first_s',
+                tense: 'past',
+                fiveSentencePattern: 'SV'
+            };
+            // Should use 'customverbed_past' from mockVerbs
+            expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('I customverbed_past.');
+        });
+        
+        // New Test Case
+        it('should fallback to default rule/list if verb not found in list', () => {
+             const state: PracticeState = {
+                verbType: 'do',
+                verb: 'sing',
+                sentenceType: 'positive',
+                subject: 'first_s',
+                tense: 'past',
+                fiveSentencePattern: 'SV'
+            };
+            // 'sing' is in mockVerbs as 'sang'.
+             expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('I sang.');
+
+             // 'unknown' is NOT in mockVerbs, fallback to +ed
+             const stateUnknown: PracticeState = {
+                verbType: 'do',
+                verb: 'unknown',
+                sentenceType: 'positive',
+                subject: 'first_s',
+                tense: 'past',
+                fiveSentencePattern: 'SV'
+            };
+            expect(PatternGenerator.generate(stateUnknown, mockNouns, mockVerbs)).toBe('I unknowned.');
         });
     });
 });
