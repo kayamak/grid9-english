@@ -42,7 +42,9 @@ async function main() {
   for (const verb of doVerbSV) {
     await prisma.verbWord.upsert({
       where: { value: verb.value },
-      update: {},
+      update: {
+        pastForm: verb.pastForm,
+      },
       create: {
         value: verb.value,
         label: verb.label,
@@ -84,8 +86,10 @@ async function main() {
     if (verb.value === 'do') continue;
     
     await prisma.verbWord.upsert({
-      where: { value: `${verb.value}_SVO` }, // Use composite key to allow same verb in different patterns
-      update: {},
+      where: { value: verb.value },
+      update: {
+        pastForm: verb.pastForm,
+      },
       create: {
         value: verb.value,
         label: verb.label,
