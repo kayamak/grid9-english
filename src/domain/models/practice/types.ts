@@ -5,39 +5,10 @@ export type Tense = 'past' | 'present' | 'future';
 export type FiveSentencePattern = 'SV' | 'SVC' | 'SVO' | 'SVOO' | 'SVOC';
 export type NumberForm = 'none' | 'a' | 'an' | 'plural' | 'the' | 'my' | 'our' | 'your' | 'his' | 'her' | 'their' | 'no_article' | 'adjective';
 
-export type Verb = 
-  | 'be' | 'do' // Defaults
-  | 'live' | 'go' | 'arrive' | 'talk' | 'run' | 'walk' | 'smile' | 'laugh' // Do verbs (SV - intransitive)
-  | 'have' | 'know' | 'get' | 'make' | 'catch' | 'love' | 'like' | 'take' | 'see' | 'hear' // Do verbs (SVO - transitive)
-  | 'play' | 'sing' | 'study' | 'teach' | 'read' | 'write' | 'drink' | 'eat' | 'cook' | 'drive' // Do verbs (SVO - transitive, continued)
-  | 'something' | 'carpenter' | 'hairdresser' | 'nurse' | 'teacher' | 'chef' | 'farmer' | 'photographer' // Be Nouns
-  | 'happy' | 'sleepy' | 'angry' | 'tired' | 'fine'; // Be Adjectives
-
-export type Object = 
-  | 'something' | 'dog' | 'dogs' | 'story' | 'stories' | 'soccer player' | 'soccer players' 
-  | 'gold medal' | 'gold medals' | 'passport' | 'passports' | 'chair' | 'chairs' 
-  | 'butterfly' | 'butterflies' | 'parents' | 'fruit' | 'fruits' | 'key' | 'keys' 
-  | 'taxi' | 'taxis' | 'airplane' | 'airplanes' | 'sound' | 'sounds' | 'soccer' 
-  | 'violin' | 'violins' | 'song' | 'songs' | 'English' | 'newspaper' | 'newspapers' 
-  | 'letter' | 'letters' | 'coffee' | 'pizza' | 'pizzas' | 'dinner' 
-  | 'car' | 'cars' | 'water' | 'music' | 'information' | 'advice' | 'homework';
-
-export type BeComplement = 
-  // Adverbial phrases for SV pattern
-  | 'here' | 'there' | 'at home' | 'at school' | 'in the park' | 'in Tokyo' 
-  | 'upstairs' | 'downstairs'
-  // Nouns for SVC pattern (all objects from Object type)
-  | 'something' | 'dog' | 'dogs' | 'story' | 'stories' | 'soccer player' | 'soccer players' 
-  | 'gold medal' | 'gold medals' | 'passport' | 'passports' | 'chair' | 'chairs' 
-  | 'butterfly' | 'butterflies' | 'parents' | 'fruit' | 'fruits' | 'key' | 'keys' 
-  | 'taxi' | 'taxis' | 'airplane' | 'airplanes' | 'sound' | 'sounds' | 'soccer' 
-  | 'violin' | 'violins' | 'song' | 'songs' | 'English' | 'newspaper' | 'newspapers' 
-  | 'letter' | 'letters' | 'coffee' | 'pizza' | 'pizzas' | 'dinner' 
-  | 'car' | 'cars' | 'water' | 'music' | 'information' | 'advice' | 'homework'
-  // Occupations (previously in Verb type)
-  | 'carpenter' | 'hairdresser' | 'nurse' | 'teacher' | 'chef' | 'farmer' | 'photographer'
-  // Adjectives for SVC pattern
-  | 'happy' | 'sleepy' | 'angry' | 'tired' | 'fine';
+// Content types are now dynamic, resolved from database
+export type Verb = string;
+export type Object = string;
+export type BeComplement = string;
 
 export interface PracticeState {
   verbType: VerbType;

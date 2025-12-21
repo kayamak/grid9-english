@@ -1,14 +1,14 @@
 import { PracticeState, SentenceType, Subject, Tense, FiveSentencePattern, Object, NumberForm, BeComplement } from './types';
 
 export class PatternGenerator {
-  static generate(state: PracticeState): string {
+  static generate(state: PracticeState, nounWords: { value: string; numberForm: string; }[] = []): string {
     const { verbType, sentenceType, subject, tense } = state;
     let rawSentence = '';
 
     if (verbType === 'be') {
       const pattern = state.fiveSentencePattern || 'SV';
       const beComplement = state.beComplement || 'here';
-      rawSentence = this.generateBeVerb(sentenceType, subject, tense, pattern, beComplement);
+      rawSentence = this.generateBeVerb(sentenceType, subject, tense, pattern, beComplement, nounWords);
     } else {
       // Use state.verb if available, otherwise default to 'live' if not set (though types enforce it now)
       // or if for some reason it's 'be' but type is 'do' (should be handled by state management, but good for safety)
@@ -28,7 +28,7 @@ export class PatternGenerator {
     return `${firstChar}${rest}${punctuation}`;
   }
 
-  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, pattern: FiveSentencePattern, beComplement: BeComplement): string {
+  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, pattern: FiveSentencePattern, beComplement: BeComplement, nounWords: { value: string; numberForm: string; }[]): string {
     const subjectText = this.getSubjectText(subject);
     let beVerb = '';
 
@@ -56,7 +56,7 @@ export class PatternGenerator {
       complement = beComplement;
     } else if (pattern === 'SVC') {
       // SVC pattern: format complement (noun/adjective) with articles
-      complement = this.formatBeComplement(beComplement, subject);
+      complement = this.formatBeComplement(beComplement, subject, nounWords);
     }
 
     // 3. Construct Sentence
@@ -86,26 +86,43 @@ export class PatternGenerator {
     return '';
   }
 
-  private static formatBeComplement(base: string, subject: Subject): string {
+  private static formatBeComplement(base: string, subject: Subject, nounWords: { value: string; numberForm: string; }[]): string {
     const isPluralSubject = subject === 'first_p' || subject === 'third_p' || subject === 'second_p'; 
-
+    
     // Handle 'something' - it's a pronoun, no article or pluralization
     if (base === 'something') {
         return 'something';
     }
 
-    const nouns = ['carpenter', 'hairdresser', 'nurse', 'teacher', 'chef', 'farmer', 'photographer'];
+    // Find if the base word is in our list of nouns
+    const foundNoun = nounWords.find(n => n.value === base);
     
-    if (nouns.includes(base)) {
+    if (foundNoun) {
         // It's a noun
+        
+        // If the noun itself is already plural (e.g. "dogs"), don't add 's'
+        if (foundNoun.numberForm === 'plural') {
+             return base;
+        }
+
+        // If noun is 'none' (uncountable) -> return as is (e.g. "soccer")
+        // But the user might want "I like soccer". "Something is soccer".
+        // If subject is plural "We are soccer players". "We are soccer".
+        // Uncountable means no plural form usually.
+        if (foundNoun.numberForm === 'none') {
+             return base;
+        }
+
         if (isPluralSubject) { 
             // Pluralize
-            // All current nouns just add 's'
+            // Only if it's singular countable (which involves "a", "an" or similar in numberForm? usually "a"/"an")
             return base + 's';
         } else {
             // Singular: add a/an
-            // All current nouns start with consonant -> 'a'
-            return `a ${base}`;
+            const firstChar = base.charAt(0).toLowerCase();
+            const vowels = ['a', 'e', 'i', 'o', 'u'];
+            const article = vowels.includes(firstChar) ? 'an' : 'a';
+            return `${article} ${base}`;
         }
     }
     

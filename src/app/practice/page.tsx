@@ -151,7 +151,7 @@ export default function PracticePage() {
     setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
   }, []);
 
-  const generatedText = PatternGenerator.generate(state);
+  const generatedText = PatternGenerator.generate(state, nounWords);
 
   return (
     <main className="min-h-screen bg-[#e3ded1] flex flex-col items-center p-8 font-sans">
