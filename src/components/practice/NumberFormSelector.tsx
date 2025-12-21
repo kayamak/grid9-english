@@ -7,7 +7,26 @@ interface NumberFormSelectorProps {
   disabled?: boolean;
 }
 
-const NUMBER_FORM_OPTIONS: { value: NumberForm; label: string }[] = [
+export type NounDeterminer =
+  | 'none'        // 不可算
+  | 'a'
+  | 'an'
+  | 'the'
+  | 'plural'
+  | 'no_article'
+  | 'my'
+  | 'our'
+  | 'your'
+  | 'his'
+  | 'her'
+  | 'their';
+
+
+// SVOの目的語（名詞）
+export const NOUN_DETERMINER_OPTIONS: {
+  value: NounDeterminer;
+  label: string;
+}[] = [
   { value: 'none', label: '不可算' },
   { value: 'a', label: 'a' },
   { value: 'an', label: 'an' },
@@ -20,6 +39,11 @@ const NUMBER_FORM_OPTIONS: { value: NumberForm; label: string }[] = [
   { value: 'her', label: 'her' },
   { value: 'their', label: 'their' },
   { value: 'no_article', label: '無し' },
+];
+
+// SVCの補語（名詞+形容詞）
+export const SVC_COMPLEMENT_OPTIONS = [
+  ...NOUN_DETERMINER_OPTIONS,
   { value: 'adjective', label: '形容詞' },
 ];
 
@@ -36,7 +60,7 @@ export const NumberFormSelector: React.FC<NumberFormSelectorProps> = ({
         disabled={disabled}
         className="block appearance-none bg-white border border-gray-300 text-gray-700 py-3 px-3 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg disabled:opacity-50 disabled:bg-gray-100 min-w-0"
       >
-        {NUMBER_FORM_OPTIONS.map((option) => (
+        {NOUN_DETERMINER_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
