@@ -63,99 +63,14 @@
 ### 4.6.1. 動詞タイプがDo動詞の場合
 
 ### 4.6.1.1 文型がSVの動詞選択肢
-- `do` (する)
-- `live` (住む)
-- `go` (行く)
-- `arrive` (着く)
-- `talk` (話す)
-- `run` (走る)
-- `walk` (歩く)
-- `smile` (笑う)
-- `laugh` (笑う)
+データベースの `VerbWord` テーブルから、`verbType = 'do'` かつ `sentencePattern = 'SV'` の条件に一致するレコードを取得して表示します。
 
 ### 4.6.1.2.1 文型がSVOの動詞選択肢
-- `do` (する)
-- `have` (持つ)
-- `know` (知る)
-- `get` (獲得する)
-- `make` (作る)
-- `catch` (捕まえる)
-- `love` (愛する)
-- `like` (気に入る)
-- `take` (取る、持っていく)
-- `see` (見える)
-- `hear` (聞こえる)
-- `play` (遊ぶ、演奏する)
-- `sing` (歌う)
-- `study` (勉強する)
-- `teach` (教える)
-- `read` (読む)
-- `write` (書く)
-- `drink` (飲む)
-- `eat` (食べる)
-- `cook` (料理する)
-- `drive` (運転する)
+データベースの `VerbWord` テーブルから、`verbType = 'do'` かつ `sentencePattern = 'SVO'` の条件に一致するレコードを取得して表示します。
 
 ### 4.6.1.2.2 文型がSVOの目的語選択肢
 
-#### 単数形の目的語
-- `something` (何か)
-- `dog` (犬)
-- `story` (物語)
-- `soccer player` (サッカー選手)
-- `gold medal` (金メダル)
-- `passport` (パスポート)
-- `chair` (椅子)
-- `butterfly` (蝶)
-- `fruit` (果物)
-- `key` (鍵)
-- `taxi` (タクシー)
-- `airplane` (飛行機)
-- `sound` (音)
-- `soccer` (サッカー)
-- `violin` (バイオリン)
-- `song` (歌)
-- `English` (英語)
-- `newspaper` (新聞)
-- `letter` (手紙)
-- `coffee` (コーヒー)
-- `pizza` (ピザ)
-- `dinner` (夕食)
-- `car` (車)
-
-#### 複数形の目的語
-- `parents` (両親)
-- `dogs` (犬)
-- `stories` (物語)
-- `soccer players` (サッカー選手)
-- `gold medals` (金メダル)
-- `passports` (パスポート)
-- `chairs` (椅子)
-- `butterflies` (蝶)
-- `fruits` (果物)
-- `keys` (鍵)
-- `taxis` (タクシー)
-- `airplanes` (飛行機)
-- `sounds` (音)
-- `violins` (バイオリン)
-- `songs` (歌)
-- `newspapers` (新聞)
-- `letters` (手紙)
-- `pizzas` (ピザ)
-- `dinners` (夕食)
-- `cars` (車)
-
-#### 不可算名詞の目的語
-- `soccer` (サッカー)
-- `English` (英語)
-- `coffee` (コーヒー)
-- `pizza` (ピザ) ※可算名詞としても使用可能
-- `dinner` (夕食)
-- `water` (水)
-- `music` (音楽)
-- `information` (情報)
-- `advice` (助言)
-- `homework` (宿題)
+データベースの `NounWord` テーブルからレコードを取得して表示します。`NounDeterminerSelector` での冠詞・限定詞の選択（単数、複数、不可算、など）に応じて、適切な `numberForm` を持つ名詞がフィルタリングされて表示されます。
 
 ### 4.6.2. 動詞タイプがBe動詞の場合の選択肢
 
@@ -166,14 +81,7 @@
 SV文型では、場所や状態を表す副詞句を選択します。`ComplementSelector`コンポーネントが表示され、以下の選択肢から選べます:
 
 **場所・状態の副詞句:**
-- `here` (ここに)
-- `there` (そこに)
-- `at home` (家に)
-- `at school` (学校に)
-- `in the park` (公園に)
-- `in Tokyo` (東京に)
-- `upstairs` (上の階に)
-- `downstairs` (下の階に)
+データベースの `AdverbWord` テーブルからレコードを取得して表示します。
 
 #### 4.6.2.2. SVC文型の場合
 
@@ -204,54 +112,9 @@ ComplementSelectorで選択できる補語は、NumberFormの選択に応じて�
 
 **補語の選択肢:**
 
-代名詞:
-- `something` (何か)
-
-名詞 - Do動詞のObjectSelectorと同じ全ての名詞:
-- `dog` (犬) / `dogs` (犬)
-- `story` (物語) / `stories` (物語)
-- `soccer player` (サッカー選手) / `soccer players` (サッカー選手)
-- `gold medal` (金メダル) / `gold medals` (金メダル)
-- `passport` (パスポート) / `passports` (パスポート)
-- `chair` (椅子) / `chairs` (椅子)
-- `butterfly` (蝶) / `butterflies` (蝶)
-- `parents` (両親)
-- `fruit` (果物) / `fruits` (果物)
-- `key` (鍵) / `keys` (鍵)
-- `taxi` (タクシー) / `taxis` (タクシー)
-- `airplane` (飛行機) / `airplanes` (飛行機)
-- `sound` (音) / `sounds` (音)
-- `soccer` (サッカー)
-- `violin` (バイオリン) / `violins` (バイオリン)
-- `song` (歌) / `songs` (歌)
-- `English` (英語)
-- `newspaper` (新聞) / `newspapers` (新聞)
-- `letter` (手紙) / `letters` (手紙)
-- `coffee` (コーヒー)
-- `pizza` (ピザ) / `pizzas` (ピザ)
-- `dinner` (夕食)
-- `car` (車) / `cars` (車)
-- `water` (水)
-- `music` (音楽)
-- `information` (情報)
-- `advice` (助言)
-- `homework` (宿題)
-
-職業(名詞):
-- `carpenter` (大工)
-- `hairdresser` (美容師)
-- `nurse` (看護師)
-- `teacher` (先生)
-- `chef` (シェフ)
-- `farmer` (農家)
-- `photographer` (写真家)
-
-形容詞:
-- `happy` (幸せ)
-- `sleepy` (眠い)
-- `angry` (怒った)
-- `tired` (疲れた)
-- `fine` (元気)
+以下のデータベーステーブルからレコードを取得して表示します:
+- **名詞**: `NounWord` テーブル。SVO文型の目的語と同様に、冠詞・限定詞の選択に応じてフィルタリングされます。
+- **形容詞**: `AdjectiveWord` テーブル。冠詞・限定詞で「形容詞」(`adjective`)が選択された場合に表示されます。
 
 ## 5. 文章生成ロジック
 
