@@ -1,21 +1,29 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaLibSQL } from '@prisma/adapter-libsql';
 import { config } from 'dotenv';
 
 // Load environment variables
 config();
 
-const adapter = new PrismaLibSql({
-  url: process.env.DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
+const url = process.env.DATABASE_URL!;
 
-const prisma = new PrismaClient({ adapter });
+let prisma: PrismaClient;
+
+if (url.startsWith('file:')) {
+  console.log('Using local SQLite file (Standard Prisma Client)');
+  prisma = new PrismaClient();
+} else {
+  console.log('Using LibSQL adapter (Turso)');
+  const adapter = new PrismaLibSQL({
+    url,
+    authToken: process.env.TURSO_AUTH_TOKEN,
+  });
+  prisma = new PrismaClient({ adapter });
+}
 
 async function main() {
   // VerbWord data is already seeded, skipping...
   // Uncomment below if you need to re-seed VerbWord data
-  /*
   console.log('Seeding VerbWord data...');
 
   // Do Verbs - SV Pattern (Intransitive)
@@ -114,7 +122,6 @@ async function main() {
       },
     });
   }
-  */
 
 
   console.log('Seeding NounWord data...');
