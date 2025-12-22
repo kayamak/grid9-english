@@ -1,178 +1,70 @@
-# システム仕様書（練習モード）
+# 練習モード 機能仕様 (Practice Mode Specification)
 
 ## 1. 概要
+ユーザーが9マスグリッドを操作しながら、英語の文頭パターン（Sentence Starters）をリアルタイムに生成・学習するためのインタラクティブ機能です。
+この機能は `src/features/practice` に集約されます。
 
-本機能は、**Grid9English**システムの9マスパネルをインタラクティブな入力インターフェースとして活用し、ユーザーが各要素（動詞タイプ、文の種類、主語、時制、**動詞**）を選択するたびに、それに対応する英文のパターンを生成・表示する「練習モード」の仕様を定義します。
+---
 
-## 2. 機能名称
+## 2. アプリケーション層 (Application Layer / Server Actions)
+`src/features/practice/actions` に、画面からの操作に対応する Server Actions を定義します。
 
-練習モード (Interactive Pattern Practice Mode)
+### 2.1 パターン生成・更新
+- **責務**: 
+    1. クライアントからのデータ（主語ID、時制、文の種類など）を `src/features/practice/schemas` の Zod スキーマで検証。
+    2. ドメイン層の `SentencePattern` VO や `Word` エンティティを、入力値やリポジトリから取得・生成。
+    3. ドメインサービス（`PatternGenerator`）を呼び出し、活用ルールに基づいた最終的な英文データを組み立てる。
+    4. 画面表示に必要なDTO（Data Transfer Object）へ変換してクライアントに返却する。
 
-## 3. 機能目標
+---
 
-ユーザーが英文パターンの構成要素を一つずつ選択・確定することで、パターン構築のロジックと、その結果として生まれる英文の出だしを学習・確認できるようにする。
+## 3. ドメイン層 (Domain Layer)
+ビジネスルールの核心です。`src/domain/practice` および `src/domain/shared` を使用します。
 
-## 4. ユーザーインターフェース (UI) と操作の仕様
+### 3.1 SentencePattern (Value Object)
+- **場所**: `src/domain/shared/vo/sentence-pattern.ts`
+- **振る舞い**:
+    - `rotateSubject()`: 主語を1→11→2→22のように回転させる。
+    - `changeTense()`: 時制を切り替える。
+    - **自己バリデーション**: `VerbType` が `be` の場合に不適切な `pattern` が設定されないよう、インスタンス生成時にチェックする。
 
-このモードでは、以下の**5つ**の要素が操作可能となります。
+### 3.2 Word (Entity)
+- **場所**: `src/domain/shared/entities/word.ts`
+- **特徴**:
+    - 単語のスペルだけでなく、活用形（Base, Past, S-form等）をカプセル化。
+    - 外部からの意図せぬ変更を防ぐため、活用形リストの取得時は「防御的コピー」を徹底する。
 
-### 4.1. **動詞タイプ**の選択
+### 3.3 Domain Services
+- **PatternGenerator**: 
+    - **場所**: `src/domain/practice/services/pattern-generator.ts`
+    - **責務**: 特定の `SentencePattern` と `Word` を受け取り、三単現や未来形（will）などの英文法ルールを適用して、最終的な出力文字列（`Subject + Verb + ...`）を生成する。
 
-| 要素 | UI要素 | 操作 | 動作 |
-| :--- | :--- | :--- | :--- |
-| **動詞タイプ** | `VerbTypeSelector` (タブ) | タブ（「Do動詞」または「Be動詞」）をクリックする。 | 1. `verbType` の状態が選択された値に更新される。2. これに基づき、**9マスパネルの表示**が更新される。3. **対応する文章（英文の出だし）**が生成・表示される。 |
+---
 
-### 4.2. **文型**の選択
+## 4. プレゼンテーション層 (Presentation Layer)
+UIとユーザーインタラクション。
 
-| 要素 | UI要素 | 操作 | 動作 | 説明 |
-| :--- | :--- | :--- | :--- | :--- |
-| **文型** | `FiveSentencePatternSelector` (プルダウン) | プルダウンから文型(「SV」または「SVO」)を選択する。| 1. `fiveSentencePattern` の状態が選択された値に更新される。2. これに基づき、**9マスパネルの表示**が更新される。3. **対応する文章(英文の出だし)**が生成・表示される。 | 本プルダウンは動詞タイプが「Do動詞」のタブの配下のみに表示されます。動詞プルダウンの右隣に配置されます。プルダウンの左に見出しとして文型を表示します。|
+### 4.1 Page Component (`src/app/practice/page.tsx`)
+- 原則として Server Component。
+- データの初期取得やレイアウトを担当。
 
-### 4.3. **文の種類**の選択
+### 4.2 Feature Components (`src/features/practice/components/`)
+- **Grid9**: 3x3のグリッド。各マスは個別の Client Component (`'use client'`)。
+- **ResultDisplay**: 生成された英文を表示するコンポーネント。
+- **状態管理**: マスのクリックイベントは Server Actions (`actions/`) を呼び出し、サーバーサイドで計算された結果を再レンダリングする（Next.js 15 の Streaming/Partial Prerendering 等を考慮）。
 
-| 要素 | UI要素 | 操作 | 動作 |
-| :--- | :--- | :--- | :--- |
-| **文の種類** | 9マスパネルの**上段（1行目）**のマスをクリックする。 | マスをクリックする。 | 1. `sentenceType` の状態がクリックされたマスに対応する値に更新される。2. **上段のアクティブなマス**が切り替わる。3. **対応する文章**が生成・表示される。 |
+---
 
-### 4.4. **主語**の選択
+## 5. インフラストラクチャ層 (Infrastructure Layer)
+技術的詳細。
 
-| 要素 | UI要素 | 操作 | 動作 |
-| :--- | :--- | :--- | :--- |
-| **主語** | 9マスパネルの**中段（2行目）**のマスをクリックする。 | マスをクリックする。 | 1. `subject` の状態がクリックされたマスに対応する値（例: `first_s`, `third_p`など）に更新される。2. 同じマスを再度クリックすると、同じ人称内で単数と複数が切り替わる(例: `second` ↔ `second_p`)。3. **中段のアクティブなマスと記号**（1, 11, 2, 22, 3, 33）が切り替わる。4. **対応する文章**が生成・表示される。 |
+### 5.1 WordRepository (Prisma Implementation)
+- **場所**: `src/infrastructure/repositories/prisma-word-repository.ts`
+- **責務**: Prisma を介して SQLite (Turso) から単語データを取得。DBのレコードモデルから `Word` エンティティへ変換（Reconstruct）する Mapper 機能を備える。
 
-### 4.5. **時制**の選択
+---
 
-| 要素 | UI要素 | 操作 | 動作 |
-| :--- | :--- | :--- | :--- |
-| **時制** | 9マスパネルの**下段（3行目）**のマスをクリックする。 | マスをクリックする。 | 1. `tense` の状態がクリックされたマスに対応する値に更新される。2. **下段のアクティブなマス**が切り替わる。3. **対応する文章**が生成・表示される。 |
-
-### 4.6. **動詞と目的語**の選択
-
-| 要素 | UI要素 | 操作 | 動作 | 説明 |
-| :--- | :--- | :--- | :--- | :--- |
-| **動詞** | `VerbSelector` (プルダウン) | プルダウンから動詞を選択する。 | 1. `verb` の状態が選択された値に更新される。2. これに基づき、**9マスパネルの表示**が更新される。3. **対応する文章（英文の出だし）**が生成・表示される。 | 動詞タイプがDo動詞の場合のみ表示されます。 表示位置は9マスパネル直下に配置されます。プルダウンの左に見出しとして動詞を表示します。|
-
-| 要素 | UI要素 | 操作 | 動作 | 説明 |
-| :--- | :--- | :--- | :--- | :--- |
-| **冠詞・限定詞** | `NounDeterminerSelector` (プルダウン) | プルダウンから冠詞・限定詞の種類を選択する。選択肢: 不可算 (`none`), a (`a`), an (`an`), 複数 (`plural`), the (`the`), my (`my`), our (`our`), your (`your`), his (`his`), her (`her`), their (`their`), 無し (`no_article`), 形容詞 (`adjective`) | 1. `numberForm` の状態が選択された値に更新される。2. 目的語プルダウンの選択肢が選択された冠詞・限定詞に応じてフィルタリングされる。3. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。初期値は「不可算」(`none`)です。目的語プルダウンの左隣に配置されます。プルダウンにはラベルがありません。|
-
-| 要素 | UI要素 | 操作 | 動作 | 説明 |
-| :--- | :--- | :--- | :--- | :--- |
-| **目的語** | `ObjectSelector` (プルダウン) | プルダウンから目的語を選択する。 | 1. `object` の状態が選択された値に更新される。2. **対応する文章（英文の出だし）**が生成・表示される。 | 文型がSVOの場合のみ表示されます。表示位置は冠詞・限定詞プルダウンの右隣に配置されます。プルダウンの左に見出しとして目的語を表示します。選択肢は冠詞・限定詞プルダウンで選択された値に応じてフィルタリングされます。`the`、所有格(`my`, `our`, `your`, `his`, `her`, `their`)、または`無し`(`no_article`)を選択した場合、`something`を除く全ての目的語が選択可能になります。|
-
-### 4.6.1. 動詞タイプがDo動詞の場合
-
-#### 4.6.1.1 文型がSVの動詞選択肢
-データベースの `VerbWord` テーブルから、`verbType = 'do'` かつ `sentencePattern = 'SV'` の条件に一致するレコードを取得して表示します。
-
-#### 4.6.1.2.1 文型がSVOの動詞選択肢
-データベースの `VerbWord` テーブルから、`verbType = 'do'` かつ `sentencePattern = 'SVO'` の条件に一致するレコードを取得して表示します。
-
-#### 4.6.1.2.2 文型がSVOの目的語選択肢
-
-データベースの `NounWord` テーブルからレコードを取得して表示します。`NounDeterminerSelector` での冠詞・限定詞の選択（単数、複数、不可算、など）に応じて、適切な `numberForm` を持つ名詞がフィルタリングされて表示されます。
-
-### 4.6.2. 動詞タイプがBe動詞の場合の選択肢
-
-動詞タイプがBe動詞の場合、動詞セレクターは常に`be`を表示し、無効化されています。文型セレクターで`SV`または`SVC`を選択でき、それぞれ異なる補語セレクターが表示されます。
-
-#### 4.6.2.1. SV文型の場合
-
-SV文型では、場所や状態を表す副詞句を選択します。`ComplementSelector`コンポーネントが表示され、以下の選択肢から選べます:
-
-**場所・状態の副詞句:**
-データベースの `AdverbWord` テーブルからレコードを取得して表示します。
-
-#### 4.6.2.2. SVC文型の場合
-
-SVC文型では、補語として名詞または形容詞を選択します。`ComplementSelector`コンポーネントと`NounDeterminerSelector`コンポーネントが表示されます。
-
-**冠詞・限定詞の選択:**
-
-NounDeterminerSelectorで以下の選択肢から選べます:
-- `不可算` (`none`)
-- `a` (`a`)
-- `an` (`an`)
-- `複数` (`plural`)
-- `the` (`the`)
-- `my` (`my`)
-- `our` (`our`)
-- `your` (`your`)
-- `his` (`his`)
-- `her` (`her`)
-- `their` (`their`)
-- `無し` (`no_article`)
-- `形容詞` (`adjective`)
-
-初期値は`a`です。NounDeterminerSelectorは補語セレクターの左隣に配置され、ラベルはありません。
-
-**補語の選択:**
-
-ComplementSelectorで選択できる補語は、NumberFormの選択に応じてフィルタリングされます。`the`、所有格(`my`, `our`, `your`, `his`, `her`, `their`)、または`無し`(`no_article`)を選択した場合、`something`を除く全ての補語が選択可能になります。
-
-**補語の選択肢:**
-
-以下のデータベーステーブルからレコードを取得して表示します:
-- **名詞**: `NounWord` テーブル。SVO文型の目的語と同様に、冠詞・限定詞の選択に応じてフィルタリングされます。
-- **形容詞**: `AdjectiveWord` テーブル。冠詞・限定詞で「形容詞」(`adjective`)が選択された場合に表示されます。
-
-## 5. 文章生成ロジック
-
-### 5.1. 状態管理 (Domain State)
-
-アプリケーションは、**ドメイン層 (Domain Layer)** で定義された以下の**値オブジェクト (Value Objects)** を状態として保持します。これらはプレゼンテーション層で管理される状態ですが、その定義と振る舞いはドメイン層に属します。
-
-`Domain State` = { `verbType`, `verb`, `sentenceType`, `subject`, `tense`, `fiveSentencePattern`, `object`, `numberForm`, `beComplement` }
-
-**ドメインモデル定義:**
-
-- `verbType`: `VerbType`
-- `verb`: `Word` (Verb)
-- `sentenceType`: `SentenceType`
-- `subject`: `Subject`
-- `tense`: `Tense`
-- `fiveSentencePattern`: `FiveSentencePattern`
-- `object`: `Word` (Object - Noun)
-- `numberForm`: `NumberForm` (Determiner Type)
-- `beComplement`: `Word` (Complement - Noun/Adjective/Adverb)
-
-### 5.2. 文章生成 (Text Generation Use Case)
-
-ユーザーが要素を選択し、ドメイン状態が更新されるたびに、**Application Layer** のユースケースを介して **Domain Service** (例: `PatternGenerator`) が呼び出され、適切な英文が生成されます。
-
-システムは、現在保持している状態の組み合わせに基づき、整合性のある**英文の出だし**を導出します。
-
-| Domain State | 生成される文章の例 |
-| :--- | :--- |
-| Do, live, Question, Third\_s, Present | **Does he live?** |
-| Be, something, Negative, First\_p, Past | **We weren't something.** |
-| Do, go, Positive, First\_s, Future | **I will go.** |
-
-### 5.3. 文章の書式設定
-
-生成された英文は、以下のルールで自動的に書式設定されます:
-
-1. **大文字化**: 文頭の最初の文字は常に大文字になります。
-2. **句読点**: 文末には適切な句読点が付加されます:
-   - 疑問文(`question`)の場合: `?`
-   - 肯定文(`positive`)および否定文(`negative`)の場合: `.`
-
-## 6. 実装上の考慮事項
-
-* **状態の初期値とデフォルト:** 練習モード開始時の初期値は以下の通りです:
-    * `verbType`: `do`
-    * `verb`: `do`
-    * `sentenceType`: `positive`
-    * `subject`: `first_s`
-    * `tense`: `present`
-    * `fiveSentencePattern`: `SV`
-    * `object`: `something`
-    * `numberForm`: `none`
-    * `beComplement`: `here`
-* **動詞タイプ変更時の動詞リセット:** `VerbType`を変更した場合、`verb`と関連する状態の値は以下のルールで自動的にリセットされます:
-    * `verbType`が「Do動詞」(`do`)の場合: `verb`は`do`、`fiveSentencePattern`は`SV`にリセットされる。
-    * `verbType`が「Be動詞」(`be`)の場合: `verb`は`be`、`fiveSentencePattern`は`SV`、`beComplement`は`here`、`numberForm`は`a`にリセットされる。
-* **主語の切り替え:** 主語のマスをクリックすると、同じ人称内で単数と複数が切り替わります:
-    * 二人称: `second` ↔ `second_p`
-    * 一人称: `first_s` ↔ `first_p`
-    * 三人称: `third_s` ↔ `third_p`
+## 6. 実装上の不変条件 (Invariants)
+- **カプセル化**: 全てのドメインオブジェクトは `private` フィールドを持ち、状態変更は必ず明示的なメソッド経由で行う。
+- **純粋性**: ドメイン層のコードには `import prisma from ...` や `import { ... } from 'next/...'` などの外部依存を一切含めない。
+- **単一責任**: `src/features/practice` 外のコードは、練習モード固有の計算ロジックに依存しないようにする。

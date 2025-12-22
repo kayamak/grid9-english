@@ -6,7 +6,7 @@ import { CircleFullSpecification } from './CircleFullSpecification';
 
 describe('Circle', () => {
   it('should create a circle instance', () => {
-    const circle = new Circle('c1', 'My Circle', 'owner1', []);
+    const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', []);
     expect(circle.id).toBe('c1');
     expect(circle.name).toBe('My Circle');
     expect(circle.ownerId).toBe('owner1');
@@ -14,27 +14,27 @@ describe('Circle', () => {
   });
 
   it('should throw error if created with null values', () => {
-     expect(() => new Circle('', 'Name', 'owner', [])).toThrow('Id cannot be null');
-     expect(() => new Circle('id', '', 'owner', [])).toThrow('Name cannot be null');
-     expect(() => new Circle('id', 'Name', '', [])).toThrow('OwnerId cannot be null');
+     expect(() => Circle.reconstruct('', 'Name', 'owner', [])).toThrow('Id cannot be null');
+     expect(() => Circle.reconstruct('id', '', 'owner', [])).toThrow('Name cannot be null');
+     expect(() => Circle.reconstruct('id', 'Name', '', [])).toThrow('OwnerId cannot be null');
   });
 
   it('should count members correctly', () => {
-    const circle = new Circle('c1', 'My Circle', 'owner1', ['m1', 'm2']);
+    const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', ['m1', 'm2']);
     // owner + 2 members = 3
     expect(circle.countMembers()).toBe(3);
   });
 
   it('should change name', () => {
-    const circle = new Circle('c1', 'Old Name', 'owner1', []);
+    const circle = Circle.reconstruct('c1', 'Old Name', 'owner1', []);
     circle.changeName('New Name');
     expect(circle.name).toBe('New Name');
   });
 
   describe('join', () => {
     it('should add member if not full', async () => {
-      const circle = new Circle('c1', 'My Circle', 'owner1', []);
-      const user = new User('u1', 'User 1', 'Normal');
+      const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', []);
+      const user = User.reconstruct('u1', 'User 1', 'Normal');
       
       // Mock specification to always return false (not full)
       const mockSpec = {
@@ -48,8 +48,8 @@ describe('Circle', () => {
     });
 
     it('should throw error if circle is full', async () => {
-       const circle = new Circle('c1', 'My Circle', 'owner1', []);
-       const user = new User('u1', 'User 1', 'Normal');
+       const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', []);
+       const user = User.reconstruct('u1', 'User 1', 'Normal');
 
        // Mock specification to always return true (full)
        const mockSpec = {

@@ -1,130 +1,115 @@
-# システム仕様書（コア機能）
+# Grid9English システム共通仕様 (Core Specification)
 
-## 1. システム概要
+## 1. はじめに
+本ドキュメントは、Grid9Englishの全体像、アーキテクチャ方針、および核心となるビジネスルールを定義します。
+Next.js 15とDDD（ドメイン駆動設計）をベースとした「堅牢なシステム設計」を志向し、以下の記事の設計思想を忠実に反映しています。
 
-### 1.1 システム名称
-
-**Grid9English** (グリッド・ナイン・イングリッシュ)
-
-### 1.2 目的
-
-**動詞の種類（Do/Be）**の選択、主語の**複数形**を含む文頭表現の**パターン**を、**9マスグリッド**と**ピクトグラム**を用いて視覚的かつ直感的に理解・習得することを目的とします。
-
-### 1.3 ターゲット
-
-初級〜中級レベルの英語学習者、特に英文の構造パターン（主語と動詞の組み合わせ）を苦手とする学習者。
+- [Next.js 15とDDDで作る堅牢なシステム設計【第1部: 設計編】](https://zenn.dev/7788/articles/f58adf9ecd42da)
+- [Next.js 15とDDDで作る堅牢なシステム設計【第2部: Domain層編】](https://zenn.dev/7788/articles/a485c60d0f6581)
 
 ---
 
-## 2. アーキテクチャ設計方針
+## 2. アーキテクチャ概要 (Layered Architecture)
+レイヤードアーキテクチャを採用し、依存関係を「プレゼンテーション → アプリケーション → ドメイン ← インフラストラクチャ」の方向に制御します（DIP: 依存性逆転の原則を適用）。
 
-本プロジェクトは、保守性、テスト容易性、およびビジネスロジックの独立性を担保するため、**クリーンアーキテクチャ (Clean Architecture)** および **ドメイン駆動設計 (DDD)** の原則を採用します。
-
-### 2.1 アーキテクチャ階層構造
-
-システムは以下の同心円状のレイヤーで構成され、依存関係は常に「外側から内側」に向かうものとします。内側のレイヤー（Domain）は外側のレイヤー（Infrastructure, UI）について何も知りません。
-
-1.  **Domain Layer (Enterprise Business Rules)**
-    *   **役割**: アプリケーションのコアとなるビジネスロジックとルールをカプセル化します。フレームワークやUI、データベースの詳細には依存しません。
-    *   **構成要素**:
-        *   **Entities / Aggregates**: ビジネスルールと状態を持つオブジェクト。
-        *   **Value Objects**: 計測や記述のための不変オブジェクト（例: `SentencePattern`, `Tense`）。
-        *   **Repository Interfaces**: データの永続化・取得のための抽象インターフェース。
-
-2.  **Application Layer (Application Business Rules)**
-    *   **役割**: ユーザーのユースケースを実現するための進行役です。ドメインオブジェクトを操作し、入出力を変換します。
-    *   **構成要素**:
-        *   **Use Cases (Interactors)**: クライアントからの要求を受け取り、ドメイン層を呼び出して処理を行います（例: `GenerateSentenceUseCase`）。
-
-3.  **Interface Adapters Layer**
-    *   **役割**: 外部の世界（Web, DB等）と内部の層（Use Cases, Entities）との間のデータ変換を行います。
-    *   **構成要素**:
-        *   **Presenters / Controllers**: React Server Components / Client Components がこれに該当します。
-        *   **Repository Implementations**: ドメイン層で定義されたリポジトリの実装（Prisma等）。
-
-4.  **Frameworks & Drivers Layer (Infrastructure)**
-    *   **役割**: 詳細な技術的要素です。
-    *   **構成要素**: Next.js, Turso (SQLite), React, Tailwind CSS。
-
-### 2.2 ドメインモデル設計 (DDD)
-
-中核となるドメイン概念は以下の通りです。
-
-#### Grammar Context (文法コンテキスト)
-
-*   **SentencePattern (Value Object)**: 文の構造を定義する値オブジェクト。
-    *   属性: `VerbType` (Do/Be), `FiveSentencePattern` (SV/SVC/SVO...), `SentenceType` (Positive/Negative/Question), `Subject` (Person/Number), `Tense` (Past/Present/Future).
-    *   振る舞い: 指定された属性の組み合わせが文法的に有効かどうかの整合性チェック。
-
-*   **Word (Entity)**: 単語を表すエンティティ。
-    *   属性: `WordId`, `Spelling`, `PartOfSpeech` (Verb, Noun, Adjective...), `Attributes` (Countable/Uncountable, Transitive/Intransitive).
-
-#### Practice Context (練習コンテキスト)
-
-*   **PracticeSession (Aggregate Root)**: ユーザーの練習セッションを管理する集約ルート。
-    *   現在の問題、解答状態、スコアなどを整合性を保ちながら管理します。
+### 2.1 各層の責務
+- **Presentation Layer (`src/app`, `src/components`)**:
+    - Next.js 15のApp Router規約に従う。
+    - Routing、Page Component、共通UIコンポーネントを担当。
+    - ビジネスロジックは持たず、Application層（Server Actions）を呼び出す。
+- **Application Layer (`src/features/*/actions`)**:
+    - ユースケースをServer Actionsとして実装。
+    - 入力バリデーション（Zod）、ドメインオブジェクトの組み立て、リポジトリへの永続化依頼を行う。
+- **Domain Layer (`src/domain`)**:
+    - ビジネスルールの中心。純粋なTypeScriptで実装し、フレームワークやDBに依存しない。
+    - エンティティ、値オブジェクト（VO）、ドメインサービス、リポジトリインターフェースを含む。
+- **Infrastructure Layer (`src/infrastructure`)**:
+    - DB（Prisma/Turso）や外部APIなどの技術的詳細を実装。
+    - ドメイン層で定義されたインターフェースの実装（Repository Implementation）を提供する。
 
 ---
 
-## 3. システム構成要素と責務
+## 3. ディレクトリ構成 (Feature-based Structure)
+機能（Feature）単位での凝集度を高め、スケーラビリティを確保する構成を採用します。
 
-### 3.1 プレゼンテーション層 (UI)
-
-*   **VerbTypeSelector**: `verbType` の状態変更をユーザーアクションとして受け取り、アプリケーション層へ伝達します。
-*   **NineKeyPanel**: 9マスグリッドの描画を担当。ドメインモデルの状態（`Subject`, `Tense`, `SentenceType`）をピクトグラムとして可視化します。
-*   **Active Cell Logic**: ドメインルールに基づき、UI上でどのセルを強調表示するかを決定する表示ロジック（Presenterの役割）。
-
-### 3.2 アプリケーション層 (Use Case)
-
-*   **GeneratePatternUseCase**:
-    *   入力: ユーザーが選択した文法要素（Props）。
-    *   処理: ドメインルールに基づいて妥当な英文パターンを生成する。
-    *   出力: 生成された英文文字列と、UI表示用の状態。
-
-### 3.3 インフラストラクチャ層 (Data Access)
-
-*   **WordRepository**: データベース（Turso）から単語定義を取得し、ドメインの `Word` エンティティとして再構成して返却します。
+```text
+src/
+├── app/                  # Presentation Layer (Routing & Page Components)
+│   ├── (auth)/           # 認証・ユーザー管理関連ページ
+│   ├── circles/          # サークル（文等パターン）閲覧・管理ページ
+│   └── practice/         # 練習モードページ
+├── features/             # Application Layer (Feature-based logic)
+│   ├── circles/          # 
+│   │   ├── actions/      # Server Actions (Create/Update/Delete/Fetch)
+│   │   ├── components/   # この機能に特化した UI (Form, List, Card)
+│   │   └── schemas/      # Zodバリデーションスキーマ
+│   └── practice/         # 
+│       ├── actions/
+│       ├── components/
+│       └── schemas/
+├── domain/               # Domain Layer (Pure logic, organized by subdomain)
+│   ├── shared/           # 共通ドメイン（Wordなど）
+│   │   ├── entities/     # private constructor + static factory
+│   │   ├── vo/           # Value Objects (Immutable)
+│   │   └── repositories/ # Interface definition
+│   ├── circles/
+│   │   ├── entities/
+│   │   └── repositories/
+│   └── practice/
+│       ├── services/     # Domain Services (Complex business logic)
+│       └── spec/         # Specification Pattern (Validation logic)
+├── infrastructure/       # Infrastructure Layer (Technical details)
+│   ├── prisma/           # Prisma client & Schema logic
+│   └── repositories/     # Repository implementations (Prisma based)
+├── components/           # Presentation Layer (Common components)
+│   └── ui/               # shadcn/ui components
+├── lib/                  # Shared utilities & configurations
+└── types/                # Project-wide type definitions
+```
 
 ---
 
-## 4. コアデータモデル定義
+## 4. ドメインモデル実装原則 (Domain implementation)
 
-各英文のパターンは、ドメイン層の **Value Object** として定義され、以下の属性を持ちます。
+### 4.1 エンティティ (Entities)
+- **識別子**: 必ず一意なIDを持つ。
+- **privateコンストラクタ**: 直接の `new` を禁止。
+- **ファクトリメソッド**: `create()`（新規作成）や `reconstruct()`（DBからの復元）を使用。
+- **不変条件の保護**: インスタンス生成時およびメソッド実行時に `validate()` を行い、常に正しい状態を維持する。
 
-| 属性名 | 型 (Domain Type) | 許容される値 | 説明 |
-| :--- | :--- | :--- | :--- |
-| **`verbType`** | `VerbType` | `do`, `be` | 文頭表現が **Do動詞** か **Be動詞** か。 |
-| **`fiveSentencePattern`** | `FiveSentencePattern` | `SV`, `SVC`, `SVO`, `SVOO`, `SVOC` | 第1〜第5文型。 |
-| **`sentenceType`** | `SentenceType` | `positive`, `negative`, `question` | 文の形式（肯定、否定、疑問）。 |
-| **`subject`** | `Subject` | `first_s`, `first_p`, `second`, `second_p`, `third_s`, `third_p` | 主語の人称と数。 |
-| **`tense`** | `Tense` | `past`, `present`, `future` | 時制。 |
+### 4.2 値オブジェクト (Value Objects)
+- **不変性 (Immutable)**: 一度生成したら状態を変えない。変更時は新しいインスタンスを返す。
+- **等価性**: IDではなく、保持する「値」そのもので同一性を判定する。
+- **完全不変**: 防御的コピーを用いて、配列やオブジェクトが外部から変更されるのを防ぐ。
 
-### 主語の分類とパネル表示記号
+### 4.3 リポジトリ (Repositories)
+- **インターフェース**: ドメイン層で定義し、永続化の詳細を隠蔽する。
+- **ドメインオブジェクトの入出力**: プリミティブなデータではなく、常にドメインエンティティをやり取りする。
 
-| Domain Value | UI Presentation | Panel Symbol |
+---
+
+## 5. ユビキタス言語 (Ubiquitous Language)
+
+| 用語 | 英語名 | 定義 |
 | :--- | :--- | :--- |
-| `first_s` | I | **1** |
-| `first_p` | We | **11** |
-| `second` | You | **2** |
-| `second_p` | You | **22** |
-| `third_s` | He, She, It | **3** |
-| `third_p` | They | **33** |
+| **Grid9 (9マス)** | Grid9 | 文頭パターンを視覚化した3x3のグリッドUI。 |
+| **動詞タイプ** | VerbType | Do動詞(Do) か Be動詞(Be) の区分。 |
+| **文頭パターン** | SentencePattern | 主語、時制、文の種類を組み合わせた文の開始部分。 |
+| **主語** | Subject | I/You/He/She/It/We/They など。 |
+| **時制的** | Tense | Past/Present/Future の区分。 |
+| **活用形** | Form | 動詞の変化（Original/Past/PastParticiple/S-Form/Ing-Form）。 |
 
 ---
 
-## 5. コア機能仕様：9マスパネル
+## 6. 統合時の判断ガイドライン (Integration Guidelines)
 
-### 5.1 構造とピクトグラム
+1. **Server Actionsの実装**: `features/*/actions/*.ts` に配置し、必ず `"use server"` を付与。入力を Zod で検証後、ドメイン層を呼び出す。
+2. **Server/Client Componentの使い分け**: `app/` 直下は原則 Server Component。状態管理が必要な UI 要素は `features/*/components/` 内で Client Component として抽出し、`'use client'` を宣言する。
+3. **バリデーションの場所**:
+    - **形式検証**: Application層（Zod）で行い、不正なデータをドメイン層に渡さない。
+    - **ビジネスルール検証**: Domain層（Entity/VO）で行い、ドメインの整合性を守る。
 
-パネルは3行3列のグリッド形式で構成され、ドメインの状態を以下の通り可視化します。
+---
 
-| 行（要素） | 列1 | 列2 | 列3 |
-| :---: | :---: | :---: | :---: |
-| **文の種類** | 否定文 (`negative`): $\text{X}$ | 肯定文 (`positive`): $\text{O}$ | 疑問文 (`question`): $\text{?}$ |
-| **主語** | 二人称: 2 | 一人称: 1 / 11 | 三人称: 3 / 33 |
-| **時制** | 過去形 (`past`): ↩ | 現在形 (`present`): $\text{O}$ | 未来形 (`future`): ↪ |
-
-### 5.2 表示ロジック
-
-`NineKeyPanel` は、ドメイン状態を反映する **Pure Component** です。
-ビジネスルールの状態遷移（例: 主語マスをクリックして単数/複数を切り替えるロジック）は、UI内部ではなく、カスタムフックまたはドメインサービス（`SubjectRotationService`等）に委譲されるべきです。
+## 7. 更新履歴
+- 2025-12-22: Zenn記事に基づき全体構成を刷新。ディレクトリ構成を Feature-based に変更。

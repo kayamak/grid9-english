@@ -1,4 +1,4 @@
-import { Word } from '../models/practice/types';
+import { Word } from '../models/practice/Word';
 
 export interface IWordRepository {
   getNounWords(): Promise<Word[]>;

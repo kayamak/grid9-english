@@ -11,7 +11,7 @@ import { NounDeterminerSelector } from '@/components/practice/NounDeterminerSele
 import { ComplementSelector } from '@/components/practice/ComplementSelector';
 import { GeneratePatternUseCase } from '@/application/usecases/practice/GeneratePatternUseCase';
 import {
-  PracticeState,
+  SentencePattern,
   SentenceType,
   Subject,
   Tense,
@@ -26,7 +26,7 @@ import {
 import { ApiWordRepository } from '@/infrastructure/repositories/ApiWordRepository';
 
 export default function PracticePage() {
-  const [state, setState] = useState<PracticeState>({
+  const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
     verbType: 'do',
     verb: 'do',
     sentenceType: 'positive',
@@ -36,7 +36,7 @@ export default function PracticePage() {
     object: 'something',
     numberForm: 'none',
     beComplement: 'here',
-  });
+  }));
 
   const [nounWords, setNounWords] = useState<Word[]>([]);
   const [verbWords, setVerbWords] = useState<Word[]>([]);
@@ -73,46 +73,63 @@ export default function PracticePage() {
   const handleVerbTypeChange = (verbType: VerbType) => {
     // When switching types, reset verb and pattern to defaults
     if (verbType === 'be') {
-      setState((prev) => ({ ...prev, verbType, verb: 'be', fiveSentencePattern: 'SV', beComplement: 'here', numberForm: 'a' }));
+      setState(() => SentencePattern.create({
+        ...state.toObject(),
+        verbType,
+        verb: 'be',
+        fiveSentencePattern: 'SV',
+        beComplement: 'here',
+        numberForm: 'a'
+      }));
     } else {
-      setState((prev) => ({ ...prev, verbType, verb: 'do', fiveSentencePattern: 'SV' }));
+      setState(() => SentencePattern.create({
+        ...state.toObject(),
+        verbType,
+        verb: 'do',
+        fiveSentencePattern: 'SV'
+      }));
     }
   };
 
   const handleVerbChange = (verb: Verb) => {
-    setState((prev) => ({ ...prev, verb }));
+    setState(() => SentencePattern.create({ ...state.toObject(), verb }));
   };
 
   const handleSentenceTypeChange = (sentenceType: SentenceType) => {
-    setState((prev) => ({ ...prev, sentenceType }));
+    setState((prev) => prev.toggleSentenceType(sentenceType));
   };
 
   const handleSubjectChange = (subject: Subject) => {
-    setState((prev) => ({ ...prev, subject }));
+    // Check if clicking same person to rotate (Invariant 1)
+    if (subject === state.subject) {
+      setState((prev) => prev.rotateSubject());
+    } else {
+      setState(() => SentencePattern.create({ ...state.toObject(), subject }));
+    }
   };
 
   const handleTenseChange = (tense: Tense) => {
-    setState((prev) => ({ ...prev, tense }));
+    setState((prev) => prev.changeTense(tense));
   };
 
   const handleFiveSentencePatternChange = (fiveSentencePattern: FiveSentencePattern) => {
-    setState((prev) => {
-      // Reset verb to 'do' when changing pattern to ensure it's valid for the new pattern
-      // This prevents having an SV-only verb selected when switching to SVO, and vice versa
-      return { ...prev, fiveSentencePattern, verb: 'do' };
-    });
+    setState(() => SentencePattern.create({
+       ...state.toObject(),
+       fiveSentencePattern,
+       verb: 'do'
+    }));
   };
 
   const handleObjectChange = (object: Object) => {
-    setState((prev) => ({ ...prev, object }));
+    setState(() => SentencePattern.create({ ...state.toObject(), object }));
   };
 
   const handleNumberFormChange = (numberForm: NumberForm) => {
-    setState((prev) => ({ ...prev, numberForm }));
+    setState(() => SentencePattern.create({ ...state.toObject(), numberForm }));
   };
 
   const handleBeComplementChange = (beComplement: BeComplement) => {
-    setState((prev) => ({ ...prev, beComplement }));
+    setState(() => SentencePattern.create({ ...state.toObject(), beComplement }));
   };
 
   const [sessionId, setSessionId] = useState('');

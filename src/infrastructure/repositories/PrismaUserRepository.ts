@@ -23,7 +23,7 @@ export class PrismaUserRepository implements IUserRepository {
       where: { id },
     });
     if (!data) return null;
-    return new User(data.id, data.name, data.type as any); // Cast type
+    return User.reconstruct(data.id, data.name, data.type as any);
   }
 
   async findByName(name: string): Promise<User | null> {
@@ -31,19 +31,19 @@ export class PrismaUserRepository implements IUserRepository {
       where: { name },
     });
     if (!data) return null;
-    return new User(data.id, data.name, data.type as any);
+    return User.reconstruct(data.id, data.name, data.type as any);
   }
 
   async findMany(ids: string[]): Promise<User[]> {
     const data = await prisma.user.findMany({
       where: { id: { in: ids } },
     });
-    return data.map(d => new User(d.id, d.name, d.type as any));
+    return data.map(d => User.reconstruct(d.id, d.name, d.type as any));
   }
 
   async findAll(): Promise<User[]> {
     const data = await prisma.user.findMany();
-    return data.map(d => new User(d.id, d.name, d.type as any));
+    return data.map(d => User.reconstruct(d.id, d.name, d.type as any));
   }
 
   async delete(user: User): Promise<void> {

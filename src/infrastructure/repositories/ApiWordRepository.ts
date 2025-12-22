@@ -1,5 +1,5 @@
 import { IWordRepository } from '../../domain/repositories/IWordRepository';
-import { Word } from '../../domain/models/practice/types';
+import { Word, WordType } from '../../domain/models/practice/Word';
 
 export class ApiWordRepository implements IWordRepository {
   async getNounWords(): Promise<Word[]> {
@@ -8,9 +8,9 @@ export class ApiWordRepository implements IWordRepository {
       throw new Error('Failed to fetch noun words');
     }
     const data = await response.json();
-    return data.map((item: any) => ({
+    return data.map((item: any) => Word.reconstruct({
       ...item,
-      type: 'noun',
+      type: 'noun' as WordType,
     }));
   }
 
@@ -23,9 +23,9 @@ export class ApiWordRepository implements IWordRepository {
       throw new Error('Failed to fetch verb words');
     }
     const data = await response.json();
-    return data.map((item: any) => ({
+    return data.map((item: any) => Word.reconstruct({
       ...item,
-      type: 'verb',
+      type: 'verb' as WordType,
     }));
   }
 
@@ -35,9 +35,9 @@ export class ApiWordRepository implements IWordRepository {
       throw new Error('Failed to fetch adjective words');
     }
     const data = await response.json();
-    return data.map((item: any) => ({
+    return data.map((item: any) => Word.reconstruct({
       ...item,
-      type: 'adjective',
+      type: 'adjective' as WordType,
     }));
   }
 
@@ -47,9 +47,9 @@ export class ApiWordRepository implements IWordRepository {
       throw new Error('Failed to fetch adverb words');
     }
     const data = await response.json();
-    return data.map((item: any) => ({
+    return data.map((item: any) => Word.reconstruct({
       ...item,
-      type: 'adverb',
+      type: 'adverb' as WordType,
     }));
   }
 }
