@@ -222,39 +222,8 @@ export class PatternGenerator {
     if (foundVerb && foundVerb.pastForm) {
         return foundVerb.pastForm;
     }
-    // Fallback if not found or pastForm missing
-    switch (verb) {
-        case 'live': return 'lived';
-        case 'do': return 'did';
-        case 'go': return 'went';
-        case 'arrive': return 'arrived';
-        case 'talk': return 'talked';
-        case 'run': return 'ran';
-        case 'walk': return 'walked';
-        case 'smile': return 'smiled';
-        case 'laugh': return 'laughed';
-        case 'have': return 'had';
-        case 'know': return 'knew';
-        case 'get': return 'got';
-        case 'make': return 'made';
-        case 'catch': return 'caught';
-        case 'love': return 'loved';
-        case 'like': return 'liked';
-        case 'take': return 'took';
-        case 'see': return 'saw';
-        case 'hear': return 'heard';
-        case 'play': return 'played';
-        case 'sing': return 'sang';
-        case 'study': return 'studied';
-        case 'teach': return 'taught';
-        case 'read': return 'read';
-        case 'write': return 'wrote';
-        case 'drink': return 'drank';
-        case 'eat': return 'ate';
-        case 'cook': return 'cooked';
-        case 'drive': return 'drove';
-        default: return verb + 'ed';
-    }
+    // Fallback if not found or pastForm missing: assume regular verb
+    return verb + 'ed';
   }
 
   private static getThirdPersonForm(verb: string): string {
