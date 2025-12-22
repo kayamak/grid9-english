@@ -165,7 +165,7 @@ export class PatternGenerator {
         }
         if (tense === 'present') {
             if (subject === 'third_s') {
-                const thirdPersonForm = this.getThirdPersonForm(verbBase);
+                const thirdPersonForm = this.getThirdPersonForm(verbBase, verbWords);
                 return `${subjectText} ${thirdPersonForm}${complement ? ' ' + complement : ''}`;
             }
             return `${subjectText} ${verbBase}${complement ? ' ' + complement : ''}`;
@@ -226,16 +226,20 @@ export class PatternGenerator {
     return verb + 'ed';
   }
 
-  private static getThirdPersonForm(verb: string): string {
-     switch (verb) {
-        case 'do': return 'does';
-        case 'go': return 'goes';
-        case 'wash': return 'washes';
-        case 'catch': return 'catches';
-        case 'study': return 'studies';
-        case 'teach': return 'teaches';
-        default: return verb + 's';
-     }
+  private static getThirdPersonForm(verb: string, verbWords: Word[]): string {
+    const foundVerb = verbWords.find(v => v.value === verb);
+    if (foundVerb && foundVerb.thirdPersonForm) {
+        return foundVerb.thirdPersonForm;
+    }
+    
+    // Fallback: simplified rules
+    if (verb.endsWith('ch') || verb.endsWith('sh') || verb.endsWith('s') || verb.endsWith('x') || verb.endsWith('o')) {
+        return verb + 'es';
+    }
+    if (verb.endsWith('y') && !['a', 'e', 'i', 'o', 'u'].includes(verb.charAt(verb.length - 2))) {
+        return verb.slice(0, -1) + 'ies';
+    }
+    return verb + 's';
   }
 
   private static getSubjectText(subject: Subject): string {

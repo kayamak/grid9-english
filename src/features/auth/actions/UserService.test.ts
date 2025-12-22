@@ -29,7 +29,7 @@ describe('UserService', () => {
             
             expect(userId).toBeDefined();
             expect(mockUserRepo.save).toHaveBeenCalled();
-            const savedUser = (mockUserRepo.save as any).mock.calls[0][0] as User;
+            const savedUser = vi.mocked(mockUserRepo.save).mock.calls[0][0] as User;
             expect(savedUser.name).toBe('New User');
             expect(savedUser.type).toBe('Normal');
         });

@@ -1,5 +1,5 @@
 import { IUserRepository } from '@/domain/users/repositories/IUserRepository';
-import { User } from '@/domain/users/entities/User';
+import { User, UserType } from '@/domain/users/entities/User';
 import { prisma } from '@/infrastructure/prisma/client';
 
 export class PrismaUserRepository implements IUserRepository {
@@ -23,7 +23,7 @@ export class PrismaUserRepository implements IUserRepository {
       where: { id },
     });
     if (!data) return null;
-    return User.reconstruct(data.id, data.name, data.type as any);
+    return User.reconstruct(data.id, data.name, data.type as UserType);
   }
 
   async findByName(name: string): Promise<User | null> {
@@ -31,19 +31,19 @@ export class PrismaUserRepository implements IUserRepository {
       where: { name },
     });
     if (!data) return null;
-    return User.reconstruct(data.id, data.name, data.type as any);
+    return User.reconstruct(data.id, data.name, data.type as UserType);
   }
 
   async findMany(ids: string[]): Promise<User[]> {
     const data = await prisma.user.findMany({
       where: { id: { in: ids } },
     });
-    return data.map(d => User.reconstruct(d.id, d.name, d.type as any));
+    return data.map(d => User.reconstruct(d.id, d.name, d.type as UserType));
   }
 
   async findAll(): Promise<User[]> {
     const data = await prisma.user.findMany();
-    return data.map(d => User.reconstruct(d.id, d.name, d.type as any));
+    return data.map(d => User.reconstruct(d.id, d.name, d.type as UserType));
   }
 
   async delete(user: User): Promise<void> {

@@ -37,6 +37,7 @@ model VerbWord {
   verbType        String  // "do" | "be"
   sentencePattern String? // "SV" | "SVO" | "SVC" | null (for be verbs)
   pastForm        String?
+  thirdPersonForm String?
   sortOrder       Int
   
   @@index([verbType, sentencePattern])

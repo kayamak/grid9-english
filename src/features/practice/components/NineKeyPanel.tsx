@@ -10,6 +10,17 @@ interface NineKeyPanelProps {
   onTenseChange: (tense: Tense) => void;
 }
 
+const RowContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="flex items-center bg-teal-100 p-4 rounded-2xl w-full max-w-xl shadow-inner border border-teal-200">
+      <div className="w-24 font-bold text-teal-800 text-sm mr-4 shrink-0 text-right pr-4 border-r-2 border-teal-300">
+          {title}
+      </div>
+      <div className="flex space-x-4 grow justify-center">
+          {children}
+      </div>
+  </div>
+);
+
 export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
   sentenceType,
   subject,
@@ -40,17 +51,6 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
       if (targetSubject === 'third_p') return '33';
       return label; 
   };
-
-  const RowContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="flex items-center bg-teal-100 p-4 rounded-2xl w-full max-w-xl shadow-inner border border-teal-200">
-        <div className="w-24 font-bold text-teal-800 text-sm mr-4 shrink-0 text-right pr-4 border-r-2 border-teal-300">
-            {title}
-        </div>
-        <div className="flex space-x-4 grow justify-center">
-            {children}
-        </div>
-    </div>
-  );
 
   return (
     <div className="flex flex-col gap-6 w-full items-center">

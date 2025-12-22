@@ -54,8 +54,8 @@ export class CircleService {
     // but strictly should use Repo.
     // I'll add findAll to PrismaCircleRepository if needed or just use prisma for "Query Service" separation.
     // I'll add findAll to Repo for simplicity.
-    const circles = await (this.circleRepository as any).findAll(); 
-    return circles.map((c: Circle) => ({
+    const circles = await this.circleRepository.findAll(); 
+    return circles.map(c => ({
       id: c.id,
       name: c.name,
       ownerId: c.ownerId,

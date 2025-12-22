@@ -66,7 +66,7 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
     };
 
     fetchVerbWords();
-  }, [verbType, fiveSentencePattern]); // Re-fetch when verbType or sentence pattern changes
+  }, [verbType, fiveSentencePattern, onChange, selectedVerb]); // Re-fetch when verbType, sentence pattern, or dependencies change
 
   return (
     <div className="flex items-center gap-3">

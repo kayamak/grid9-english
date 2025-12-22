@@ -45,15 +45,15 @@ async function main() {
 
   // Do Verbs - SV Pattern (Intransitive)
   const doVerbSV = [
-    { value: 'do', label: 'do (する)', sortOrder: 1, pastForm: 'did' },
-    { value: 'live', label: 'live (住む)', sortOrder: 2, pastForm: 'lived' },
-    { value: 'go', label: 'go (行く)', sortOrder: 3, pastForm: 'went' },
-    { value: 'arrive', label: 'arrive (着く)', sortOrder: 4, pastForm: 'arrived' },
-    { value: 'talk', label: 'talk (話す)', sortOrder: 5, pastForm: 'talked' },
-    { value: 'run', label: 'run (走る)', sortOrder: 6, pastForm: 'ran' },
-    { value: 'walk', label: 'walk (歩く)', sortOrder: 7, pastForm: 'walked' },
-    { value: 'smile', label: 'smile (笑う)', sortOrder: 8, pastForm: 'smiled' },
-    { value: 'laugh', label: 'laugh (笑う)', sortOrder: 9, pastForm: 'laughed' },
+    { value: 'do', label: 'do (する)', sortOrder: 1, pastForm: 'did', thirdPersonForm: 'does' },
+    { value: 'live', label: 'live (住む)', sortOrder: 2, pastForm: 'lived', thirdPersonForm: 'lives' },
+    { value: 'go', label: 'go (行く)', sortOrder: 3, pastForm: 'went', thirdPersonForm: 'goes' },
+    { value: 'arrive', label: 'arrive (着く)', sortOrder: 4, pastForm: 'arrived', thirdPersonForm: 'arrives' },
+    { value: 'talk', label: 'talk (話す)', sortOrder: 5, pastForm: 'talked', thirdPersonForm: 'talks' },
+    { value: 'run', label: 'run (走る)', sortOrder: 6, pastForm: 'ran', thirdPersonForm: 'runs' },
+    { value: 'walk', label: 'walk (歩く)', sortOrder: 7, pastForm: 'walked', thirdPersonForm: 'walks' },
+    { value: 'smile', label: 'smile (笑う)', sortOrder: 8, pastForm: 'smiled', thirdPersonForm: 'smiles' },
+    { value: 'laugh', label: 'laugh (笑う)', sortOrder: 9, pastForm: 'laughed', thirdPersonForm: 'laughs' },
   ];
 
   for (const verb of doVerbSV) {
@@ -61,6 +61,7 @@ async function main() {
       where: { value: verb.value },
       update: {
         pastForm: verb.pastForm,
+        thirdPersonForm: verb.thirdPersonForm,
       },
       create: {
         value: verb.value,
@@ -69,33 +70,34 @@ async function main() {
         sentencePattern: 'SV',
         sortOrder: verb.sortOrder,
         pastForm: verb.pastForm,
+        thirdPersonForm: verb.thirdPersonForm,
       },
     });
   }
 
   // Do Verbs - SVO Pattern (Transitive)
   const doVerbSVO = [
-    { value: 'do', label: 'do (する)', sortOrder: 1, pastForm: 'did' },
-    { value: 'have', label: 'have (持つ)', sortOrder: 2, pastForm: 'had' },
-    { value: 'know', label: 'know (知る)', sortOrder: 3, pastForm: 'knew' },
-    { value: 'get', label: 'get (獲得する)', sortOrder: 4, pastForm: 'got' },
-    { value: 'make', label: 'make (作る)', sortOrder: 5, pastForm: 'made' },
-    { value: 'catch', label: 'catch (捕まえる)', sortOrder: 6, pastForm: 'caught' },
-    { value: 'love', label: 'love (愛する)', sortOrder: 7, pastForm: 'loved' },
-    { value: 'like', label: 'like (気に入る)', sortOrder: 8, pastForm: 'liked' },
-    { value: 'take', label: 'take (取る、持っていく)', sortOrder: 9, pastForm: 'took' },
-    { value: 'see', label: 'see (見える)', sortOrder: 10, pastForm: 'saw' },
-    { value: 'hear', label: 'hear (聞こえる)', sortOrder: 11, pastForm: 'heard' },
-    { value: 'play', label: 'play (遊ぶ、演奏する)', sortOrder: 12, pastForm: 'played' },
-    { value: 'sing', label: 'sing (歌う)', sortOrder: 13, pastForm: 'sang' },
-    { value: 'study', label: 'study (勉強する)', sortOrder: 14, pastForm: 'studied' },
-    { value: 'teach', label: 'teach (教える)', sortOrder: 15, pastForm: 'taught' },
-    { value: 'read', label: 'read (読む)', sortOrder: 16, pastForm: 'read' },
-    { value: 'write', label: 'write (書く)', sortOrder: 17, pastForm: 'wrote' },
-    { value: 'drink', label: 'drink (飲む)', sortOrder: 18, pastForm: 'drank' },
-    { value: 'eat', label: 'eat (食べる)', sortOrder: 19, pastForm: 'ate' },
-    { value: 'cook', label: 'cook (料理する)', sortOrder: 20, pastForm: 'cooked' },
-    { value: 'drive', label: 'drive (運転する)', sortOrder: 21, pastForm: 'drove' },
+    { value: 'do', label: 'do (する)', sortOrder: 1, pastForm: 'did', thirdPersonForm: 'does' },
+    { value: 'have', label: 'have (持つ)', sortOrder: 2, pastForm: 'had', thirdPersonForm: 'has' },
+    { value: 'know', label: 'know (知る)', sortOrder: 3, pastForm: 'knew', thirdPersonForm: 'knows' },
+    { value: 'get', label: 'get (獲得する)', sortOrder: 4, pastForm: 'got', thirdPersonForm: 'gets' },
+    { value: 'make', label: 'make (作る)', sortOrder: 5, pastForm: 'made', thirdPersonForm: 'makes' },
+    { value: 'catch', label: 'catch (捕まえる)', sortOrder: 6, pastForm: 'caught', thirdPersonForm: 'catches' },
+    { value: 'love', label: 'love (愛する)', sortOrder: 7, pastForm: 'loved', thirdPersonForm: 'loves' },
+    { value: 'like', label: 'like (気に入る)', sortOrder: 8, pastForm: 'liked', thirdPersonForm: 'likes' },
+    { value: 'take', label: 'take (取る、持っていく)', sortOrder: 9, pastForm: 'took', thirdPersonForm: 'takes' },
+    { value: 'see', label: 'see (見える)', sortOrder: 10, pastForm: 'saw', thirdPersonForm: 'sees' },
+    { value: 'hear', label: 'hear (聞こえる)', sortOrder: 11, pastForm: 'heard', thirdPersonForm: 'hears' },
+    { value: 'play', label: 'play (遊ぶ、演奏する)', sortOrder: 12, pastForm: 'played', thirdPersonForm: 'plays' },
+    { value: 'sing', label: 'sing (歌う)', sortOrder: 13, pastForm: 'sang', thirdPersonForm: 'sings' },
+    { value: 'study', label: 'study (勉強する)', sortOrder: 14, pastForm: 'studied', thirdPersonForm: 'studies' },
+    { value: 'teach', label: 'teach (教える)', sortOrder: 15, pastForm: 'taught', thirdPersonForm: 'teaches' },
+    { value: 'read', label: 'read (読む)', sortOrder: 16, pastForm: 'read', thirdPersonForm: 'reads' },
+    { value: 'write', label: 'write (書く)', sortOrder: 17, pastForm: 'wrote', thirdPersonForm: 'writes' },
+    { value: 'drink', label: 'drink (飲む)', sortOrder: 18, pastForm: 'drank', thirdPersonForm: 'drinks' },
+    { value: 'eat', label: 'eat (食べる)', sortOrder: 19, pastForm: 'ate', thirdPersonForm: 'eats' },
+    { value: 'cook', label: 'cook (料理する)', sortOrder: 20, pastForm: 'cooked', thirdPersonForm: 'cooks' },
+    { value: 'drive', label: 'drive (運転する)', sortOrder: 21, pastForm: 'drove', thirdPersonForm: 'drives' },
   ];
 
   for (const verb of doVerbSVO) {
@@ -106,6 +108,7 @@ async function main() {
       where: { value: verb.value },
       update: {
         pastForm: verb.pastForm,
+        thirdPersonForm: verb.thirdPersonForm,
       },
       create: {
         value: verb.value,
@@ -114,6 +117,7 @@ async function main() {
         sentencePattern: 'SVO',
         sortOrder: verb.sortOrder,
         pastForm: verb.pastForm,
+        thirdPersonForm: verb.thirdPersonForm,
       },
     });
   }

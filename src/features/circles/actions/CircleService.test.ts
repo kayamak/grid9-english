@@ -43,7 +43,7 @@ describe('CircleService', () => {
             expect(circleId).toBeDefined();
             expect(mockCircleRepo.save).toHaveBeenCalled();
             // Verify save was called with correct structure
-            const savedCircle = (mockCircleRepo.save as any).mock.calls[0][0] as Circle; // Vitest typing quirk if not fully typed
+            const savedCircle = vi.mocked(mockCircleRepo.save).mock.calls[0][0] as Circle; 
             expect(savedCircle.name).toBe('My Circle');
             expect(savedCircle.ownerId).toBe('owner1');
         });
