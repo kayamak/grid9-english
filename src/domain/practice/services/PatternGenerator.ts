@@ -13,7 +13,8 @@ export class PatternGenerator {
     if (verbType === 'be') {
       const fiveSentencePattern = pattern.fiveSentencePattern || 'SV';
       const beComplement = pattern.beComplement || 'here';
-      rawSentence = this.generateBeVerb(sentenceType, subject, tense, fiveSentencePattern, beComplement, nounWords);
+      const numberForm = pattern.numberForm || 'a';
+      rawSentence = this.generateBeVerb(sentenceType, subject, tense, fiveSentencePattern, beComplement, numberForm, nounWords);
     } else {
       // Use pattern.verb if available, otherwise default to 'live'
       const verb = (pattern.verb && pattern.verb !== 'be') ? pattern.verb : 'live'; 
@@ -32,7 +33,7 @@ export class PatternGenerator {
     return `${firstChar}${rest}${punctuation}`;
   }
 
-  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, pattern: FiveSentencePattern, beComplement: BeComplement, nounWords: Word[]): string {
+  private static generateBeVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, pattern: FiveSentencePattern, beComplement: BeComplement, numberForm: NumberForm, nounWords: Word[]): string {
     const subjectText = this.getSubjectText(subject);
     let beVerb = '';
 
@@ -60,7 +61,7 @@ export class PatternGenerator {
       complement = beComplement;
     } else if (pattern === 'SVC') {
       // SVC pattern: format complement (noun/adjective) with articles
-      complement = this.formatBeComplement(beComplement, subject, nounWords);
+      complement = this.formatBeComplement(beComplement, subject, numberForm, nounWords);
     }
 
     // 3. Construct Sentence
@@ -90,7 +91,7 @@ export class PatternGenerator {
     return '';
   }
 
-  private static formatBeComplement(base: string, subject: Subject, nounWords: Word[]): string {
+  private static formatBeComplement(base: string, subject: Subject, numberForm: NumberForm, nounWords: Word[]): string {
     const isPluralSubject = subject === 'first_p' || subject === 'third_p' || subject === 'second_p'; 
     
     // Handle 'something' - it's a pronoun, no article or pluralization
@@ -104,27 +105,43 @@ export class PatternGenerator {
     if (foundNoun) {
         // It's a noun
         
-        // If the noun itself is already plural (e.g. "dogs"), don't add 's'
-        if (foundNoun.numberForm === 'plural') {
-             return base;
+        // 1. Determine the core noun form (singular or plural)
+        let nounText = base;
+        const isUncountable = foundNoun.numberForm === 'none';
+        const isAlreadyPlural = foundNoun.numberForm === 'plural';
+
+        if (isPluralSubject && !isUncountable && !isAlreadyPlural) {
+            // Pluralize if subject is plural and noun is singular countable
+            nounText = base + 's';
         }
 
-        // If noun is 'none' (uncountable) -> return as is (e.g. "soccer")
-        if (foundNoun.numberForm === 'none') {
-             return base;
+        // 2. Add article/determiner based on numberForm
+        if (numberForm === 'the') {
+            return `the ${nounText}`;
         }
-
-        if (isPluralSubject) { 
-            // Pluralize
-            // Only if it's singular countable
-            return base + 's';
-        } else {
-            // Singular: add a/an
-            const firstChar = base.charAt(0).toLowerCase();
+        if (['my', 'our', 'your', 'his', 'her', 'their'].includes(numberForm)) {
+            return `${numberForm} ${nounText}`;
+        }
+        if (numberForm === 'plural') {
+            return nounText;
+        }
+        if (numberForm === 'none' || numberForm === 'no_article') {
+            return nounText;
+        }
+        if (numberForm === 'a' || numberForm === 'an' || numberForm === 'adjective') {
+            // For Be verbs, if subject is plural, we don't use a/an even if numberForm says so
+            if (isPluralSubject || isUncountable || isAlreadyPlural) {
+                return nounText;
+            }
+            // Singular: determine a/an based on phonetics (simplified)
+            const firstChar = nounText.charAt(0).toLowerCase();
             const vowels = ['a', 'e', 'i', 'o', 'u'];
             const article = vowels.includes(firstChar) ? 'an' : 'a';
-            return `${article} ${base}`;
+            return `${article} ${nounText}`;
         }
+        
+        // Default fallback if numberForm is unexpected
+        return nounText;
     }
     
     // Adjectives (happy, etc) -> return as is
