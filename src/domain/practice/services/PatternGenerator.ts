@@ -1,4 +1,4 @@
-import { IPattern, SentenceType, Subject, Tense, FiveSentencePattern, Object, NumberForm, BeComplement, Word } from '../types';
+import { SentenceType, Subject, Tense, FiveSentencePattern, Object, NumberForm, BeComplement, Word, SentencePattern } from '../types';
 
 /**
  * Domain Service: PatternGenerator
@@ -6,7 +6,7 @@ import { IPattern, SentenceType, Subject, Tense, FiveSentencePattern, Object, Nu
  * based on the Domain Rules.
  */
 export class PatternGenerator {
-  static generate(pattern: IPattern, nounWords: Word[] = [], verbWords: Word[] = []): string {
+  static generate(pattern: SentencePattern, nounWords: Word[] = [], verbWords: Word[] = []): string {
     const { verbType, sentenceType, subject, tense } = pattern;
     let rawSentence = '';
 

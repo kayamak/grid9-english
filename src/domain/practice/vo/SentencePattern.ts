@@ -1,4 +1,5 @@
 import { VerbType, SentenceType, Subject, Tense, FiveSentencePattern, NumberForm } from '../types';
+import { SentencePatternSpecification } from '../spec/SentencePatternSpecification';
 
 export class SentencePattern {
   private constructor(
@@ -40,10 +41,9 @@ export class SentencePattern {
   }
 
   private validate(): void {
-    if (this._verbType === 'be') {
-      if (this._fiveSentencePattern === 'SVO' || this._fiveSentencePattern === 'SVOO' || this._fiveSentencePattern === 'SVOC') {
-        throw new Error('Be verb cannot have SVO, SVOO, or SVOC patterns');
-      }
+    const spec = new SentencePatternSpecification();
+    if (!spec.isSatisfiedBy(this)) {
+      throw new Error('Invalid sentence pattern: Be verb cannot have SVO, SVOO, or SVOC patterns');
     }
   }
 
