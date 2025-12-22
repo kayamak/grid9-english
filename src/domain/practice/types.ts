@@ -1,5 +1,5 @@
-import { Word } from './Word';
-import { SentencePattern } from './SentencePattern';
+import { Word } from '@/domain/shared/entities/Word';
+import { SentencePattern } from './vo/SentencePattern';
 
 export type VerbType = 'do' | 'be';
 export type SentenceType = 'positive' | 'negative' | 'question';
@@ -7,6 +7,18 @@ export type Subject = 'first_s' | 'first_p' | 'second' | 'second_p' | 'third_s' 
 export type Tense = 'past' | 'present' | 'future';
 export type FiveSentencePattern = 'SV' | 'SVC' | 'SVO' | 'SVOO' | 'SVOC';
 export type NumberForm = 'none' | 'a' | 'an' | 'plural' | 'the' | 'my' | 'our' | 'your' | 'his' | 'her' | 'their' | 'no_article' | 'adjective';
+
+export interface IPattern {
+  verbType: VerbType;
+  verb: string;
+  sentenceType: SentenceType;
+  subject: Subject;
+  tense: Tense;
+  fiveSentencePattern?: FiveSentencePattern;
+  object?: string;
+  numberForm?: NumberForm;
+  beComplement?: string;
+}
 
 export { Word, SentencePattern };
 

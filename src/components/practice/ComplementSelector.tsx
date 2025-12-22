@@ -1,5 +1,5 @@
 import React from 'react';
-import { BeComplement, FiveSentencePattern, NumberForm, Word } from '@/domain/models/practice/types';
+import { BeComplement, FiveSentencePattern, NumberForm, Word } from '@/domain/practice/types';
 
 interface ComplementSelectorProps {
   selectedComplement: BeComplement;

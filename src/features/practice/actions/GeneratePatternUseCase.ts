@@ -1,5 +1,5 @@
-import { SentencePattern, Word } from '../../../domain/models/practice/types';
-import { PatternGenerator } from '../../../domain/models/practice/PatternGenerator';
+import { SentencePattern, Word } from '@/domain/practice/types';
+import { PatternGenerator } from '@/domain/practice/services/PatternGenerator';
 
 export class GeneratePatternUseCase {
   /**

@@ -9,7 +9,7 @@ import { VerbSelector } from '@/components/practice/VerbSelector';
 import { ObjectSelector } from '@/components/practice/ObjectSelector';
 import { NounDeterminerSelector } from '@/components/practice/NounDeterminerSelector';
 import { ComplementSelector } from '@/components/practice/ComplementSelector';
-import { GeneratePatternUseCase } from '@/application/usecases/practice/GeneratePatternUseCase';
+import { GeneratePatternUseCase } from '@/features/practice/actions/GeneratePatternUseCase';
 import {
   SentencePattern,
   SentenceType,
@@ -22,7 +22,7 @@ import {
   NumberForm,
   BeComplement,
   Word,
-} from '@/domain/models/practice/types';
+} from '@/domain/practice/types';
 import { ApiWordRepository } from '@/infrastructure/repositories/ApiWordRepository';
 
 export default function PracticePage() {

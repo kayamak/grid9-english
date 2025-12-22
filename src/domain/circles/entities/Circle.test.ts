@@ -1,8 +1,8 @@
 
 import { describe, it, expect, vi } from 'vitest';
-import { Circle } from './Circle';
-import { User } from '../users/User';
-import { CircleFullSpecification } from './CircleFullSpecification';
+import { Circle } from '@/domain/circles/entities/Circle';
+import { User } from '@/domain/users/entities/User';
+import { CircleFullSpecification } from '@/domain/circles/spec/CircleFullSpecification';
 
 describe('Circle', () => {
   it('should create a circle instance', () => {

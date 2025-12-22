@@ -1,8 +1,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { UserService } from './UserService';
-import { IUserRepository } from '../../domain/models/users/IUserRepository';
-import { User } from '../../domain/models/users/User';
+import { IUserRepository } from '@/domain/users/repositories/IUserRepository';
+import { User } from '@/domain/users/entities/User';
 
 describe('UserService', () => {
     let userService: UserService;
@@ -35,7 +35,7 @@ describe('UserService', () => {
         });
 
         it('should throw if user name already exists', async () => {
-            const existingUser = new User('u1', 'New User', 'Normal');
+            const existingUser = User.reconstruct('u1', 'New User', 'Normal');
             vi.mocked(mockUserRepo.findByName).mockResolvedValue(existingUser);
 
             await expect(userService.register('New User')).rejects.toThrow('User already exists');
@@ -45,7 +45,7 @@ describe('UserService', () => {
 
     describe('update', () => {
         it('should update user name', async () => {
-            const user = new User('u1', 'Old Name', 'Normal');
+            const user = User.reconstruct('u1', 'Old Name', 'Normal');
             vi.mocked(mockUserRepo.find).mockResolvedValue(user);
             vi.mocked(mockUserRepo.findByName).mockResolvedValue(null);
 
@@ -61,8 +61,8 @@ describe('UserService', () => {
         });
 
         it('should throw if new name is taken by another user', async () => {
-            const user = new User('u1', 'Old Name', 'Normal');
-            const otherUser = new User('u2', 'New Name', 'Normal');
+            const user = User.reconstruct('u1', 'Old Name', 'Normal');
+            const otherUser = User.reconstruct('u2', 'New Name', 'Normal');
             
             vi.mocked(mockUserRepo.find).mockResolvedValue(user);
             vi.mocked(mockUserRepo.findByName).mockResolvedValue(otherUser);

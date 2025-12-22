@@ -1,5 +1,5 @@
 import React from 'react';
-import { VerbType } from '@/domain/models/practice/types';
+import { VerbType } from '@/domain/practice/types';
 
 interface VerbTypeSelectorProps {
   selectedVerb: VerbType;

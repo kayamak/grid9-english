@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Verb, VerbType, FiveSentencePattern } from '@/domain/models/practice/types';
+import { Verb, VerbType, FiveSentencePattern } from '@/domain/practice/types';
 import { VerbWord } from '@/types/verbWord';
 
 interface VerbSelectorProps {

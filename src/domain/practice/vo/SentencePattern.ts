@@ -1,4 +1,4 @@
-import { VerbType, SentenceType, Subject, Tense, FiveSentencePattern, NumberForm } from './types';
+import { VerbType, SentenceType, Subject, Tense, FiveSentencePattern, NumberForm } from '../types';
 
 export class SentencePattern {
   private constructor(

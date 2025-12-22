@@ -1,6 +1,6 @@
-import { CircleService } from '../../application/services/CircleService';
-import { UserService } from '../../application/services/UserService';
-import { createCircle } from '../actions/circles';
+import { CircleService } from '@/features/circles/actions/CircleService';
+import { UserService } from '@/features/auth/actions/UserService';
+import { createCircle } from '@/features/circles/actions/circles';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';

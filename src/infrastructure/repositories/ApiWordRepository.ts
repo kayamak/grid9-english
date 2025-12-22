@@ -1,5 +1,5 @@
-import { IWordRepository } from '../../domain/repositories/IWordRepository';
-import { Word, WordType } from '../../domain/models/practice/Word';
+import { IWordRepository } from '@/domain/shared/repositories/IWordRepository';
+import { Word, WordType } from '@/domain/shared/entities/Word';
 
 export class ApiWordRepository implements IWordRepository {
   async getNounWords(): Promise<Word[]> {

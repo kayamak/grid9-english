@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiveSentencePattern, VerbType } from '@/domain/models/practice/types';
+import { FiveSentencePattern, VerbType } from '@/domain/practice/types';
 
 interface FiveSentencePatternSelectorProps {
   selectedPattern: FiveSentencePattern;

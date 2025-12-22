@@ -1,5 +1,5 @@
 import React from 'react';
-import { Object, NumberForm, Word } from '@/domain/models/practice/types';
+import { Object, NumberForm, Word } from '@/domain/practice/types';
 
 interface ObjectSelectorProps {
   selectedObject: Object;

@@ -1,6 +1,6 @@
-import { CircleService } from '../../../application/services/CircleService';
-import { UserService } from '../../../application/services/UserService';
-import { updateCircle, deleteCircle, joinCircle } from '../../actions/circles';
+import { CircleService } from '@/features/circles/actions/CircleService';
+import { UserService } from '@/features/auth/actions/UserService';
+import { updateCircle, deleteCircle, joinCircle } from '@/features/circles/actions/circles';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -22,7 +22,7 @@ export default async function CircleDetailPage({ params }: Props) {
 
   const allUsers = await userService.getAll();
   // Filter users who are not owner and not members
-  const memberIds = new Set(circle.members.map(m => m)); // circle.members is string[] in service response? Wait, let's check Service return type.
+  const memberIds = new Set(circle.members.map((m: string) => m)); // circle.members is string[] in service response? Wait, let's check Service return type.
   // CircleService.get returns { members: string[] }? 
   // Let's verify CircleService.get implementation. 
   // It returns { members: circle.members } which is string[] in Circle.ts.
@@ -61,7 +61,7 @@ export default async function CircleDetailPage({ params }: Props) {
         <div>
           <h2 className="text-xl font-bold mb-2">Members ({members.length})</h2>
           <ul className="list-disc list-inside mb-4">
-            {circle.members.map(mid => {
+            {circle.members.map((mid: string) => {
                const user = memberObjMap.get(mid);
                return <li key={mid}>{user ? user.name : mid}</li>
             })}

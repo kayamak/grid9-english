@@ -1,9 +1,9 @@
-import { ICircleRepository } from '../../domain/models/circles/ICircleRepository';
-import { IUserRepository } from '../../domain/models/users/IUserRepository';
-import { PrismaCircleRepository } from '../../infrastructure/repositories/PrismaCircleRepository';
-import { PrismaUserRepository } from '../../infrastructure/repositories/PrismaUserRepository';
-import { Circle } from '../../domain/models/circles/Circle';
-import { CircleFullSpecification } from '../../domain/models/circles/CircleFullSpecification';
+import { ICircleRepository } from '@/domain/circles/repositories/ICircleRepository';
+import { IUserRepository } from '@/domain/users/repositories/IUserRepository';
+import { PrismaCircleRepository } from '@/infrastructure/repositories/PrismaCircleRepository';
+import { PrismaUserRepository } from '@/infrastructure/repositories/PrismaUserRepository';
+import { Circle } from '@/domain/circles/entities/Circle';
+import { CircleFullSpecification } from '@/domain/circles/spec/CircleFullSpecification';
 
 export class CircleService {
   private circleRepository: ICircleRepository;
@@ -22,7 +22,7 @@ export class CircleService {
     if (!owner) throw new Error("Owner not found");
 
     const id = crypto.randomUUID();
-    const circle = new Circle(id, name, owner.id, []);
+    const circle = Circle.create(id, name, owner.id);
     
     // Name duplication check? 
     const existing = await this.circleRepository.findByName(name);

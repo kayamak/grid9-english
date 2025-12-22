@@ -1,6 +1,6 @@
-import { IUserRepository } from '../../domain/models/users/IUserRepository';
-import { PrismaUserRepository } from '../../infrastructure/repositories/PrismaUserRepository';
-import { User } from '../../domain/models/users/User';
+import { IUserRepository } from '@/domain/users/repositories/IUserRepository';
+import { PrismaUserRepository } from '@/infrastructure/repositories/PrismaUserRepository';
+import { User } from '@/domain/users/entities/User';
 
 export class UserService {
   public userRepository: IUserRepository;
@@ -11,7 +11,7 @@ export class UserService {
 
   async register(name: string): Promise<string> {
     const id = crypto.randomUUID();
-    const user = new User(id, name, 'Normal');
+    const user = User.create(id, name);
     
     // Check if exists? Name unique? 
     // Domain rule: name must be unique (if enforced). 

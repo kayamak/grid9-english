@@ -1,5 +1,5 @@
 import React from 'react';
-import { SentenceType, Subject, Tense } from '@/domain/models/practice/types';
+import { SentenceType, Subject, Tense } from '@/domain/practice/types';
 
 interface NineKeyPanelProps {
   sentenceType: SentenceType;

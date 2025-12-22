@@ -1,26 +1,26 @@
 
 import { describe, it, expect } from 'vitest';
 import { PatternGenerator } from './PatternGenerator';
-import { PracticeState } from './types';
+import { PracticeState, SentencePattern, Word } from '../types';
 
 // Mock noun data
 const mockNouns = [
-  { id: '1', value: 'soccer', type: 'noun', numberForm: 'none', label: '' }, 
-  { id: '2', value: 'cats', type: 'noun', numberForm: 'plural', label: '' },
-  { id: '3', value: 'dog', type: 'noun', numberForm: 'singular', label: '' }, 
+  Word.reconstruct({ id: '1', value: 'soccer', type: 'noun', numberForm: 'none', label: '' }), 
+  Word.reconstruct({ id: '2', value: 'cats', type: 'noun', numberForm: 'plural', label: '' }),
+  Word.reconstruct({ id: '3', value: 'dog', type: 'noun', numberForm: 'singular', label: '' }), 
 ];
 
 // Mock verb data with custom past form
 const mockVerbs = [
-    { id: '1', value: 'customverb', type: 'verb', pastForm: 'customverbed_past', label: '' },
-    { id: '2', value: 'sing', type: 'verb', pastForm: 'sang', label: '' },
+    Word.reconstruct({ id: '1', value: 'customverb', type: 'verb', pastForm: 'customverbed_past', label: '' }),
+    Word.reconstruct({ id: '2', value: 'sing', type: 'verb', pastForm: 'sang', label: '' }),
 ];
 
 
 describe('PatternGenerator', () => {
     describe('Be Verb', () => {
         it('should generate simple Present Positive SV sentence', () => {
-            const state: PracticeState = {
+            const state = SentencePattern.create({
                 verbType: 'be',
                 verb: 'be',
                 sentenceType: 'positive',
@@ -28,7 +28,7 @@ describe('PatternGenerator', () => {
                 tense: 'present',
                 fiveSentencePattern: 'SV',
                 beComplement: 'here'
-            };
+            });
             expect(PatternGenerator.generate(state, mockNouns, mockVerbs)).toBe('I am here.');
         });
 

@@ -1,5 +1,5 @@
-import { ICircleRepository } from '../../domain/models/circles/ICircleRepository';
-import { Circle } from '../../domain/models/circles/Circle';
+import { ICircleRepository } from '@/domain/circles/repositories/ICircleRepository';
+import { Circle } from '@/domain/circles/entities/Circle';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaCircleRepository implements ICircleRepository {

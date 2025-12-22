@@ -1,6 +1,6 @@
 'use server'
 
-import { CircleService } from '../../application/services/CircleService';
+import { CircleService } from './CircleService';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 

@@ -1,5 +1,5 @@
-import { UserService } from '../../../application/services/UserService';
-import { updateUser, deleteUser } from '../../actions/users';
+import { UserService } from '@/features/auth/actions/UserService';
+import { updateUser, deleteUser } from '@/features/auth/actions/users';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 

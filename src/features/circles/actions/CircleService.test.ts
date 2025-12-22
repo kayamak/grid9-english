@@ -1,10 +1,10 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CircleService } from './CircleService';
-import { ICircleRepository } from '../../domain/models/circles/ICircleRepository';
-import { IUserRepository } from '../../domain/models/users/IUserRepository';
-import { User } from '../../domain/models/users/User';
-import { Circle } from '../../domain/models/circles/Circle';
+import { ICircleRepository } from '@/domain/circles/repositories/ICircleRepository';
+import { IUserRepository } from '@/domain/users/repositories/IUserRepository';
+import { User } from '@/domain/users/entities/User';
+import { Circle } from '@/domain/circles/entities/Circle';
 
 describe('CircleService', () => {
     let circleService: CircleService;
@@ -34,7 +34,7 @@ describe('CircleService', () => {
 
     describe('create', () => {
         it('should create a circle', async () => {
-            const owner = new User('owner1', 'Owner', 'Normal');
+            const owner = User.reconstruct('owner1', 'Owner', 'Normal');
             vi.mocked(mockUserRepo.find).mockResolvedValue(owner);
             vi.mocked(mockCircleRepo.findByName).mockResolvedValue(null);
 
@@ -58,8 +58,8 @@ describe('CircleService', () => {
         });
 
         it('should throw if circle name already exists', async () => {
-            const owner = new User('owner1', 'Owner', 'Normal');
-            const existingCircle = new Circle('c1', 'My Circle', 'owner2', []);
+            const owner = User.reconstruct('owner1', 'Owner', 'Normal');
+            const existingCircle = Circle.reconstruct('c1', 'My Circle', 'owner2', []);
             
             vi.mocked(mockUserRepo.find).mockResolvedValue(owner);
             vi.mocked(mockCircleRepo.findByName).mockResolvedValue(existingCircle);
@@ -73,8 +73,8 @@ describe('CircleService', () => {
 
     describe('join', () => {
         it('should join a circle', async () => {
-             const circle = new Circle('c1', 'My Circle', 'owner1', []);
-             const member = new User('m1', 'Member', 'Normal');
+             const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', []);
+             const member = User.reconstruct('m1', 'Member', 'Normal');
              // Mock owner finding for spec check? No, spec uses findMany for members
              // Circle has 0 members.
              
@@ -86,7 +86,7 @@ describe('CircleService', () => {
              // circle members = []. owner = owner1.
              // spec calls findMany(['owner1']).
              
-             const owner = new User('owner1', 'Owner', 'Normal');
+             const owner = User.reconstruct('owner1', 'Owner', 'Normal');
              vi.mocked(mockUserRepo.findMany).mockResolvedValue([owner]);
 
              await circleService.join('c1', 'm1');
@@ -101,7 +101,7 @@ describe('CircleService', () => {
         });
 
         it('should throw if member not found', async () => {
-            const circle = new Circle('c1', 'My Circle', 'owner1', []);
+            const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', []);
             vi.mocked(mockCircleRepo.find).mockResolvedValue(circle);
             vi.mocked(mockUserRepo.find).mockResolvedValue(null);
 

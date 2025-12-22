@@ -1,5 +1,5 @@
-import { User } from '../users/User';
-import { CircleFullSpecification } from './CircleFullSpecification';
+import { User } from '@/domain/users/entities/User';
+import { CircleFullSpecification } from '@/domain/circles/spec/CircleFullSpecification';
 
 export class Circle {
   private constructor(

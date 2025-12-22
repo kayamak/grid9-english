@@ -1,9 +1,9 @@
 
 import { describe, it, expect, vi } from 'vitest';
-import { CircleFullSpecification } from './CircleFullSpecification';
-import { Circle } from './Circle';
-import { IUserRepository } from '../users/IUserRepository';
-import { User } from '../users/User';
+import { CircleFullSpecification } from '@/domain/circles/spec/CircleFullSpecification';
+import { Circle } from '@/domain/circles/entities/Circle';
+import { IUserRepository } from '@/domain/users/repositories/IUserRepository';
+import { User } from '@/domain/users/entities/User';
 
 describe('CircleFullSpecification', () => {
   const mockUserRepository = {
@@ -19,7 +19,7 @@ describe('CircleFullSpecification', () => {
     
     // Create circle with 28 members + owner = 29 total
     const members = Array.from({ length: 28 }, (_, i) => `m${i}`);
-    const circle = new Circle('c1', 'My Circle', 'owner1', members);
+    const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', members);
     
     expect(circle.countMembers()).toBe(29);
     
@@ -34,12 +34,12 @@ describe('CircleFullSpecification', () => {
     // 30 >= 30 -> true (it is full)
     
     const members = Array.from({ length: 29 }, (_, i) => `m${i}`);
-    const circle = new Circle('c1', 'My Circle', 'owner1', members); // Total 30
+    const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', members); // Total 30
     
     // Mock users: all Normal
     const mockUsers = [
-        new User('owner1', 'Owner', 'Normal'),
-        ...members.map(id => new User(id, id, 'Normal'))
+        User.reconstruct('owner1', 'Owner', 'Normal'),
+        ...members.map(id => User.reconstruct(id, id, 'Normal'))
     ];
     vi.mocked(mockUserRepository.findMany).mockResolvedValue(mockUsers);
 
@@ -53,13 +53,13 @@ describe('CircleFullSpecification', () => {
     // 30 < 50 -> false (not full)
 
     const members = Array.from({ length: 29 }, (_, i) => `m${i}`);
-    const circle = new Circle('c1', 'My Circle', 'owner1', members); // Total 30
+    const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', members); // Total 30
 
     // Mock users: 15 Premium, rest Normal
     const mockUsers = [
-        new User('owner1', 'Owner', 'Premium'), // 1
-        ...members.slice(0, 14).map(id => new User(id, id, 'Premium')), // 14
-        ...members.slice(14).map(id => new User(id, id, 'Normal')) // Rest
+        User.reconstruct('owner1', 'Owner', 'Premium'), // 1
+        ...members.slice(0, 14).map(id => User.reconstruct(id, id, 'Premium')), // 14
+        ...members.slice(14).map(id => User.reconstruct(id, id, 'Normal')) // Rest
     ]; 
     // Total 15 premiums > 10 -> Max is 50.
     
@@ -75,12 +75,12 @@ describe('CircleFullSpecification', () => {
       // 50 >= 50 -> true (full)
       
       const members = Array.from({ length: 49 }, (_, i) => `m${i}`);
-      const circle = new Circle('c1', 'My Circle', 'owner1', members);
+      const circle = Circle.reconstruct('c1', 'My Circle', 'owner1', members);
       
       const mockUsers = [
-          new User('owner1', 'Owner', 'Premium'), // 1
-          ...members.slice(0, 14).map(id => new User(id, id, 'Premium')), // 14
-          ...members.slice(14).map(id => new User(id, id, 'Normal'))
+          User.reconstruct('owner1', 'Owner', 'Premium'), // 1
+          ...members.slice(0, 14).map(id => User.reconstruct(id, id, 'Premium')), // 14
+          ...members.slice(14).map(id => User.reconstruct(id, id, 'Normal'))
       ];
       
       vi.mocked(mockUserRepository.findMany).mockResolvedValue(mockUsers);

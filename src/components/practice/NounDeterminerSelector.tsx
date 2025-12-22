@@ -1,5 +1,5 @@
 import React from 'react';
-import { NumberForm } from '@/domain/models/practice/types';
+import { NumberForm } from '@/domain/practice/types';
 
 interface NounDeterminerSelectorProps {
   selectedNumberForm: NumberForm;

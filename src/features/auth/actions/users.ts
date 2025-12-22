@@ -1,6 +1,6 @@
 'use server'
 
-import { UserService } from '../../application/services/UserService';
+import { UserService } from './UserService';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 

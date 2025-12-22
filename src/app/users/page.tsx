@@ -1,7 +1,7 @@
-import { UserService } from '../../application/services/UserService';
-import { registerUser } from '../actions/users';
+import { UserService } from '@/features/auth/actions/UserService';
+import { registerUser } from '@/features/auth/actions/users';
 import Link from 'next/link';
-import { prisma } from '../../lib/prisma'; // Should be used implicitly by Service but good to know env is ready
+import { prisma } from '@/lib/prisma'; // Should be used implicitly by Service but good to know env is ready
 
 // Force dynamic because we fetch directly from DB/Service
 export const dynamic = 'force-dynamic';
