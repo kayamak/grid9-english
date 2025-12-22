@@ -182,22 +182,6 @@ function PracticeContent() {
             </Link>
           <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">Pattern Practice</h1>
           
-          <div className="mt-4 flex justify-center gap-4">
-            <Button
-              variant={isDrillMode ? "outline" : "default"}
-              onClick={() => setIsDrillMode(false)}
-              className="rounded-full px-6 font-bold"
-            >
-              Free Practice
-            </Button>
-            <Button
-              variant={isDrillMode ? "default" : "outline"}
-              onClick={() => setIsDrillMode(true)}
-              className="rounded-full px-6 font-bold bg-indigo-600 hover:bg-indigo-700 text-white border-none"
-            >
-              Sentence Drill Mode
-            </Button>
-          </div>
         </header>
 
         {isDrillMode && currentDrill && (
