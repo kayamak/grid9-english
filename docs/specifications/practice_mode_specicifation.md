@@ -80,6 +80,7 @@ UIとユーザーインタラクション。
 | カラム名 | 型 | 説明 |
 | :--- | :--- | :--- |
 | id | String | CUID による一意識別子 |
+| sentencePattern | String | "DO_SV" | "DO_SVO" | "DO_SVC" | "BE_SV" | "BE_SVC" |
 | english | String | 英文（問題・回答のいずれかとして使用） |
 | japanese | String | 日本語訳（問題・回答のいずれかとして使用） |
 | sortOrder | Int | 出題順序を制御するための値 |
@@ -87,6 +88,7 @@ UIとユーザーインタラクション。
 ### 7.2 初期データ
 以下のデータを登録し、`sortOrder` 順（先頭から）に出題します。
 
+#### 7.2.1. SVの初期データ
 1. **You live.** / あなたは住んでいます。
 2. **I ran.** / 私は走りました。
 3. **They won't laugh.** / 彼らは笑わないでしょう。
@@ -101,6 +103,33 @@ UIとユーザーインタラクション。
 12. **Did I laugh?** / 私は笑いましたか？
 13. **Does he talk?** / 彼は会話しますか？
 14. **We walk.** / 私たちは歩きます。
+
+#### 7.2.2. SVCの初期データ
+1. **I was a carpenter.** / 私は木工でした。
+2. **I will be a hairdresser.** / 私は美容師になるつもりです。
+3. **Are they nurses?** / 彼らはは看護師ですか？
+4. **I'm not a nurse.** / 私は看護師ではありません。
+5. **You were a teacher.** / あなたは教師でした。
+6. **Are you teachers?** / あなたは先生ですか？
+7. **You aren't chefs.** / あなたたちはシェフではありません。
+8. **Will you be a chef?** / あなたはシェフになるつもりですか？
+9. **Will he be a carpenter?** / 彼は木工になるつもりですか？
+10. **I wasn't a hairdresser.** / 私は美容師ではありませんでした。
+11. **I am a farmer.** / 私は農夫です。
+12. **He won't be a farmer.** / 彼は農夫になるつもりはありません。
+13. **He isn't a photographer.** / 彼は写真家ではありません。
+14. **We will be happy.** / 私たちは幸せになるでしょう。
+15. **We weren't happy.** / 私たちは幸せではありませんでした。
+16. **Are you sleepy?** / あなたは眠いですか？
+17. **They were sleepy.** / 彼らは眠かった。
+18. **You won't be sleepy.** / あなたは眠くならないでしょう。
+19. **Were you angry?** / あなたたちは怒っていましたか？
+20. **They will be tired.** / 彼らは疲れているでしょう。
+21. **He wasn't tired.** / 彼は疲れていませんでした。
+22. **We are angry.** / 私たちは怒っています。
+23. **Is he fine?** / 彼は元気ですか？
+24. **You will be fine.** / あなたは元気になるでしょう。
+25. **He was sad.** / 彼は悲しかった。
 
 ### 7.3 学習フローと操作 (Integrated Grid Mode)
 文章ドリルは、メインのパターン練習画面 (`/practice`) に統合されます。
