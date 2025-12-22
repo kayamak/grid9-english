@@ -34,6 +34,7 @@ import { Suspense } from 'react';
 function PracticeContent() {
   const searchParams = useSearchParams();
   const initialMode = searchParams.get('mode') === 'drill';
+  const selectedPattern = searchParams.get('pattern') || undefined;
   const initialDrillIndex = parseInt(searchParams.get('drill') || '1') - 1;
 
   const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
@@ -84,11 +85,11 @@ function PracticeContent() {
     fetchWords();
 
     const fetchDrills = async () => {
-      const data = await getSentenceDrills();
+      const data = await getSentenceDrills(selectedPattern);
       setDrills(data);
     };
     fetchDrills();
-  }, []);
+  }, [selectedPattern]);
 
   const handleVerbTypeChange = (verbType: VerbType) => {
     // When switching types, reset verb and pattern to defaults
@@ -199,7 +200,15 @@ function PracticeContent() {
                   </Button>
               </div>
 
-              <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold">Current Challenge ({currentDrillIndex + 1}/{drills.length})</p>
+              <div className="flex flex-col items-center">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold">Current Challenge ({currentDrillIndex + 1}/{drills.length})</p>
+                {selectedPattern && (
+                  <span className="mt-1 px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded uppercase tracking-wider border border-indigo-100">
+                    {selectedPattern}
+                  </span>
+                )}
+              </div>
+              
               <h2 className="text-3xl font-serif font-bold text-slate-800 text-center px-8">
                 {isQuestionEnglish ? currentDrill.english : currentDrill.japanese}
               </h2>

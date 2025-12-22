@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { getSentenceDrills } from '@/features/practice/actions/drills';
+import { getUniquePatterns } from '@/features/practice/actions/drills';
 
 export default async function Home() {
-  const drills = await getSentenceDrills();
+  const patterns = await getUniquePatterns();
 
   return (
     <main className="min-h-screen bg-[#f8f9fa] p-8 md:p-16 font-sans">
@@ -44,15 +44,30 @@ export default async function Home() {
                 href="/practice?mode=drill" 
                 className="text-indigo-600 font-bold hover:text-indigo-700 transition-colors flex items-center gap-1 group"
               >
-                Start Drills <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                All Drills <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
               </Link>
             </div>
-            <div className="bg-white p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full">
+            <div className="bg-white p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full flex flex-col">
               <p className="text-slate-600 leading-relaxed mb-6 text-lg">
                 Master core patterns with guided challenges. Build specific sentences to complete the drill set.
               </p>
-              <div className="flex gap-2">
-                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full uppercase tracking-wider">CHALLENGE</span>
+              
+              <div className="mt-auto space-y-4">
+                <p className="text-xs font-black text-indigo-300 uppercase tracking-widest">Select a Pattern to Focus</p>
+                <div className="flex flex-wrap gap-2">
+                  {patterns.map((pattern) => (
+                    <Link
+                      key={pattern}
+                      href={`/practice?mode=drill&pattern=${pattern}`}
+                      className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-sm font-bold rounded-xl transition-all hover:scale-105"
+                    >
+                      {pattern}
+                    </Link>
+                  ))}
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full uppercase tracking-wider">CHALLENGE</span>
+                </div>
               </div>
             </div>
           </section>
