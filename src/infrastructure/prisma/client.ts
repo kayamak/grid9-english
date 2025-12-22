@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaLibSQL } from '@prisma/adapter-libsql';
+import { PrismaLibSql } from '@prisma/adapter-libsql';
 
 const globalForPrisma = global as unknown as { prisma_: PrismaClient };
 
@@ -28,7 +28,7 @@ if (url?.startsWith('file:')) {
     log: ['query'],
   });
 } else {
-  const adapter = new PrismaLibSQL({
+  const adapter = new PrismaLibSql({
     url: url!,
     authToken: process.env.TURSO_AUTH_TOKEN,
   });

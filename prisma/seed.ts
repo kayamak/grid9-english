@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaLibSQL } from '@prisma/adapter-libsql';
+import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { config } from 'dotenv';
 
 // Load environment variables
@@ -31,7 +31,7 @@ if (url.startsWith('file:')) {
   });
 } else {
   console.log('Using LibSQL adapter (Turso)');
-  const adapter = new PrismaLibSQL({
+  const adapter = new PrismaLibSql({
     url,
     authToken: process.env.TURSO_AUTH_TOKEN,
   });
@@ -281,6 +281,42 @@ async function main() {
         value: adverb.value,
         label: adverb.label,
         sortOrder: adverb.sortOrder,
+      },
+    });
+  }
+
+  console.log('Seeding SentenceDrill data...');
+
+  const sentenceDrills = [
+    { english: 'You live.', japanese: 'あなたは住んでいます。', sortOrder: 1 },
+    { english: 'I ran.', japanese: '私は走りました。', sortOrder: 2 },
+    { english: 'They won\'t laugh.', japanese: '彼らは笑わないでしょう。', sortOrder: 3 },
+    { english: 'I didn\'t smile', japanese: '私は微笑みませんでした。', sortOrder: 4 },
+    { english: 'Will he live?', japanese: '彼は住むでしょうか？', sortOrder: 5 },
+    { english: 'Do we arrive?', japanese: '私たちは到着しますか？', sortOrder: 6 },
+    { english: 'He walks.', japanese: '彼は歩きます。', sortOrder: 7 },
+    { english: 'You won\'t go.', japanese: 'あなたは行かないでしょう。', sortOrder: 8 },
+    { english: 'Did you talk?', japanese: 'あなたたちは話しましたか？', sortOrder: 9 },
+    { english: 'You don\'t run.', japanese: 'あなたは走りません。', sortOrder: 10 },
+    { english: 'They will arrive.', japanese: '彼らは到着するでしょう。', sortOrder: 11 },
+    { english: 'Did I laugh?', japanese: '私は笑いましたか？', sortOrder: 12 },
+    { english: 'Does he talk?', japanese: '彼は会話しますか？', sortOrder: 13 },
+    { english: 'We walk.', japanese: '私たちは歩きます。', sortOrder: 14 },
+  ];
+
+  for (const drill of sentenceDrills) {
+    await prisma.sentenceDrill.upsert({
+      where: { id: `drill-${drill.sortOrder}` },
+      update: {
+        english: drill.english,
+        japanese: drill.japanese,
+        sortOrder: drill.sortOrder,
+      },
+      create: {
+        id: `drill-${drill.sortOrder}`,
+        english: drill.english,
+        japanese: drill.japanese,
+        sortOrder: drill.sortOrder,
       },
     });
   }

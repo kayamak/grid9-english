@@ -10,6 +10,9 @@ import { ObjectSelector } from '@/features/practice/components/ObjectSelector';
 import { NounDeterminerSelector } from '@/features/practice/components/NounDeterminerSelector';
 import { ComplementSelector } from '@/features/practice/components/ComplementSelector';
 import { GeneratePatternUseCase } from '@/features/practice/actions/GeneratePatternUseCase';
+import { getSentenceDrills } from '@/features/practice/actions/drills';
+import { CheckCircle2, ArrowRightLeft, StepForward } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   SentencePattern,
   SentenceType,
@@ -25,7 +28,14 @@ import {
 } from '@/domain/practice/types';
 import { ApiWordRepository } from '@/infrastructure/repositories/ApiWordRepository';
 
-export default function PracticePage() {
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+
+function PracticeContent() {
+  const searchParams = useSearchParams();
+  const initialMode = searchParams.get('mode') === 'drill';
+  const initialDrillIndex = parseInt(searchParams.get('drill') || '1') - 1;
+
   const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
     verbType: 'do',
     verb: 'do',
@@ -43,6 +53,10 @@ export default function PracticePage() {
   const [adjectiveWords, setAdjectiveWords] = useState<Word[]>([]);
   const [adverbWords, setAdverbWords] = useState<Word[]>([]);
   const [isLoadingNouns, setIsLoadingNouns] = useState(true);
+  const [drills, setDrills] = useState<any[]>([]);
+  const [isDrillMode, setIsDrillMode] = useState(initialMode);
+  const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
+  const [isQuestionEnglish, setIsQuestionEnglish] = useState(true);
 
   // Fetch noun words from Repository
   useEffect(() => {
@@ -68,6 +82,12 @@ export default function PracticePage() {
     };
 
     fetchWords();
+
+    const fetchDrills = async () => {
+      const data = await getSentenceDrills();
+      setDrills(data);
+    };
+    fetchDrills();
   }, []);
 
   const handleVerbTypeChange = (verbType: VerbType) => {
@@ -140,6 +160,17 @@ export default function PracticePage() {
 
   const generatedText = new GeneratePatternUseCase().execute(state, nounWords, verbWords);
 
+  const currentDrill = drills[currentDrillIndex];
+  const isCorrect = isDrillMode && currentDrill && generatedText.toLowerCase().replace(/[.,?!]/g, '') === currentDrill.english.toLowerCase().replace(/[.,?!]/g, '');
+
+  const handleNextDrill = () => {
+    setCurrentDrillIndex((prev) => (prev + 1) % drills.length);
+  };
+
+  const toggleDrillMode = () => {
+    setIsDrillMode(!isDrillMode);
+  };
+
   return (
     <main className="min-h-screen bg-[#e3ded1] flex flex-col items-center p-8 font-sans">
       {/* Background: realistic desk color/texture */}
@@ -150,7 +181,58 @@ export default function PracticePage() {
                 &larr; Return to Dashboard
             </Link>
           <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">Pattern Practice</h1>
+          
+          <div className="mt-4 flex justify-center gap-4">
+            <Button
+              variant={isDrillMode ? "outline" : "default"}
+              onClick={() => setIsDrillMode(false)}
+              className="rounded-full px-6 font-bold"
+            >
+              Free Practice
+            </Button>
+            <Button
+              variant={isDrillMode ? "default" : "outline"}
+              onClick={() => setIsDrillMode(true)}
+              className="rounded-full px-6 font-bold bg-indigo-600 hover:bg-indigo-700 text-white border-none"
+            >
+              Sentence Drill Mode
+            </Button>
+          </div>
         </header>
+
+        {isDrillMode && currentDrill && (
+          <div className="mb-8 w-full flex flex-col items-center">
+            <div className="bg-white/80 backdrop-blur-sm border border-indigo-100 p-6 rounded-2xl shadow-sm w-full max-w-2xl flex flex-col items-center relative gap-4">
+              <div className="absolute top-4 right-4 flex gap-2">
+                 <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setIsQuestionEnglish(!isQuestionEnglish)}
+                    className="text-xs text-indigo-400 hover:text-indigo-600 flex gap-1 items-center"
+                  >
+                    <ArrowRightLeft className="w-3 h-3" />
+                    {isQuestionEnglish ? 'English' : 'Japanese'}
+                  </Button>
+              </div>
+
+              <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold">Current Challenge ({currentDrillIndex + 1}/{drills.length})</p>
+              <h2 className="text-3xl font-serif font-bold text-slate-800 text-center px-8">
+                {isQuestionEnglish ? currentDrill.english : currentDrill.japanese}
+              </h2>
+
+              <div className="flex gap-4 mt-2">
+                <Button 
+                   variant="outline" 
+                   size="sm" 
+                   onClick={handleNextDrill}
+                   className="rounded-full border-indigo-100 hover:bg-indigo-50 text-indigo-400"
+                >
+                  Skip <StepForward className="ml-2 w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* The Notebook Assembly */}
         <div className="flex flex-col items-center">
@@ -266,12 +348,25 @@ export default function PracticePage() {
 
                 <div className="mt-12 w-full max-w-lg relative">
                     {/* Handwritten style result box */}
-                    <div className="bg-transparent border-b-2 border-gray-300 p-4 text-center">
-                        <p className="text-sm text-gray-400 uppercase tracking-widest mb-1 font-serif">Result</p>
-                        <p className="text-5xl font-bold text-slate-800 font-serif leading-tight">
+                    <div className={`bg-transparent border-b-2 transition-colors duration-500 p-4 text-center ${isCorrect ? 'border-green-400' : 'border-gray-300'}`}>
+                        <p className={`text-sm uppercase tracking-widest mb-1 font-serif ${isCorrect ? 'text-green-500 font-bold' : 'text-gray-400'}`}>
+                          {isCorrect ? '✨ Correct! Perfect Build ✨' : 'Result'}
+                        </p>
+                        <p className={`text-5xl font-bold font-serif leading-tight transition-all duration-300 ${isCorrect ? 'text-green-600 scale-105' : 'text-slate-800'}`}>
                         {generatedText}
                         </p>
                     </div>
+
+                    {isCorrect && (
+                      <div className="mt-8 flex justify-center animate-bounce">
+                        <Button 
+                          onClick={handleNextDrill}
+                          className="bg-green-500 hover:bg-green-600 text-white rounded-full px-8 py-6 text-xl font-bold shadow-lg"
+                        >
+                          Next Challenge <StepForward className="ml-2" />
+                        </Button>
+                      </div>
+                    )}
                 </div>
 
             </section>
@@ -282,5 +377,13 @@ export default function PracticePage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function PracticePage() {
+  return (
+    <Suspense fallback={<div>Loading Practice...</div>}>
+      <PracticeContent />
+    </Suspense>
   );
 }
