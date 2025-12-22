@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Grid9 English
 
-## Getting Started
+Grid9 Englishプロジェクトへようこそ。このプロジェクトは、英語学習を支援するためのWebアプリケーションです。
 
-First, run the development server:
+## 📖 ドキュメント構成
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+プロジェクトの詳細な仕様や技術的なガイドは、`docs/`ディレクトリ配下の各ファイルにまとめられています。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 📂 docs/ (ルート)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+*   **[README.md](./docs/README.md)**
+    *   ドキュメントの全体像と、ドキュメント更新の際のガイドラインが記載されているインデックスファイルです。
+*   **[database-guide.md](./docs/database-guide.md)**
+    *   データベース（Turso & Prisma）のセットアップ、マイグレーション、シードデータの投入方法についてのガイドです。
+*   **[database-cheatsheet.md](./docs/database-cheatsheet.md)**
+    *   日常的な開発で使用するデータベース操作のコマンド集、およびSQLクエリのクイックリファレンスです。
+*   **[er-diagram.md](./docs/er-diagram.md)**
+    *   Mermaid形式で記述されたデータベースのER図です。テーブル間のリレーションを確認できます。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 📂 docs/specifications/ (仕様書)
 
-## Learn More
+各機能の詳細な振る舞いや要件が記載されています。
 
-To learn more about Next.js, take a look at the following resources:
+*   **[core_specicifation.md](./docs/specifications/core_specicifation.md)**
+    *   プロジェクト全体のコアとなる仕様や設計方針が記載されています。
+*   **[practice_mode_specicifation.md](./docs/specifications/practice_mode_specicifation.md)**
+    *   英作文練習モードの具体的な動作仕様、UI構成、および実装上の考慮事項が記載されています。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 📂 docs/sequence-diagrams/ (シーケンス図)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+システムの処理フローを可視化しています。
 
-## Deploy on Vercel
+*   **circles/**
+    *   サークル管理（作成、取得、更新、削除、参加）に関する処理シーケンス。
+*   **users/**
+    *   ユーザー管理（登録、取得、更新、削除）に関する処理シーケンス。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 開発の進め方
+
+詳細は各ドキュメントを参照してください。
+
+1.  **環境構築**: `npm install`
+2.  **DBセットアップ**: [データベース管理ガイド](./docs/database-guide.md) に従い、TursoとPrismaを設定します。
+3.  **サーバー起動**: `npm run dev`
+
+ドキュメントを更新した際は、適宜この `README.md` の記述も見直してください。
