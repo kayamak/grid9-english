@@ -213,7 +213,8 @@ export default function PracticePage() {
                       </ObjectSelector>
                     )}
                   </div>
-                )}\n\n                {/* Verb and Sentence Pattern Selector Dropdowns - Only shown for Be verbs */}
+                )}
+                {/* Verb and Sentence Pattern Selector Dropdowns - Only shown for Be verbs */}
                 {state.verbType === 'be' && (
                   <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
                     <div className="flex gap-4">

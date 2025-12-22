@@ -1,6 +1,6 @@
 import { ICircleRepository } from '@/domain/circles/repositories/ICircleRepository';
 import { Circle } from '@/domain/circles/entities/Circle';
-import { prisma } from '../../lib/prisma';
+import { prisma } from '@/infrastructure/prisma/client';
 
 export class PrismaCircleRepository implements ICircleRepository {
   async save(circle: Circle): Promise<void> {
