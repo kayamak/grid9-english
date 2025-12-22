@@ -7,6 +7,24 @@ import { defineConfig } from "prisma/config";
 // Load environment variables from .env file
 config();
 
+import path from "path";
+
+const getDatabaseUrl = () => {
+  if (process.env.APP_ENV === 'staging') {
+    return `${process.env.TURSO_DATABASE_URL}?authToken=${process.env.TURSO_AUTH_TOKEN}`;
+  }
+  
+  const url = process.env.DATABASE_URL!;
+  if (url.startsWith('file:')) {
+    const dbPath = url.replace('file:', '');
+    const absolutePath = path.isAbsolute(dbPath)
+      ? dbPath
+      : path.join(process.cwd(), 'prisma', dbPath.replace(/^\.\//, ''));
+    return `file:${absolutePath}`;
+  }
+  return url;
+};
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
@@ -14,8 +32,6 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: process.env.APP_ENV === 'staging'
-      ? `${process.env.TURSO_DATABASE_URL}?authToken=${process.env.TURSO_AUTH_TOKEN}`
-      : process.env.DATABASE_URL!,
+    url: getDatabaseUrl(),
   },
 });

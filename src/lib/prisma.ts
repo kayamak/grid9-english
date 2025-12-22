@@ -3,12 +3,29 @@ import { PrismaLibSQL } from '@prisma/adapter-libsql';
 
 const globalForPrisma = global as unknown as { prisma_: PrismaClient };
 
-const url = process.env.APP_ENV === 'staging' ? process.env.TURSO_DATABASE_URL : process.env.DATABASE_URL;
-console.log("url=======>",url)
+import path from 'path';
+
+const url_raw = process.env.APP_ENV === 'staging' ? process.env.TURSO_DATABASE_URL : process.env.DATABASE_URL;
+console.log("url_raw=======>", url_raw)
+
+let url = url_raw;
+if (url?.startsWith('file:')) {
+  const dbPath = url.replace('file:', '');
+  const absolutePath = path.isAbsolute(dbPath)
+    ? dbPath
+    : path.join(process.cwd(), 'prisma', dbPath.replace(/^\.\//, ''));
+  url = `file:${absolutePath}`;
+}
+
 let prismaClient: PrismaClient;
 
 if (url?.startsWith('file:')) {
   prismaClient = new PrismaClient({
+    datasources: {
+      db: {
+        url,
+      },
+    },
     log: ['query'],
   });
 } else {

@@ -5,13 +5,30 @@ import { config } from 'dotenv';
 // Load environment variables
 config();
 
-const url = process.env.DATABASE_URL!;
+import path from 'path';
+
+const url_raw = process.env.DATABASE_URL!;
+let url = url_raw;
+
+if (url.startsWith('file:')) {
+  const dbPath = url.replace('file:', '');
+  const absolutePath = path.isAbsolute(dbPath)
+    ? dbPath
+    : path.join(process.cwd(), 'prisma', dbPath.replace(/^\.\//, ''));
+  url = `file:${absolutePath}`;
+}
 
 let prisma: PrismaClient;
 
 if (url.startsWith('file:')) {
-  console.log('Using local SQLite file (Standard Prisma Client)');
-  prisma = new PrismaClient();
+  console.log(`Using local SQLite file: ${url}`);
+  prisma = new PrismaClient({
+    datasources: {
+      db: {
+        url,
+      },
+    },
+  });
 } else {
   console.log('Using LibSQL adapter (Turso)');
   const adapter = new PrismaLibSQL({
