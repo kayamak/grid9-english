@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
@@ -12,10 +9,9 @@ datasource db {
 }
 
 model User {
-  id    String @id
-  name  String
-  type  String // "Normal" | "Premium"
-
+  id              String   @id
+  name            String
+  type            String
   ownedCircles    Circle[] @relation("CircleOwner")
   memberOfCircles Circle[] @relation("CircleMembers")
 }
@@ -23,10 +19,8 @@ model User {
 model Circle {
   id      String @id
   name    String
-  
   ownerId String
   owner   User   @relation("CircleOwner", fields: [ownerId], references: [id])
-  
   members User[] @relation("CircleMembers")
 }
 
@@ -34,12 +28,12 @@ model VerbWord {
   id              String  @id @default(cuid())
   value           String  @unique
   label           String
-  verbType        String  // "do" | "be"
-  sentencePattern String? // "SV" | "SVO" | "SVC" | null (for be verbs)
+  verbType        String
+  sentencePattern String?
   pastForm        String?
   thirdPersonForm String?
   sortOrder       Int
-  
+
   @@index([verbType, sentencePattern])
 }
 
@@ -47,9 +41,9 @@ model NounWord {
   id         String @id @default(cuid())
   value      String @unique
   label      String
-  numberForm String // "none" | "a" | "an" | "plural"
+  numberForm String
   sortOrder  Int
-  
+
   @@index([numberForm])
 }
 
@@ -68,8 +62,9 @@ model AdverbWord {
 }
 
 model SentenceDrill {
-  id        String @id @default(cuid())
-  english   String
-  japanese  String
-  sortOrder Int
+  id              String @id @default(cuid())
+  sentencePattern String
+  english         String
+  japanese        String
+  sortOrder       Int
 }

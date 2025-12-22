@@ -1,23 +1,29 @@
 export class SentenceDrill {
   private constructor(
     private readonly _id: string,
+    private readonly _sentencePattern: string,
     private readonly _english: string,
     private readonly _japanese: string,
     private readonly _sortOrder: number
   ) {
     if (!_id) throw new Error('SentenceDrill ID is required');
+    if (!_sentencePattern) {
+      throw new Error(`Sentence pattern is required for drill: ${_id}`);
+    }
     if (!_english) throw new Error('English sentence is required');
     if (!_japanese) throw new Error('Japanese sentence is required');
   }
 
   static create(props: {
     id: string;
+    sentencePattern: string;
     english: string;
     japanese: string;
     sortOrder: number;
   }): SentenceDrill {
     return new SentenceDrill(
       props.id,
+      props.sentencePattern,
       props.english,
       props.japanese,
       props.sortOrder
@@ -26,12 +32,14 @@ export class SentenceDrill {
 
   static reconstruct(props: {
     id: string;
+    sentencePattern: string;
     english: string;
     japanese: string;
     sortOrder: number;
   }): SentenceDrill {
     return new SentenceDrill(
       props.id,
+      props.sentencePattern,
       props.english,
       props.japanese,
       props.sortOrder
@@ -39,6 +47,7 @@ export class SentenceDrill {
   }
 
   get id(): string { return this._id; }
+  get sentencePattern(): string { return this._sentencePattern; }
   get english(): string { return this._english; }
   get japanese(): string { return this._japanese; }
   get sortOrder(): number { return this._sortOrder; }
@@ -46,6 +55,7 @@ export class SentenceDrill {
   toObject() {
     return {
       id: this._id,
+      sentencePattern: this._sentencePattern,
       english: this._english,
       japanese: this._japanese,
       sortOrder: this._sortOrder,

@@ -10,9 +10,10 @@ export class PrismaSentenceDrillRepository implements ISentenceDrillRepository {
       },
     });
 
-    return data.map((d: { id: string; english: string; japanese: string; sortOrder: number }) =>
+    return data.map((d: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }) =>
       SentenceDrill.reconstruct({
         id: d.id,
+        sentencePattern: d.sentencePattern,
         english: d.english,
         japanese: d.japanese,
         sortOrder: d.sortOrder,
