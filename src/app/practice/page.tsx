@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { NineKeyPanel } from '@/components/practice/NineKeyPanel';
-import { VerbTypeSelector } from '@/components/practice/VerbTypeSelector';
-import { FiveSentencePatternSelector } from '@/components/practice/FiveSentencePatternSelector';
-import { VerbSelector } from '@/components/practice/VerbSelector';
-import { ObjectSelector } from '@/components/practice/ObjectSelector';
-import { NounDeterminerSelector } from '@/components/practice/NounDeterminerSelector';
-import { ComplementSelector } from '@/components/practice/ComplementSelector';
+import { NineKeyPanel } from '@/features/practice/components/NineKeyPanel';
+import { VerbTypeSelector } from '@/features/practice/components/VerbTypeSelector';
+import { FiveSentencePatternSelector } from '@/features/practice/components/FiveSentencePatternSelector';
+import { VerbSelector } from '@/features/practice/components/VerbSelector';
+import { ObjectSelector } from '@/features/practice/components/ObjectSelector';
+import { NounDeterminerSelector } from '@/features/practice/components/NounDeterminerSelector';
+import { ComplementSelector } from '@/features/practice/components/ComplementSelector';
 import { GeneratePatternUseCase } from '@/features/practice/actions/GeneratePatternUseCase';
 import {
   SentencePattern,
