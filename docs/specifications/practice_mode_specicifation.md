@@ -131,6 +131,32 @@ UIとユーザーインタラクション。
 24. **You will be fine.** / あなたは元気になるでしょう。
 25. **He was sad.** / 彼は悲しかった。
 
+#### 7.2.3. SVOの初期データ
+1. **You had a dog.** / あなたは犬を飼っていました。
+2. **You will know the story.** / あなたは物語を知るでしょう。
+3. **I don't know the soccer player.** / 私はサッカー選手を知りません。
+4. **Will he get a gold medal?** / 彼は金メダルを取るでしょうか？
+5. **I will get my passport.** / 私は自分のパスポートを取得します。
+6. **He will make a chair.** / 彼は椅子を作るつもりです。
+7. **My son caught butterflies.** / 彼の息子は蝶を捕まえました。
+8. **We love our parents.** / 私たちは自分たちの両親を愛しています。
+9. **Do you like fruit?** / あなたはフルーツが好きですか？
+10. **I will take the key.** / 私は鍵を持っていくつもりです。
+11. **Will we take a taxi?** / 私たちはタクシーで行くのでしょうか？
+12. **Did they see the airplane?** / 彼らには空飛ぶ機を見たのですか？
+13. **Did you hear the sound?** / 彼らにはその音が聞こえましたか？
+14. **They don't play soccer.** / 彼らはサッカーをやりません。
+15. **Will you play the violin?** / あなたにはバイオリンを演奏するつもりですか？
+16. **We won't sing a song.** / 私たちは歌を歌うつもりはありません。
+17. **Did you study English?** / あなたは英語を勉強しましたか？
+18. **He doesn't teach English.** / 彼は英語を教えていません。
+19. **He reads a newspaper.** / 彼は新聞を読みます。
+20. **I wrote a letter.** / 私は手紙を書きました。
+21. **You don't drink coffee.** / あなたはコーヒーを飲みません。
+22. **He eats pizza.** / 彼はピザを食べます。
+23. **He won't cook dinner.** / 彼は夕食を作るつもりはありません。
+24. **I drove my car.** / 私は車を運転しました。
+
 ### 7.3 学習フローと操作 (Integrated Grid Mode)
 文章ドリルは、メインのパターン練習画面 (`/practice`) に統合されます。
 
