@@ -52,7 +52,7 @@ export async function GET() {
         { sentencePattern: 'DO_SVO', english: 'Will he get a gold medal?', japanese: '彼は金メダルを取るでしょうか？', sortOrder: 43 },
         { sentencePattern: 'DO_SVO', english: 'I will get my passport.', japanese: '私は自分のパスポートを取得します。', sortOrder: 44 },
         { sentencePattern: 'DO_SVO', english: 'He will make a chair.', japanese: '彼は椅子を作るつもりです。', sortOrder: 45 },
-        { sentencePattern: 'DO_SVO', english: 'My son caught butterflies.', japanese: '彼の息子は蝶を捕まえました。', sortOrder: 46 },
+        { sentencePattern: 'DO_SVO', english: 'He caught butterflies.', japanese: '彼は蝶を捕まえました。', sortOrder: 46 },
         { sentencePattern: 'DO_SVO', english: 'We love our parents.', japanese: '私たちは自分たちの両親を愛しています。', sortOrder: 47 },
         { sentencePattern: 'DO_SVO', english: 'Do you like fruit?', japanese: 'あなたはフルーツが好きですか？', sortOrder: 48 },
         { sentencePattern: 'DO_SVO', english: 'I will take the key.', japanese: '私は鍵を持っていくつもりです。', sortOrder: 49 },

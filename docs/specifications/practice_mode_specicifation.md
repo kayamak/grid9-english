@@ -138,7 +138,7 @@ UIとユーザーインタラクション。
 4. **Will he get a gold medal?** / 彼は金メダルを取るでしょうか？
 5. **I will get my passport.** / 私は自分のパスポートを取得します。
 6. **He will make a chair.** / 彼は椅子を作るつもりです。
-7. **My son caught butterflies.** / 彼の息子は蝶を捕まえました。
+7. **He caught butterflies.** / 彼の息子は蝶を捕まえました。
 8. **We love our parents.** / 私たちは自分たちの両親を愛しています。
 9. **Do you like fruit?** / あなたはフルーツが好きですか？
 10. **I will take the key.** / 私は鍵を持っていくつもりです。
