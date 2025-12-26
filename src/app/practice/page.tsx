@@ -57,7 +57,6 @@ function PracticeContent() {
   const [drills, setDrills] = useState<any[]>([]);
   const [isDrillMode, setIsDrillMode] = useState(initialMode);
   const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
-  const [isQuestionEnglish, setIsQuestionEnglish] = useState(true);
 
   // Fetch noun words from Repository
   useEffect(() => {
@@ -188,18 +187,6 @@ function PracticeContent() {
         {isDrillMode && currentDrill && (
           <div className="mb-8 w-full flex flex-col items-center">
             <div className="bg-white/80 backdrop-blur-sm border border-indigo-100 p-6 rounded-2xl shadow-sm w-full max-w-2xl flex flex-col items-center relative gap-4">
-              <div className="absolute top-4 right-4 flex gap-2">
-                 <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => setIsQuestionEnglish(!isQuestionEnglish)}
-                    className="text-xs text-indigo-400 hover:text-indigo-600 flex gap-1 items-center"
-                  >
-                    <ArrowRightLeft className="w-3 h-3" />
-                    {isQuestionEnglish ? 'English' : 'Japanese'}
-                  </Button>
-              </div>
-
               <div className="flex flex-col items-center">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold">Current Challenge ({currentDrillIndex + 1}/{drills.length})</p>
                 {selectedPattern && (
@@ -208,10 +195,15 @@ function PracticeContent() {
                   </span>
                 )}
               </div>
-              
-              <h2 className="text-3xl font-serif font-bold text-slate-800 text-center px-8">
-                {isQuestionEnglish ? currentDrill.english : currentDrill.japanese}
-              </h2>
+
+              <div className="flex flex-col items-center">
+                <h2 className="text-3xl font-serif font-bold text-slate-800 text-center px-8">
+                  {currentDrill.english}
+                </h2>
+                <p className="text-lg text-slate-500 font-medium text-center mt-2 px-8 border-t border-slate-100 pt-2 w-full max-w-sm">
+                  {currentDrill.japanese}
+                </p>
+              </div>
 
               <div className="flex gap-4 mt-2">
                 <Button 
