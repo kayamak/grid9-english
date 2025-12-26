@@ -205,12 +205,19 @@ async function main() {
     { value: 'homework', label: 'homework (宿題)', numberForm: 'none', sortOrder: 48 },
     // Occupations (for Be verb complements)
     { value: 'carpenter', label: 'carpenter (大工)', numberForm: 'a', sortOrder: 49 },
-    { value: 'hairdresser', label: 'hairdresser (美容師)', numberForm: 'a', sortOrder: 50 },
-    { value: 'nurse', label: 'nurse (看護師)', numberForm: 'a', sortOrder: 51 },
-    { value: 'teacher', label: 'teacher (先生)', numberForm: 'a', sortOrder: 52 },
-    { value: 'chef', label: 'chef (シェフ)', numberForm: 'a', sortOrder: 53 },
-    { value: 'farmer', label: 'farmer (農家)', numberForm: 'a', sortOrder: 54 },
-    { value: 'photographer', label: 'photographer (写真家)', numberForm: 'a', sortOrder: 55 },
+    { value: 'carpenters', label: 'carpenters (大工)', numberForm: 'plural', sortOrder: 50 },
+    { value: 'hairdresser', label: 'hairdresser (美容師)', numberForm: 'a', sortOrder: 51 },
+    { value: 'hairdressers', label: 'hairdressers (美容師)', numberForm: 'plural', sortOrder: 52 },
+    { value: 'nurse', label: 'nurse (看護師)', numberForm: 'a', sortOrder: 53 },
+    { value: 'nurses', label: 'nurses (看護師)', numberForm: 'plural', sortOrder: 54 },
+    { value: 'teacher', label: 'teacher (先生)', numberForm: 'a', sortOrder: 55 },
+    { value: 'teachers', label: 'teachers (先生)', numberForm: 'plural', sortOrder: 56 },
+    { value: 'chef', label: 'chef (シェフ)', numberForm: 'a', sortOrder: 57 },
+    { value: 'chefs', label: 'chefs (シェフ)', numberForm: 'plural', sortOrder: 58 },
+    { value: 'farmer', label: 'farmer (農家)', numberForm: 'a', sortOrder: 59 },
+    { value: 'farmers', label: 'farmers (農家)', numberForm: 'plural', sortOrder: 60 },
+    { value: 'photographer', label: 'photographer (写真家)', numberForm: 'a', sortOrder: 61 },
+    { value: 'photographers', label: 'photographers (写真家)', numberForm: 'plural', sortOrder: 62 },
   ];
 
   for (const noun of nounWords) {
