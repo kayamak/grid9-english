@@ -241,11 +241,12 @@ async function main() {
 
   // Adjective Words - migrated from Be verb complements
   const adjectiveWords = [
-    { value: 'happy', label: 'happy (幸せ)', sortOrder: 1 },
-    { value: 'sleepy', label: 'sleepy (眠い)', sortOrder: 2 },
-    { value: 'angry', label: 'angry (怒った)', sortOrder: 3 },
-    { value: 'tired', label: 'tired (疲れた)', sortOrder: 4 },
-    { value: 'fine', label: 'fine (元気)', sortOrder: 5 },
+    { value: 'angry', label: 'angry (怒った)', sortOrder: 1 },
+    { value: 'fine', label: 'fine (元気)', sortOrder: 2 },
+    { value: 'happy', label: 'happy (幸せ)', sortOrder: 3 },
+    { value: 'sad', label: 'sad (悲しい)', sortOrder: 4 },
+    { value: 'sleepy', label: 'sleepy (眠い)', sortOrder: 5 },
+    { value: 'tired', label: 'tired (疲れた)', sortOrder: 6 },
   ];
 
   for (const adjective of adjectiveWords) {
