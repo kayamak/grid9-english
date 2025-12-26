@@ -22,9 +22,10 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
   // When 'the', possessive determiners, or 'no_article' are selected, show all objects except 'something'
   // since these can be used with any noun (singular, plural, countable, uncountable)
   const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
-  const filteredOptions = showAllExceptSomething
+  const filteredOptions = (showAllExceptSomething
     ? nounWords.filter(option => option.value !== 'something')
-    : nounWords.filter(option => option.numberForm === numberForm);
+    : nounWords.filter(option => option.numberForm === numberForm))
+    .sort((a, b) => a.value.localeCompare(b.value));
   
   // Auto-select first option if current selection is not in filtered list
   React.useEffect(() => {

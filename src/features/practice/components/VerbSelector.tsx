@@ -43,11 +43,13 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
 
         const verbWords: VerbWord[] = await response.json();
         
-        // Transform to options format
-        const transformedOptions = verbWords.map(vw => ({
-          value: vw.value as Verb,
-          label: vw.label,
-        }));
+        // Transform to options format and sort alphabetically
+        const transformedOptions = verbWords
+          .map(vw => ({
+            value: vw.value as Verb,
+            label: vw.label,
+          }))
+          .sort((a, b) => a.value.localeCompare(b.value));
         
         setOptions(transformedOptions);
         

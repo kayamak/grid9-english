@@ -65,6 +65,9 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
     }
   }
   
+  // Sort options alphabetically by value
+  options.sort((a, b) => a.value.localeCompare(b.value));
+  
   // Auto-select first option if current selection is not in the list
   React.useEffect(() => {
     const isCurrentSelectionValid = options.some(option => option.value === selectedComplement);
