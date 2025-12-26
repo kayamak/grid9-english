@@ -55,16 +55,17 @@ src/
 │
 ├── domain/               # Domain Layer (Pure logic, organized by subdomain)
 │   ├── shared/           # 共通ドメイン
-│   │   ├── entities/     # (Word.ts等 - private constructor + factory)
-│   │   ├── vo/           # Value Objects (Immutable)
-│   │   └── repositories/ # Interface definition (IWordRepository.ts)
+│   │   ├── entities/     # (Word.ts等)
+│   │   ├── vo/           # Value Objects
+│   │   └── repositories/ # Interface definition
 │   ├── circles/
 │   │   ├── entities/     # Circle.ts
 │   │   └── repositories/ # ICircleRepository.ts
 │   └── practice/
+│       ├── entities/     # SentenceDrill.ts
 │       ├── vo/           # SentencePattern.ts
-│       ├── services/     # Domain Services (複雑な計算・生成ロジック)
-│       └── spec/         # Specification Pattern (PublishablePatternSpec.ts等)
+│       ├── services/     # Domain Services (PatternGenerator.ts)
+│       └── spec/         # Specification Pattern (SentencePatternSpecification.ts)
 │
 ├── infrastructure/       # Infrastructure Layer (Technical details)
 │   ├── prisma/           # Prisma client & Schema logic
@@ -129,3 +130,4 @@ src/
 
 ## 7. 更新履歴
 - 2025-12-22: Zenn記事に基づき全体構成を刷新。ディレクトリ構成とドメイン実装原則を詳細化。
+- 2025-12-26: ソースコードの最新状態（SentenceDrill、活用形DB化、UI改善等）を反映。

@@ -22,22 +22,24 @@
 ビジネスルールの核心です。`src/domain/practice` および `src/domain/shared` を使用します。
 
 ### 3.1 SentencePattern (Value Object)
-- **場所**: `src/domain/shared/vo/sentence-pattern.ts`
+- **場所**: `src/domain/practice/vo/SentencePattern.ts`
 - **振る舞い**:
-    - `rotateSubject()`: 主語を1→11→2→22のように回転させる。
+    - `rotateSubject()`: 主語を単数⇔複数で切り替える（I ↔ We, You ↔ You, He ↔ They）。
     - `changeTense()`: 時制を切り替える。
-    - **自己バリデーション**: `VerbType` が `be` の場合に不適切な `pattern` が設定されないよう、インスタンス生成時にチェックする。
+    - **自己バリデーション**: `VerbType` が `be` の場合に不適切な `pattern` が設定されないよう、`SentencePatternSpecification` を使用して精度高くチェックする。
 
 ### 3.2 Word (Entity)
-- **場所**: `src/domain/shared/entities/word.ts`
+- **場所**: `src/domain/shared/entities/Word.ts`
 - **特徴**:
-    - 単語のスペルだけでなく、活用形（Base, Past, S-form等）をカプセル化。
-    - 外部からの意図せぬ変更を防ぐため、活用形リストの取得時は「防御的コピー」を徹底する。
+    - 単語のスペルだけでなく、活用形（Past, ThirdPersonForm等）をカプセル化。
+    - データベースの `VerbWord` テーブルから取得した活用形を優先し、存在しない場合は規則変化（-ed, -s等）をフォールバックとして適用する。
+    - 外部からの意図せぬ変更を防ぐため、`private` フィールドと `get` アクセサを使用する。
 
 ### 3.3 Domain Services
 - **PatternGenerator**: 
-    - **場所**: `src/domain/practice/services/pattern-generator.ts`
+    - **場所**: `src/domain/practice/services/PatternGenerator.ts`
     - **責務**: 特定の `SentencePattern` と `Word` を受け取り、三単現や未来形（will）などの英文法ルールを適用して、最終的な出力文字列（`Subject + Verb + ...`）を生成する。
+    - **活用ロジック**: `VerbWord` に格納された `pastForm` や `thirdPersonForm` を使用。
 
 ---
 
@@ -51,7 +53,8 @@ UIとユーザーインタラクション。
 ### 4.2 Feature Components (`src/features/practice/components/`)
 - **Grid9**: 3x3のグリッド。各マスは個別の Client Component (`'use client'`)。
 - **ResultDisplay**: 生成された英文を表示するコンポーネント。
-- **状態管理**: マスのクリックイベントは Server Actions (`actions/`) を呼び出し、サーバーサイドで計算された結果を再レンダリングする（Next.js 15 の Streaming/Partial Prerendering 等を考慮）。
+- **Selector Components**: 動詞や目的語の選択。選択肢は `value` に基づいてアルファベット順にソートされる。
+- **状態管理**: マスのクリックイベントは Server Actions (`actions/`) を呼び出し、サーバーサイドで計算された結果を再レンダリングする。
 
 ---
 
@@ -79,8 +82,8 @@ UIとユーザーインタラクション。
 
 | カラム名 | 型 | 説明 |
 | :--- | :--- | :--- |
-| id | String | CUID による一意識別子 |
-| sentencePattern | String | "DO_SV" | "DO_SVO" | "DO_SVC" | "BE_SV" | "BE_SVC" |
+| id | String | CUID または `drill-{sortOrder}` 形式の識別子 |
+| sentencePattern | String | "DO_SV" | "DO_SVO" | "BE_SVC" |
 | english | String | 英文（問題・回答のいずれかとして使用） |
 | japanese | String | 日本語訳（問題・回答のいずれかとして使用） |
 | sortOrder | Int | 出題順序を制御するための値 |
@@ -138,7 +141,7 @@ UIとユーザーインタラクション。
 4. **Will he get a gold medal?** / 彼は金メダルを取るでしょうか？
 5. **I will get my passport.** / 私は自分のパスポートを取得します。
 6. **He will make a chair.** / 彼は椅子を作るつもりです。
-7. **He caught butterflies.** / 彼の息子は蝶を捕まえました。
+7. **He caught butterflies.** / 彼は蝶を捕まえました。
 8. **We love our parents.** / 私たちは自分たちの両親を愛しています。
 9. **Do you like fruit?** / あなたはフルーツが好きですか？
 10. **I will take the key.** / 私は鍵を持っていくつもりです。
