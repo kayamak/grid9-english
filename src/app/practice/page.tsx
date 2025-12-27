@@ -276,7 +276,9 @@ function PracticeContent() {
             <Link href="/" className="text-gray-600 hover:text-gray-900 mb-4 inline-block font-medium">
                 &larr; Return to Dashboard
             </Link>
-          <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">Pattern Practice</h1>
+          <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">
+            {isQuestMode ? 'Drill Quest' : 'Pattern Practice'}
+          </h1>
           
         </header>
 
