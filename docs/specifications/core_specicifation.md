@@ -115,6 +115,7 @@ src/
 | **主語** | Subject | I/You/He/She/It/We/They など。 |
 | **時制** | Tense | Past/Present/Future の区分。 |
 | **活用形** | Form | 動詞の変化（Original/Past/PastParticiple/S-Form/Ing-Form）。 |
+| **Drill Quest** | Drill Quest | RPG要素を取り入れた段階的な学習モード。 |
 
 ---
 
@@ -131,3 +132,4 @@ src/
 ## 7. 更新履歴
 - 2025-12-22: Zenn記事に基づき全体構成を刷新。ディレクトリ構成とドメイン実装原則を詳細化。
 - 2025-12-26: ソースコードの最新状態（SentenceDrill、活用形DB化、UI改善等）を反映。
+- 2025-12-27: 「Drill Quest」の仕様を追加。
