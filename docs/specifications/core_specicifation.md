@@ -17,6 +17,8 @@ Next.js 15とDDD（ドメイン駆動設計）をベースとした「堅牢な�
     - Next.js 15のApp Router規約に従う。
     - Routing、Page Component、共通UIコンポーネントを担当。
     - ビジネスロジックは持たず、Application層（Server Actions）を呼び出す。
+    - **UI言語**: 日本語を基本とし、学習対象の英文のみ英語で表示する。
+
 - **Application Layer (`src/features/*/actions`)**:
     - ユースケースをServer Actionsとして実装。
     - 入力バリデーション（Zod）、ドメインオブジェクトの組み立て、リポジトリへの永続化依頼を行う。
@@ -115,7 +117,11 @@ src/
 | **主語** | Subject | I/You/He/She/It/We/They など。 |
 | **時制** | Tense | Past/Present/Future の区分。 |
 | **活用形** | Form | 動詞の変化（Original/Past/PastParticiple/S-Form/Ing-Form）。 |
-| **Drill Quest** | Drill Quest | RPG要素を取り入れた段階的な学習モード。 |
+| **Drill Quest** | Drill Quest | RPG要素を取り入れた段階的な学習モード。レベルアップ、制限時間、ノルマ(8/10)がある。 |
+| **文章ドリル** | Sentence Drill | 特定のターゲットパターンに基づいた英文構築練習モード。 |
+| **自由練習** | Free Practice | 制約なしに英文を構築できるモード。 |
+| **正規化判定** | Normalization | 正誤判定時に大文字小文字の区別をなくし、句読点（.,?!）を除去して比較するロジック。 |
+| **時限式** | Timer | クエストモードで適用される、1問ごとの制限時間。 |
 
 ---
 

@@ -16,8 +16,7 @@ export async function getDrillQuestQuestions(level: number) {
   // Level mapping based on spec
   if ([1, 4, 7].includes(level)) pattern = 'DO_SV';
   else if ([2, 5, 8].includes(level)) pattern = 'DO_SVO';
-  else if (level === 3) pattern = 'BE_SVC';
-  else if ([6, 9].includes(level)) pattern = 'DO_SVC';
+  else if ([3, 6, 9].includes(level)) pattern = 'BE_SVC';
 
   const drills = await repository.findByPattern(pattern);
   
