@@ -11,8 +11,8 @@ interface NineKeyPanelProps {
 }
 
 const RowContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="flex items-center bg-teal-100 p-2 md:p-4 rounded-2xl w-full max-w-xl shadow-inner border border-teal-200">
-      <div className="w-16 md:w-24 font-bold text-teal-800 text-[10px] md:text-sm mr-2 md:mr-4 shrink-0 text-right pr-2 md:pr-4 border-r-2 border-teal-300">
+  <div className="flex items-center dq-window w-full max-w-xl py-2 px-4 shadow-lg">
+      <div className="w-16 md:w-24 font-normal text-yellow-100 text-[10px] md:text-sm mr-2 md:mr-4 shrink-0 text-right pr-2 md:pr-4 border-r-2 border-white/10">
           {title}
       </div>
       <div className="flex space-x-2 md:space-x-4 grow justify-center">
@@ -30,14 +30,14 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
   onTenseChange,
 }) => {
   const getCellClass = (isActive: boolean) =>
-    `relative group flex items-center justify-center aspect-square text-xl md:text-3xl font-bold cursor-pointer transition-all border-2 md:border-4 rounded-lg md:rounded-xl select-none w-16 h-16 md:w-24 md:h-24 shadow-sm ${
+    `relative group flex items-center justify-center aspect-square text-xl md:text-3xl font-normal cursor-pointer transition-all border-2 md:border-4 select-none w-14 h-14 md:w-20 md:h-20 shadow-md ${
       isActive
-        ? 'bg-yellow-400 border-orange-500 text-gray-900 scale-105 shadow-md z-10'
-        : 'bg-yellow-200 border-yellow-300 text-gray-700 hover:bg-yellow-300'
+        ? 'bg-yellow-400 text-[#000d60] border-white scale-110 z-10 shadow-[0_0_15px_rgba(255,255,255,0.5)]'
+        : 'bg-[#001da0] text-white border-white/30 hover:border-white/60 hover:bg-[#0025c0]'
     }`;
 
   const renderTooltip = (text: string) => (
-    <span className="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-black/80 text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none z-20">
+    <span className="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap dq-window !bg-black !p-1 text-white text-xs shadow-xl pointer-events-none z-20">
       {text}
     </span>
   );
@@ -53,9 +53,9 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full items-center">
+    <div className="flex flex-col gap-4 w-full items-center">
       {/* Row 1: Sentence Type */}
-      <RowContainer title="文の種類">
+      <RowContainer title="しゅるい">
           <div
             className={getCellClass(sentenceType === 'negative')}
             onClick={() => onSentenceTypeChange('negative')}
@@ -80,7 +80,7 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
       </RowContainer>
 
       {/* Row 2: Subject */}
-      <RowContainer title="主語">
+      <RowContainer title="しゅご">
           <div
             className={getCellClass(subject === 'second' || subject === 'second_p')}
             onClick={() => onSubjectChange(subject === 'second' ? 'second_p' : 'second')}
@@ -105,7 +105,7 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
       </RowContainer>
       
       {/* Row 3: Tense */}
-      <RowContainer title="時制">
+      <RowContainer title="じせい">
           <div
             className={getCellClass(tense === 'past')}
             onClick={() => onTenseChange('past')}

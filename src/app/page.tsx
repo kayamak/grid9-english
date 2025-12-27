@@ -5,85 +5,57 @@ export default async function Home() {
   const patterns = await getUniquePatterns();
 
   return (
-    <main className="min-h-screen bg-[#f8f9fa] p-8 md:p-16 font-sans">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 md:mb-16">
-          <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">
-            GRID<span className="text-blue-600">9</span> ENGLISH
+    <main className="min-h-screen bg-[#000840] flex flex-col items-center justify-center p-4 md:p-8 font-dot">
+      <div className="w-full max-w-4xl space-y-8">
+        
+        {/* Title Window */}
+        <header className="dq-window-fancy text-center py-8">
+          <h1 className="text-4xl md:text-6xl font-normal tracking-widest text-white mb-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+            GRID９ ENGLISH
           </h1>
-          <p className="text-lg md:text-xl text-slate-500 font-medium whitespace-pre-wrap">視覚的なパターンで英語の文章構造をマスターする。</p>
+          <p className="text-lg md:text-xl text-yellow-200 typing-text">視覚的なパターンで英語をマスターせよ！</p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {/* Entry: Free Practice */}
-          <section>
-            <div className="flex justify-between items-end mb-6">
-              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">自由練習</h2>
-              <Link 
-                href="/practice?mode=free" 
-                className="text-blue-600 font-bold hover:text-blue-700 transition-colors flex items-center gap-1 group text-sm"
-              >
-                開始 <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Main Menu Window */}
+          <section className="dq-window">
+            <h2 className="text-2xl mb-6 border-b-2 border-white/20 pb-2 text-yellow-400">コマンド</h2>
+            <nav className="flex flex-col gap-4">
+              <Link href="/practice?mode=free" className="dq-menu-item text-xl text-white">
+                <span>じゆうトレーニング</span>
               </Link>
-            </div>
-            <div className="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full">
-              <p className="text-slate-600 leading-relaxed mb-4 text-sm">
-                3x3のグリッドシステムを使って、自由に英語の文章構造を探求しましょう。決まった課題はなく、自由な実験の場です。
-              </p>
-            </div>
+              <Link href="/practice?mode=drill" className="dq-menu-item text-xl text-white">
+                <span>ぶんしょうドリル</span>
+              </Link>
+              <Link href="/practice?mode=quest" className="dq-menu-item text-xl text-white">
+                <span>ドリルクエスト</span>
+              </Link>
+            </nav>
           </section>
 
-          {/* Entry: Sentence Drill Mode */}
-          <section>
-            <div className="flex justify-between items-end mb-6">
-              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">文章ドリル</h2>
-              <Link 
-                href="/practice?mode=drill" 
-                className="text-indigo-600 font-bold hover:text-indigo-700 transition-colors flex items-center gap-1 group text-sm"
-              >
-                全ドリル <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
-              </Link>
+          {/* Info/Patterns Window */}
+          <section className="dq-window">
+            <h2 className="text-2xl mb-6 border-b-2 border-white/20 pb-2 text-yellow-400">じゅもん（パターン）</h2>
+            <div className="grid grid-cols-2 gap-2">
+              {patterns.map((pattern) => (
+                <Link
+                  key={pattern}
+                  href={`/practice?mode=drill&pattern=${pattern}`}
+                  className="dq-menu-item text-lg text-white"
+                >
+                  {pattern}
+                </Link>
+              ))}
             </div>
-            <div className="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full flex flex-col">
-              <p className="text-slate-600 leading-relaxed mb-4 text-sm">
-                ガイド付きの課題で核心的なパターンをマスターしましょう。特定の文章を組み立てて、ドリルセットを完了させます。
-              </p>
-              
-              <div className="mt-auto space-y-4">
-                <p className="text-[10px] font-black text-indigo-300 uppercase tracking-widest">パターン</p>
-                <div className="flex flex-wrap gap-1">
-                  {patterns.map((pattern) => (
-                    <Link
-                      key={pattern}
-                      href={`/practice?mode=drill&pattern=${pattern}`}
-                      className="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-[10px] font-bold rounded-lg transition-all"
-                    >
-                      {pattern}
-                    </Link>
-                  ))}
-                </div>
-
-              </div>
-            </div>
+            {patterns.length === 0 && (
+              <p className="text-white/40">まだ　なにも　おぼえていない！</p>
+            )}
           </section>
+        </div>
 
-          {/* Entry: Drill Quest Mode */}
-          <section>
-            <div className="flex justify-between items-end mb-6">
-              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">ドリルクエスト</h2>
-              <Link 
-                href="/practice?mode=quest" 
-                className="text-amber-600 font-bold hover:text-amber-700 transition-colors flex items-center gap-1 group text-sm"
-              >
-                クエスト開始 <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
-              </Link>
-            </div>
-            <div className="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full flex flex-col">
-              <p className="text-slate-600 leading-relaxed mb-4 text-sm">
-                RPGスタイルの旅に出かけましょう。プレッシャーの中で課題をクリアしてレベルアップ。どこまで到達できるでしょうか？
-              </p>
-            </div>
-          </section>
+        {/* Message Window (Lower) */}
+        <div className="dq-window h-24 flex items-center px-8 border-yellow-400">
+          <p className="text-xl animate-pulse text-white">▼ ぼうけんの　じゅんびは　いいかな？</p>
         </div>
       </div>
     </main>

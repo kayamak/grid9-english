@@ -60,15 +60,15 @@ export const NounDeterminerSelector: React.FC<NounDeterminerSelectorProps> = ({
         value={selectedNumberForm}
         onChange={(e) => onChange(e.target.value as NumberForm)}
         disabled={disabled}
-        className="block appearance-none bg-white border border-gray-300 text-gray-700 py-2 md:py-3 px-2 md:px-3 pr-6 md:pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-base md:text-lg disabled:opacity-50 disabled:bg-gray-100 min-w-0"
+        className="dq-button !py-2 !px-2 appearance-none !pr-8 min-w-0 disabled:opacity-30"
       >
         {(isAdjective ? SVC_COMPLEMENT_OPTIONS : NOUN_DETERMINER_OPTIONS).map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} className="bg-blue-900 text-white">
             {option.label}
           </option>
         ))}
       </select>
-      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
         <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
           <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
         </svg>

@@ -284,49 +284,46 @@ function PracticeContent() {
   };
 
   return (
-    <main className="min-h-screen bg-[#e3ded1] flex flex-col items-center p-4 md:p-8 font-sans">
-      {/* Background: realistic desk color/texture */}
-      
+    <main className="min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white">
       <div className="w-full max-w-4xl">
-        <header className="mb-8 md:mb-12 text-center">
-            <Link href="/" className="text-gray-600 hover:text-gray-900 mb-4 inline-block font-medium text-sm md:text-base">
-                &larr; Return to Dashboard
-            </Link>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight">
-            {isQuestMode ? 'Drill Quest' : 'Pattern Practice'}
+        <header className="mb-8 md:mb-12 flex justify-between items-center dq-window-fancy">
+          <Link href="/" className="dq-button !py-1 !px-4 text-sm">
+            &larr; もどる
+          </Link>
+          <h1 className="text-2xl md:text-3xl font-normal text-white">
+            {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
           </h1>
+          <div className="w-20"></div> {/* Spacer */}
         </header>
 
         {isDrillMode && !isQuestMode && currentDrill && (
           <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
-            <div className="bg-white/80 backdrop-blur-sm border border-indigo-100 p-4 md:p-6 rounded-2xl shadow-sm w-full max-w-2xl flex flex-col items-center relative gap-4">
+            <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-4">
               <div className="flex flex-col items-center">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold">Current Challenge ({currentDrillIndex + 1}/{drills.length})</p>
+                <p className="text-sm text-yellow-200">じょうほう: {currentDrillIndex + 1} / {drills.length}</p>
                 {selectedPattern && (
-                  <span className="mt-1 px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-black rounded uppercase tracking-wider border border-indigo-100">
-                    {selectedPattern}
+                  <span className="text-yellow-400 text-sm">
+                    [{selectedPattern}]
                   </span>
                 )}
               </div>
 
-              <div className="flex flex-col items-center">
-                <h2 className="text-2xl md:text-3xl font-serif font-bold text-slate-800 text-center px-4 md:px-8">
+              <div className="flex flex-col items-center border-t-2 border-white/20 pt-4 w-full">
+                <h2 className="text-2xl md:text-3xl text-center px-4 text-white">
                   {currentDrill.english}
                 </h2>
-                <p className="text-base md:text-lg text-slate-500 font-medium text-center mt-2 px-4 md:px-8 border-t border-slate-100 pt-2 w-full max-w-sm">
+                <p className="text-lg text-white/80 text-center mt-2 px-4 italic">
                   {currentDrill.japanese}
                 </p>
               </div>
 
               <div className="flex gap-4 mt-2">
-                <Button 
-                   variant="outline" 
-                   size="sm" 
+                <button 
                    onClick={handleNextDrill}
-                   className="rounded-full border-indigo-100 hover:bg-indigo-50 text-indigo-400"
+                   className="dq-button text-sm"
                 >
-                  Skip <StepForward className="ml-2 w-4 h-4" />
-                </Button>
+                  にげる (Skip)
+                </button>
               </div>
             </div>
           </div>
@@ -334,75 +331,67 @@ function PracticeContent() {
 
         {isQuestMode && currentDrill && questStatus === 'playing' && (
           <div className="mb-8 w-full flex flex-col items-center">
-            <div className="bg-white/90 backdrop-blur-md border-b-4 border-amber-500 p-6 rounded-3xl shadow-xl w-full max-w-2xl flex flex-col items-center relative gap-6 overflow-hidden">
+            <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-6 overflow-hidden">
               {/* Timer Bar */}
-              <div className="absolute top-0 left-0 h-1.5 bg-amber-500 transition-all duration-1000" style={{ width: `${(timeLeft / (currentLevel < 4 ? 30 : 30 - currentLevel * 2)) * 100}%` }}></div>
+              <div className="absolute top-0 left-0 h-2 bg-yellow-400 transition-all duration-1000" style={{ width: `${(timeLeft / (currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : 30 - currentLevel * 2))) * 100}%` }}></div>
               
-              <div className="w-full flex justify-between items-center px-4">
+              <div className="w-full flex justify-between items-center px-4 mt-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-amber-600 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg transform rotate-3">
+                  <div className="dq-window bg-black px-3 py-1 text-white font-normal text-xl">
                     Lv{currentLevel}
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest leading-none">Quest Progress</p>
-                    <p className="text-sm font-bold text-slate-700">{currentDrillIndex + 1} / {drills.length}</p>
+                    <p className="text-xs text-white/60">しんちょく</p>
+                    <p className="text-sm">{currentDrillIndex + 1} / {drills.length}</p>
                   </div>
                 </div>
 
-                <div className={`flex flex-col items-end ${timeLeft <= 5 ? 'animate-pulse text-red-600' : 'text-slate-700'}`}>
+                <div className={`flex flex-col items-end ${timeLeft <= 5 ? 'animate-pulse text-red-500' : 'text-white'}`}>
                   <div className="flex items-center gap-2">
-                    <Timer className={`w-5 h-5 ${timeLeft <= 5 ? 'text-red-500' : 'text-amber-500'}`} />
-                    <span className="text-2xl font-black tabular-nums">{timeLeft}s</span>
+                    <Timer className={`w-5 h-5 ${timeLeft <= 5 ? 'text-red-500' : 'text-yellow-400'}`} />
+                    <span className="text-2xl font-normal tabular-nums">{timeLeft}びょう</span>
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-widest opacity-50">Remaining</p>
                 </div>
               </div>
 
-              <div className="flex flex-col items-center py-4 bg-slate-50/50 w-full rounded-2xl border border-slate-100">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Translate to English</p>
-                <h2 className="text-2xl md:text-3xl font-serif font-bold text-slate-800 text-center px-4 md:px-8">
+              <div className="flex flex-col items-center py-6 bg-black/40 w-full border-y-2 border-white/20">
+                <p className="text-sm text-white/60 mb-2">えいごに　なおせ！</p>
+                <h2 className="text-2xl md:text-3xl font-normal text-center px-4 md:px-8">
                   {currentDrill.japanese}
                 </h2>
-                {/* English is hidden in quest mode until correct or timeup? 
-                    Actually, usually in drills we show Japanese and ask to build English. 
-                    In the current drill mode, it shows BOTH. 
-                    Spec says "English sentences as problems", but usually it's Japanese -> build English.
-                    Wait, current drill mode shows English AND Japanese.
-                    Let's hide English for Quest Mode to make it a challenge.
-                */}
                 {(isCorrect || timeLeft === 0) && (
-                   <p className="mt-4 text-xl font-serif font-bold text-amber-600 animate-in fade-in slide-in-from-top-4 duration-500">
+                   <p className="mt-4 text-xl text-yellow-400 animate-in fade-in slide-in-from-top-4 duration-500">
                      {currentDrill.english}
                    </p>
                 )}
               </div>
 
               <div className="w-full flex justify-between items-center px-4">
-                 <div className="flex items-center gap-2">
+                 <div className="flex items-center gap-4">
                     <div className="flex gap-1">
                        {[...Array(10)].map((_, i) => (
                          <div 
                            key={i} 
-                           className={`w-3 h-3 rounded-full border-2 ${
+                           className={`w-3 h-3 border-2 ${
                              questResults[i] === 'correct' 
-                               ? 'bg-green-500 border-green-600' 
+                               ? 'bg-green-500 border-white' 
                                : questResults[i] === 'wrong' 
-                                 ? 'bg-red-500 border-red-600' 
-                                 : (i === currentDrillIndex ? 'bg-amber-400 border-amber-500 animate-pulse' : 'bg-slate-200 border-slate-300')
+                                 ? 'bg-red-500 border-white' 
+                                 : (i === currentDrillIndex ? 'bg-yellow-400 border-white animate-pulse' : 'bg-transparent border-white/30')
                            }`}
                          />
                        ))}
                     </div>
-                    <span className="text-xs font-bold text-slate-400 ml-2">{correctCountInLevel} / 10 Correct</span>
+                    <span className="text-xs text-white/60">{correctCountInLevel} / 10 せいかい</span>
                  </div>
 
                  {(isCorrect || timeLeft === 0) && (
-                   <Button 
+                   <button 
                       onClick={handleNextDrill}
-                      className="bg-amber-500 hover:bg-amber-600 text-white rounded-xl px-6 font-bold shadow-lg flex items-center gap-2 animate-in zoom-in duration-300"
+                      className="dq-button"
                    >
-                     {currentDrillIndex + 1 === drills.length ? 'Results' : 'Next'} <ChevronRight className="w-4 h-4" />
-                   </Button>
+                     {currentDrillIndex + 1 === drills.length ? 'けっかへ' : 'つぎへ'}
+                   </button>
                  )}
               </div>
             </div>
@@ -411,62 +400,58 @@ function PracticeContent() {
 
         {isQuestMode && questStatus === 'result' && (
           <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
-            <div className="bg-white p-10 rounded-[3rem] shadow-2xl border-4 border-green-500 flex flex-col items-center gap-6 text-center max-w-md w-full relative overflow-hidden">
-               <div className="absolute -top-10 -left-10 w-40 h-40 bg-green-50 rounded-full -z-10"></div>
-               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-green-50 rounded-full -z-10"></div>
-               
-               <Trophy className="w-24 h-24 text-green-500 animate-bounce" />
+            <div className="dq-window p-10 flex flex-col items-center gap-6 text-center max-w-md w-full">
+               <Trophy className="w-24 h-24 text-yellow-400 animate-bounce" />
                <div>
-                 <h2 className="text-4xl font-black text-slate-900 mb-2">LEVEL UP!</h2>
-                 <p className="text-slate-500 font-medium">Amazing performance, Warrior.</p>
+                 <h2 className="text-4xl font-normal text-white mb-2">レベルアップ！</h2>
+                 <p className="text-white/60">みごとだ！　わかき　せんしよ。</p>
                </div>
                
                <div className="flex gap-8 my-4">
                   <div>
-                    <p className="text-4xl font-black text-slate-800">{correctCountInLevel}/10</p>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Score</p>
+                    <p className="text-4xl font-normal">{correctCountInLevel}/10</p>
+                    <p className="text-xs text-white/40 uppercase">せいかいすう</p>
                   </div>
-                  <div className="w-px h-12 bg-slate-100"></div>
+                  <div className="w-px h-12 bg-white/20"></div>
                   <div>
-                    <p className="text-4xl font-black text-green-600">Lv {currentLevel + 1}</p>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Next Rank</p>
+                    <p className="text-4xl font-normal text-yellow-400">Lv {currentLevel + 1}</p>
+                    <p className="text-xs text-white/40 uppercase">つぎのしれん</p>
                   </div>
                </div>
 
-               <Button 
+               <button 
                  onClick={handleLevelUp}
-                 className="w-full bg-green-500 hover:bg-green-600 text-white py-8 rounded-2xl text-xl font-black shadow-xl hover:scale-105 transition-all"
+                 className="dq-button w-full py-4 text-xl"
                >
-                 Advance to Level {currentLevel + 1}
-               </Button>
+                 Lv {currentLevel + 1} に　すすむ
+               </button>
             </div>
           </div>
         )}
 
         {isQuestMode && questStatus === 'failed' && (
           <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
-            <div className="bg-white p-10 rounded-[3rem] shadow-2xl border-4 border-red-500 flex flex-col items-center gap-6 text-center max-w-md w-full">
+            <div className="dq-window p-10 border-red-500 flex flex-col items-center gap-6 text-center max-w-md w-full">
                <XCircle className="w-24 h-24 text-red-500" />
                <div>
-                 <h2 className="text-4xl font-black text-slate-900 mb-2">QUEST FAILED</h2>
-                 <p className="text-slate-500 font-medium">You need at least 8 correct to advance.</p>
+                 <h2 className="text-4xl font-normal text-white mb-2">しっぱい！</h2>
+                 <p className="text-white/60">８もんいじょう　せいかい　しなければならない。</p>
                </div>
                
-               <div className="bg-red-50 p-6 rounded-2xl w-full">
-                  <p className="text-5xl font-black text-red-600">{correctCountInLevel}/10</p>
-                  <p className="text-sm font-bold text-red-400 mt-2">Your Final Score</p>
+               <div className="bg-red-900/20 p-6 border-2 border-red-500/20 w-full">
+                  <p className="text-5xl font-normal text-red-500">{correctCountInLevel}/10</p>
+                  <p className="text-sm text-red-400 mt-2">きみの　せいせき</p>
                </div>
 
                <div className="grid grid-cols-2 gap-4 w-full">
-                 <Button 
+                 <button 
                    onClick={handleRetryLevel}
-                   variant="outline"
-                   className="border-2 border-slate-200 py-6 rounded-xl font-bold flex items-center gap-2"
+                   className="dq-button py-2"
                  >
-                   <RotateCcw className="w-4 h-4" /> Retry
-                 </Button>
+                   さいちょうせん
+                 </button>
                  <Link href="/" className="w-full">
-                    <Button variant="ghost" className="w-full py-6 rounded-xl font-bold text-slate-500">Exit Quest</Button>
+                    <button className="dq-button w-full py-2 text-white/40 border-white/20">あきらめる</button>
                  </Link>
                </div>
             </div>
@@ -474,7 +459,7 @@ function PracticeContent() {
         )}
 
         {isQuestMode && questStatus === 'all-cleared' && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl font-sans">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 font-dot">
             {/* Celebration Background Particles */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               {[...Array(20)].map((_, i) => (
@@ -499,11 +484,11 @@ function PracticeContent() {
                   className="absolute"
                 >
                   {i % 3 === 0 ? (
-                    <PartyPopper className="text-amber-400 w-8 h-8 opacity-40 shadow-xl" />
+                    <PartyPopper className="text-yellow-400 w-8 h-8 opacity-40 shadow-xl" />
                   ) : i % 3 === 1 ? (
-                    <Beer className="text-amber-200 w-10 h-10 opacity-30" />
+                    <Beer className="text-yellow-200 w-10 h-10 opacity-30" />
                   ) : (
-                    <div className="w-4 h-4 rounded-sm bg-gradient-to-br from-indigo-400 to-purple-400 opacity-40" />
+                    <div className="w-4 h-4 bg-white opacity-40" />
                   )}
                 </motion.div>
               ))}
@@ -513,10 +498,8 @@ function PracticeContent() {
               initial={{ scale: 0.8, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{ type: "spring", damping: 15 }}
-              className="bg-slate-900 p-12 rounded-[3.5rem] shadow-[0_0_100px_rgba(245,158,11,0.2)] border-8 border-amber-400 flex flex-col items-center gap-8 text-center max-w-lg w-full text-white relative overflow-hidden"
+              className="dq-window p-12 flex flex-col items-center gap-8 text-center max-w-lg w-full text-white"
             >
-               <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500/20 via-transparent to-transparent"></div>
-               
                <div className="relative flex items-center justify-center">
                  <motion.div
                    animate={{ 
@@ -525,10 +508,10 @@ function PracticeContent() {
                    }}
                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                  >
-                   <Trophy className="w-32 h-32 text-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.5)]" />
+                   <Trophy className="w-32 h-32 text-yellow-400" />
                  </motion.div>
                  <motion.div 
-                   className="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-900 font-black shadow-lg border-4 border-amber-400"
+                   className="absolute -top-4 -right-4 dq-window bg-black px-2 py-1 text-white font-normal"
                    initial={{ scale: 0 }}
                    animate={{ scale: 1 }}
                    transition={{ delay: 0.5 }}
@@ -542,18 +525,18 @@ function PracticeContent() {
                    initial={{ y: 20, opacity: 0 }}
                    animate={{ y: 0, opacity: 1 }}
                    transition={{ delay: 0.3 }}
-                   className="text-5xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 animate-pulse"
+                   className="text-5xl font-normal text-yellow-400 animate-pulse"
                  >
-                   GRAND MASTER
+                   グランドマスター
                  </motion.h2>
                  <motion.p 
                    initial={{ y: 20, opacity: 0 }}
                    animate={{ y: 0, opacity: 1 }}
                    transition={{ delay: 0.4 }}
-                   className="text-slate-400 font-medium text-lg leading-relaxed"
+                   className="text-white/60 text-lg leading-relaxed"
                  >
-                   すべてを制覇しました。<br/>
-                   あなたは真の英語マスターです。
+                   すべてを　せいした！<br/>
+                   あなたは　しんの　えいごマスターだ。
                  </motion.p>
                </div>
 
@@ -561,20 +544,19 @@ function PracticeContent() {
                  initial={{ opacity: 0 }}
                  animate={{ opacity: 1 }}
                  transition={{ delay: 0.8 }}
-                 className="flex flex-col items-center gap-4 py-6 border-y border-slate-800 w-full"
+                 className="flex flex-col items-center gap-4 py-6 border-y-2 border-white/20 w-full"
                >
                  <div className="flex items-center gap-4">
-                    <Beer className="w-12 h-12 text-amber-400" />
-                    <span className="text-3xl font-black tracking-widest text-amber-200">CHEERS!</span>
-                    <Beer className="w-12 h-12 text-amber-400 scale-x-[-1]" />
+                    <Beer className="w-12 h-12 text-yellow-400" />
+                    <span className="text-3xl font-normal tracking-widest text-yellow-200">かんぱーい！</span>
+                    <Beer className="w-12 h-12 text-yellow-400 scale-x-[-1]" />
                  </div>
-                 <p className="text-xs font-bold text-amber-500/50 tracking-[0.3em] uppercase">Victory Celebration</p>
                </motion.div>
 
                <Link href="/" className="w-full z-10">
-                 <Button className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-8 rounded-2xl text-xl font-black shadow-[0_10px_30px_rgba(245,158,11,0.4)] hover:scale-105 transition-all active:scale-95">
-                   伝説として帰還する
-                 </Button>
+                 <button className="dq-button w-full py-4 text-xl">
+                   でんせつとして　きかんする
+                 </button>
                </Link>
             </motion.div>
           </div>
@@ -583,19 +565,16 @@ function PracticeContent() {
         {/* The Notebook Assembly */}
         <div className="flex flex-col items-center">
             
-            {/* 1. Tabs Area - Sits naturally on top of the notebook page */}
+            {/* 1. Tabs Area */}
             <div className="w-full max-w-2xl px-4 md:px-8 flex justify-start">
-               {/* VerbTypeSelector renders the tabs with bottom-[-2px] to connect */}
                <VerbTypeSelector
                  selectedVerb={state.verbType}
                  onChange={handleVerbTypeChange}
                />
             </div>
 
-            {/* 2. Notebook Page Container */}
-            <section className="relative w-full max-w-3xl bg-[#fdfbf7] p-4 md:p-8 rounded-lg rounded-tl-none shadow-[2px_10px_20px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] flex flex-col items-center min-h-[500px] md:min-h-[600px]">
-                
-                {/* Paper Texture Overlay (optional css trick or just stick to color) */}
+            {/* 2. DQ Window Container */}
+            <section className="dq-window-fancy w-full max-w-3xl p-4 md:p-8 flex flex-col items-center min-h-[500px]">
                 
                 <div className="w-full max-w-xl">
                     <NineKeyPanel
@@ -608,12 +587,12 @@ function PracticeContent() {
                     />
                 </div>
 
-                {/* Verb and Sentence Pattern Selector Dropdowns - Only shown for Do verbs */}
-                {state.verbType === 'do' && (
+                {/* Verb and Sentence Pattern Selector Dropdowns */}
+                {(state.verbType === 'do' || state.verbType === 'be') && (
                   <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
                     <div className="flex flex-col md:flex-row gap-4">
                       <FiveSentencePatternSelector
-                        selectedPattern={state.fiveSentencePattern || 'SVO'}
+                        selectedPattern={state.fiveSentencePattern || (state.verbType === 'do' ? 'SVO' : 'SV')}
                         onChange={handleFiveSentencePatternChange}
                         verbType={state.verbType}
                       />
@@ -623,10 +602,11 @@ function PracticeContent() {
                           selectedVerb={state.verb}
                           onChange={handleVerbChange}
                           fiveSentencePattern={state.fiveSentencePattern}
+                          disabled={state.verbType === 'be'}
                         />
                       </div>
                     </div>
-                    {state.fiveSentencePattern === 'SVO' && (
+                    {state.verbType === 'do' && state.fiveSentencePattern === 'SVO' && (
                       <ObjectSelector
                         selectedObject={state.object || 'something'}
                         onChange={handleObjectChange}
@@ -640,88 +620,69 @@ function PracticeContent() {
                         />
                       </ObjectSelector>
                     )}
-                  </div>
-                )}
-                {/* Verb and Sentence Pattern Selector Dropdowns - Only shown for Be verbs */}
-                {state.verbType === 'be' && (
-                  <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <FiveSentencePatternSelector
-                        selectedPattern={state.fiveSentencePattern || 'SV'}
-                        onChange={handleFiveSentencePatternChange}
-                        verbType={state.verbType}
-                      />
-                      <div className="flex-1">
-                        <VerbSelector
-                          verbType={state.verbType}
-                          selectedVerb={state.verb}
-                          onChange={handleVerbChange}
-                          fiveSentencePattern={state.fiveSentencePattern}
-                          disabled={true}
-                        />
-                      </div>
-                    </div>
-                    {state.fiveSentencePattern === 'SVC' ? (
-                      <ComplementSelector
-                        selectedComplement={state.beComplement || 'carpenter'}
-                        onChange={handleBeComplementChange}
-                        pattern={state.fiveSentencePattern || 'SV'}
-                        numberForm={state.numberForm || 'a'}
-                        nounWords={nounWords}
-                        adjectiveWords={adjectiveWords}
-                        adverbWords={adverbWords}
-                        disabled={isLoadingNouns}
-                      >
-                        <NounDeterminerSelector
-                          selectedNumberForm={state.numberForm || 'a'}
-                          onChange={handleNumberFormChange}
-                          isAdjective={true}
-                        />
-                      </ComplementSelector>
-                    ) : (
-                      <ComplementSelector
-                        selectedComplement={state.beComplement || 'here'}
-                        onChange={handleBeComplementChange}
-                        pattern={state.fiveSentencePattern || 'SV'}
-                        nounWords={nounWords}
-                        adjectiveWords={adjectiveWords}
-                        adverbWords={adverbWords}
-                        disabled={isLoadingNouns}
-                      />
+                    {state.verbType === 'be' && (
+                        state.fiveSentencePattern === 'SVC' ? (
+                          <ComplementSelector
+                            selectedComplement={state.beComplement || 'carpenter'}
+                            onChange={handleBeComplementChange}
+                            pattern={state.fiveSentencePattern || 'SV'}
+                            numberForm={state.numberForm || 'a'}
+                            nounWords={nounWords}
+                            adjectiveWords={adjectiveWords}
+                            adverbWords={adverbWords}
+                            disabled={isLoadingNouns}
+                          >
+                            <NounDeterminerSelector
+                              selectedNumberForm={state.numberForm || 'a'}
+                              onChange={handleNumberFormChange}
+                              isAdjective={true}
+                            />
+                          </ComplementSelector>
+                        ) : (
+                          <ComplementSelector
+                            selectedComplement={state.beComplement || 'here'}
+                            onChange={handleBeComplementChange}
+                            pattern={state.fiveSentencePattern || 'SV'}
+                            nounWords={nounWords}
+                            adjectiveWords={adjectiveWords}
+                            adverbWords={adverbWords}
+                            disabled={isLoadingNouns}
+                          />
+                        )
                     )}
                   </div>
                 )}
 
                 <div className="mt-12 w-full max-w-lg relative">
-                    {/* Handwritten style result box */}
-                    <div className={`bg-transparent border-b-2 transition-colors duration-500 p-4 text-center ${isCorrect ? 'border-green-400' : 'border-gray-300'}`}>
-                        <p className={`text-sm uppercase tracking-widest mb-1 font-serif ${isCorrect ? 'text-green-500 font-bold' : (isQuestMode && timeLeft === 0 ? 'text-red-500' : 'text-gray-400')}`}>
-                          {isCorrect ? '✨ Correct! Perfect Build ✨' : (isQuestMode && timeLeft === 0 ? '⏰ TIME UP! ⏰' : 'Result')}
+                    {/* DQ style result box */}
+                    <div className={`dq-window transition-colors duration-500 p-4 text-center ${isCorrect ? 'border-yellow-400 bg-black/80' : 'border-white bg-black'}`}>
+                        <p className={`text-sm uppercase tracking-widest mb-1 ${isCorrect ? 'text-yellow-400' : (isQuestMode && timeLeft === 0 ? 'text-red-500' : 'text-white/40')}`}>
+                          {isCorrect ? '★ せいかい！ ★' : (isQuestMode && timeLeft === 0 ? '⏰ じかんぎれ！ ⏰' : 'けっか')}
                         </p>
-                        <p className={`text-3xl md:text-5xl font-bold font-serif leading-tight transition-all duration-300 ${isCorrect ? 'text-green-600 scale-105' : (isQuestMode && timeLeft === 0 ? 'text-red-500 opacity-50' : 'text-slate-800')}`}>
+                        <p className={`text-3xl md:text-5xl font-normal leading-tight transition-all duration-300 ${isCorrect ? 'text-white scale-105' : (isQuestMode && timeLeft === 0 ? 'text-red-500 opacity-50' : 'text-white')}`}>
                         {generatedText}
                         </p>
                     </div>
 
                     {isCorrect && !isQuestMode && (
                       <div className="mt-8 flex justify-center animate-bounce">
-                        <Button 
+                        <button 
                           onClick={handleNextDrill}
-                          className="bg-green-500 hover:bg-green-600 text-white rounded-full px-8 py-6 text-xl font-bold shadow-lg"
+                          className="dq-button text-xl px-12 py-4 shadow-xl"
                         >
-                          Next Challenge <StepForward className="ml-2" />
-                        </Button>
+                          つぎの　しれんへ
+                        </button>
                       </div>
                     )}
 
                     {isQuestMode && (isCorrect || timeLeft === 0) && questStatus === 'playing' && (
                        <div className="mt-8 flex justify-center animate-bounce">
-                         <Button 
+                         <button 
                            onClick={handleNextDrill}
-                           className={`${isCorrect ? 'bg-green-500 hover:bg-green-600' : 'bg-amber-500 hover:bg-amber-600'} text-white rounded-full px-10 py-6 text-xl font-black shadow-lg flex items-center gap-3`}
+                           className={`dq-button text-xl px-12 py-4 shadow-xl ${isCorrect ? 'border-yellow-400' : 'border-white'}`}
                          >
-                           {currentDrillIndex + 1 === drills.length ? 'FINISH QUEST' : 'CONTINUE'} <StepForward className="w-6 h-6" />
-                         </Button>
+                           {currentDrillIndex + 1 === drills.length ? 'クエストしゅうりょう' : 'つぎへ'}
+                         </button>
                        </div>
                     )}
                 </div>

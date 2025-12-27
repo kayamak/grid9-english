@@ -9,126 +9,117 @@
 }
 
 :root {
-  --bg-color: #0f172a;
-  --text-color: #e2e8f0;
-  --primary-color: #3b82f6;
-  --secondary-color: #1e293b;
-  --accent-color: #f472b6;
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-  --font-family: var(--font-geist-sans), system-ui, sans-serif;
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --primary-color: #ffffff;
+  --secondary-color: #1a1a1a;
+  --accent-color: #ffd700;
+  --font-dot: var(--font-dot-gothic), "DotGothic16", monospace;
 }
 
 @layer base {
   body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: var(--font-family);
+    font-family: var(--font-dot);
     line-height: 1.6;
+    image-rendering: pixelated;
   }
 
   h1, h2, h3 {
-    @apply font-bold mb-4;
+    @apply font-normal mb-4;
+    font-family: var(--font-dot);
   }
 
   a {
-    color: var(--primary-color);
+    color: var(--text-color);
     text-decoration: none;
-    transition: color 0.3s;
+    transition: all 0.2s;
   }
 
   a:hover {
     color: var(--accent-color);
-    text-shadow: 0 0 8px var(--accent-color);
   }
 
   input, select {
-    @apply w-full p-3 mb-4 rounded-lg bg-slate-700 border border-slate-600 text-white text-base;
-    /* or use vars if we want strict parity, but tailwind utils are easier */
-    background-color: #334155; /* slate-700 */
-    border: 1px solid #475569; /* slate-600 */
+    @apply w-full p-3 mb-4 bg-black border-2 border-white text-white;
+    font-family: var(--font-dot);
   }
 
   input:focus, select:focus {
-    @apply outline-none border-blue-500 shadow-lg; /* approx */
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-  }
-
-  table {
-    @apply w-full border-collapse mt-4;
-  }
-
-  th, td {
-    @apply p-4 text-left border-b border-slate-700;
-  }
-
-  th {
-    @apply font-semibold text-slate-400;
+    @apply outline-none border-yellow-400;
   }
 }
 
 @layer components {
-  .header {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border-bottom: var(--glass-border);
-    @apply sticky top-0 z-50 flex justify-between items-center px-4 md:px-8 py-3 md:py-4;
+  .dq-window {
+    @apply relative p-4;
+    background: linear-gradient(135deg, #0015a0 0%, #000a60 100%);
+    border: 4px solid #f0f0f0;
+    box-shadow: 
+      inset 0 0 0 2px #000, 
+      0 0 0 2px #000,
+      0 4px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
   }
 
-  .nav-ul {
-    @apply flex gap-6 list-none m-0 p-0;
+  /* Version with decorative border (more like DQ11) */
+  .dq-window-fancy {
+    @apply relative p-5;
+    background: linear-gradient(180deg, #0033cc 0%, #001144 100%);
+    border: 3px solid #ffd700;
+    box-shadow: 
+      inset 0 0 0 2px #442200,
+      0 4px 10px rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
   }
 
-  .container {
-    max-width: 1200px;
-    @apply mx-auto my-4 md:my-8 px-4 md:px-8;
+  .dq-button {
+    @apply inline-block px-5 py-2 bg-[#0015a0] border-2 border-[#ffd700] text-white cursor-pointer transition-all shadow-md;
+    font-family: var(--font-dot);
+    text-shadow: 1px 1px 0 #000;
   }
 
-  .card {
-    background: var(--secondary-color);
-    border: var(--glass-border);
-    @apply rounded-xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm transition-transform duration-200;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  .dq-button:hover {
+    @apply bg-white text-black;
+    text-shadow: none;
   }
 
-  .card:hover {
-    @apply -translate-y-0.5;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  .dq-button:active {
+    @apply transform scale-95;
   }
 
-  .btn {
-    background-color: var(--primary-color);
-    @apply inline-block px-6 py-3 text-white rounded-lg font-semibold border-none cursor-pointer transition-all duration-200;
+  .dq-menu-item {
+    @apply flex items-center gap-3 cursor-pointer py-2 px-3 transition-colors;
+    text-shadow: 1px 1px 2px #000;
   }
 
-  .btn:hover {
-    @apply bg-blue-600 scale-105 shadow-lg;
-    box-shadow: 0 0 15px var(--primary-color);
+  .dq-menu-item:hover {
+    @apply bg-white/10;
   }
 
-  .btn-danger {
-    @apply bg-red-500;
+  .dq-menu-item::before {
+    content: " ";
+    @apply w-4;
   }
 
-  .btn-danger:hover {
-    @apply bg-red-600;
-    box-shadow: 0 0 15px #ef4444;
+  .dq-menu-item:hover::before {
+    content: "▶";
+    @apply text-yellow-400;
   }
 
-  .flash {
-    @apply p-4 mb-4 rounded-lg;
+  .font-dot {
+    font-family: var(--font-dot);
   }
 
-  .notice {
-    background-color: rgba(34, 197, 94, 0.2);
-    border: 1px solid #22c55e;
-    color: #4ade80;
+  .typing-text {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 2.5s steps(40, end);
   }
 
-  .alert {
-    background-color: rgba(239, 68, 68, 0.2);
-    border: 1px solid #ef4444;
-    color: #f87171;
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
   }
 }

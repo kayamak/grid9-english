@@ -27,12 +27,12 @@ export const FiveSentencePatternSelector: React.FC<FiveSentencePatternSelectorPr
 
   return (
     <div className="flex items-center gap-3">
-      <label className="text-gray-700 font-medium whitespace-nowrap">文型</label>
+      <label className="text-white font-normal whitespace-nowrap">ぶんけい</label>
       <div className="relative w-auto">
         <select
           value={selectedPattern}
           onChange={(e) => onChange(e.target.value as FiveSentencePattern)}
-          className="block appearance-none w-auto bg-white border border-gray-300 text-gray-700 py-2 md:py-3 px-3 md:px-4 pr-6 md:pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-base md:text-lg"
+          className="dq-button !p-2 !pr-8 appearance-none"
         >
           {patternOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -40,7 +40,7 @@ export const FiveSentencePatternSelector: React.FC<FiveSentencePatternSelectorPr
             </option>
           ))}
         </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
           <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
           </svg>

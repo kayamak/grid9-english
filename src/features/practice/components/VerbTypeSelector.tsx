@@ -8,27 +8,26 @@ interface VerbTypeSelectorProps {
 
 export const VerbTypeSelector: React.FC<VerbTypeSelectorProps> = ({ selectedVerb, onChange }) => {
   return (
-    <div className="flex space-x-1 pl-4 md:pl-8 relative z-10 bottom-[-2px]"> 
-       {/* bottom-[-2px] ensures tabs overlap the page slightly to look connected */}
+    <div className="flex space-x-2 relative z-10 -mb-1"> 
       <button
         onClick={() => onChange('do')}
-        className={`px-4 md:px-8 py-2 md:py-3 rounded-t-xl md:rounded-t-2xl font-handwriting text-lg md:text-xl font-bold transition-all border-t-2 border-l-2 border-r-2 ${
+        className={`px-6 py-2 border-t-4 border-l-4 border-r-4 rounded-t-lg font-normal text-lg transition-all shadow-lg ${
           selectedVerb === 'do'
-            ? 'bg-blue-600 border-blue-700 text-white shadow-[0_-2px_4px_rgba(0,0,0,0.1)] translate-y-[2px]' 
-            : 'bg-gray-200 border-gray-300 text-gray-500 hover:bg-gray-300 mt-2 shadow-inner'
+            ? 'bg-[#001da0] border-[#ffd700] text-white brightness-125' 
+            : 'bg-[#000840] border-white/20 text-white/40 hover:text-white hover:border-white/40'
         }`}
       >
-        Do Verbs
+        Doどうし
       </button>
       <button
         onClick={() => onChange('be')}
-        className={`px-4 md:px-8 py-2 md:py-3 rounded-t-xl md:rounded-t-2xl font-handwriting text-lg md:text-xl font-bold transition-all border-t-2 border-l-2 border-r-2 ${
+        className={`px-6 py-2 border-t-4 border-l-4 border-r-4 rounded-t-lg font-normal text-lg transition-all shadow-lg ${
           selectedVerb === 'be'
-            ? 'bg-blue-600 border-blue-700 text-white shadow-[0_-2px_4px_rgba(0,0,0,0.1)] translate-y-[2px]' 
-            : 'bg-gray-200 border-gray-300 text-gray-500 hover:bg-gray-300 mt-2 shadow-inner'
+            ? 'bg-[#001da0] border-[#ffd700] text-white brightness-125' 
+            : 'bg-[#000840] border-white/20 text-white/40 hover:text-white hover:border-white/40'
         }`}
       >
-        Be Verbs
+        Beどうし
       </button>
     </div>
   );
