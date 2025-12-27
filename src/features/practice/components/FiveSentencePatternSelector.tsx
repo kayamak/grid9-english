@@ -32,7 +32,7 @@ export const FiveSentencePatternSelector: React.FC<FiveSentencePatternSelectorPr
         <select
           value={selectedPattern}
           onChange={(e) => onChange(e.target.value as FiveSentencePattern)}
-          className="block appearance-none w-auto bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg"
+          className="block appearance-none w-auto bg-white border border-gray-300 text-gray-700 py-2 md:py-3 px-3 md:px-4 pr-6 md:pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-base md:text-lg"
         >
           {patternOptions.map((option) => (
             <option key={option.value} value={option.value}>

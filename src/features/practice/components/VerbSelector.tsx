@@ -77,7 +77,7 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
           value={selectedVerb}
           onChange={(e) => onChange(e.target.value as Verb)}
           disabled={disabled || loading}
-          className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg disabled:opacity-50 disabled:bg-gray-100"
+          className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 md:py-3 px-3 md:px-4 pr-6 md:pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-base md:text-lg disabled:opacity-50 disabled:bg-gray-100"
         >
           {loading ? (
             <option>読み込み中...</option>

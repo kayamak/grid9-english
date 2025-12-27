@@ -284,23 +284,22 @@ function PracticeContent() {
   };
 
   return (
-    <main className="min-h-screen bg-[#e3ded1] flex flex-col items-center p-8 font-sans">
+    <main className="min-h-screen bg-[#e3ded1] flex flex-col items-center p-4 md:p-8 font-sans">
       {/* Background: realistic desk color/texture */}
       
       <div className="w-full max-w-4xl">
-        <header className="mb-12 text-center">
-            <Link href="/" className="text-gray-600 hover:text-gray-900 mb-4 inline-block font-medium">
+        <header className="mb-8 md:mb-12 text-center">
+            <Link href="/" className="text-gray-600 hover:text-gray-900 mb-4 inline-block font-medium text-sm md:text-base">
                 &larr; Return to Dashboard
             </Link>
-          <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight">
             {isQuestMode ? 'Drill Quest' : 'Pattern Practice'}
           </h1>
-          
         </header>
 
         {isDrillMode && !isQuestMode && currentDrill && (
-          <div className="mb-8 w-full flex flex-col items-center">
-            <div className="bg-white/80 backdrop-blur-sm border border-indigo-100 p-6 rounded-2xl shadow-sm w-full max-w-2xl flex flex-col items-center relative gap-4">
+          <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
+            <div className="bg-white/80 backdrop-blur-sm border border-indigo-100 p-4 md:p-6 rounded-2xl shadow-sm w-full max-w-2xl flex flex-col items-center relative gap-4">
               <div className="flex flex-col items-center">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-indigo-400 font-bold">Current Challenge ({currentDrillIndex + 1}/{drills.length})</p>
                 {selectedPattern && (
@@ -311,10 +310,10 @@ function PracticeContent() {
               </div>
 
               <div className="flex flex-col items-center">
-                <h2 className="text-3xl font-serif font-bold text-slate-800 text-center px-8">
+                <h2 className="text-2xl md:text-3xl font-serif font-bold text-slate-800 text-center px-4 md:px-8">
                   {currentDrill.english}
                 </h2>
-                <p className="text-lg text-slate-500 font-medium text-center mt-2 px-8 border-t border-slate-100 pt-2 w-full max-w-sm">
+                <p className="text-base md:text-lg text-slate-500 font-medium text-center mt-2 px-4 md:px-8 border-t border-slate-100 pt-2 w-full max-w-sm">
                   {currentDrill.japanese}
                 </p>
               </div>
@@ -361,7 +360,7 @@ function PracticeContent() {
 
               <div className="flex flex-col items-center py-4 bg-slate-50/50 w-full rounded-2xl border border-slate-100">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Translate to English</p>
-                <h2 className="text-3xl font-serif font-bold text-slate-800 text-center px-8">
+                <h2 className="text-2xl md:text-3xl font-serif font-bold text-slate-800 text-center px-4 md:px-8">
                   {currentDrill.japanese}
                 </h2>
                 {/* English is hidden in quest mode until correct or timeup? 
@@ -585,7 +584,7 @@ function PracticeContent() {
         <div className="flex flex-col items-center">
             
             {/* 1. Tabs Area - Sits naturally on top of the notebook page */}
-            <div className="w-full max-w-2xl px-8 flex justify-start">
+            <div className="w-full max-w-2xl px-4 md:px-8 flex justify-start">
                {/* VerbTypeSelector renders the tabs with bottom-[-2px] to connect */}
                <VerbTypeSelector
                  selectedVerb={state.verbType}
@@ -594,7 +593,7 @@ function PracticeContent() {
             </div>
 
             {/* 2. Notebook Page Container */}
-            <section className="relative w-full max-w-3xl bg-[#fdfbf7] p-8 rounded-lg rounded-tl-none shadow-[2px_10px_20px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] flex flex-col items-center min-h-[600px]">
+            <section className="relative w-full max-w-3xl bg-[#fdfbf7] p-4 md:p-8 rounded-lg rounded-tl-none shadow-[2px_10px_20px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.05)] flex flex-col items-center min-h-[500px] md:min-h-[600px]">
                 
                 {/* Paper Texture Overlay (optional css trick or just stick to color) */}
                 
@@ -612,7 +611,7 @@ function PracticeContent() {
                 {/* Verb and Sentence Pattern Selector Dropdowns - Only shown for Do verbs */}
                 {state.verbType === 'do' && (
                   <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
-                    <div className="flex gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
                       <FiveSentencePatternSelector
                         selectedPattern={state.fiveSentencePattern || 'SVO'}
                         onChange={handleFiveSentencePatternChange}
@@ -646,7 +645,7 @@ function PracticeContent() {
                 {/* Verb and Sentence Pattern Selector Dropdowns - Only shown for Be verbs */}
                 {state.verbType === 'be' && (
                   <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
-                    <div className="flex gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
                       <FiveSentencePatternSelector
                         selectedPattern={state.fiveSentencePattern || 'SV'}
                         onChange={handleFiveSentencePatternChange}
@@ -699,7 +698,7 @@ function PracticeContent() {
                         <p className={`text-sm uppercase tracking-widest mb-1 font-serif ${isCorrect ? 'text-green-500 font-bold' : (isQuestMode && timeLeft === 0 ? 'text-red-500' : 'text-gray-400')}`}>
                           {isCorrect ? '✨ Correct! Perfect Build ✨' : (isQuestMode && timeLeft === 0 ? '⏰ TIME UP! ⏰' : 'Result')}
                         </p>
-                        <p className={`text-5xl font-bold font-serif leading-tight transition-all duration-300 ${isCorrect ? 'text-green-600 scale-105' : (isQuestMode && timeLeft === 0 ? 'text-red-500 opacity-50' : 'text-slate-800')}`}>
+                        <p className={`text-3xl md:text-5xl font-bold font-serif leading-tight transition-all duration-300 ${isCorrect ? 'text-green-600 scale-105' : (isQuestMode && timeLeft === 0 ? 'text-red-500 opacity-50' : 'text-slate-800')}`}>
                         {generatedText}
                         </p>
                     </div>

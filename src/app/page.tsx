@@ -7,11 +7,11 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-[#f8f9fa] p-8 md:p-16 font-sans">
       <div className="max-w-4xl mx-auto">
-        <header className="mb-16">
-          <h1 className="text-5xl font-black text-slate-900 tracking-tighter mb-4">
+        <header className="mb-12 md:mb-16">
+          <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">
             GRID<span className="text-blue-600">9</span> ENGLISH
           </h1>
-          <p className="text-xl text-slate-500 font-medium">視覚的なパターンで英語の文章構造をマスターする。</p>
+          <p className="text-lg md:text-xl text-slate-500 font-medium whitespace-pre-wrap">視覚的なパターンで英語の文章構造をマスターする。</p>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">

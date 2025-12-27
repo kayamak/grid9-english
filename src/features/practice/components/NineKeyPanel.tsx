@@ -11,11 +11,11 @@ interface NineKeyPanelProps {
 }
 
 const RowContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="flex items-center bg-teal-100 p-4 rounded-2xl w-full max-w-xl shadow-inner border border-teal-200">
-      <div className="w-24 font-bold text-teal-800 text-sm mr-4 shrink-0 text-right pr-4 border-r-2 border-teal-300">
+  <div className="flex items-center bg-teal-100 p-2 md:p-4 rounded-2xl w-full max-w-xl shadow-inner border border-teal-200">
+      <div className="w-16 md:w-24 font-bold text-teal-800 text-[10px] md:text-sm mr-2 md:mr-4 shrink-0 text-right pr-2 md:pr-4 border-r-2 border-teal-300">
           {title}
       </div>
-      <div className="flex space-x-4 grow justify-center">
+      <div className="flex space-x-2 md:space-x-4 grow justify-center">
           {children}
       </div>
   </div>
@@ -30,7 +30,7 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
   onTenseChange,
 }) => {
   const getCellClass = (isActive: boolean) =>
-    `relative group flex items-center justify-center aspect-square text-3xl font-bold cursor-pointer transition-all border-4 rounded-xl select-none w-24 h-24 shadow-sm ${
+    `relative group flex items-center justify-center aspect-square text-xl md:text-3xl font-bold cursor-pointer transition-all border-2 md:border-4 rounded-lg md:rounded-xl select-none w-16 h-16 md:w-24 md:h-24 shadow-sm ${
       isActive
         ? 'bg-yellow-400 border-orange-500 text-gray-900 scale-105 shadow-md z-10'
         : 'bg-yellow-200 border-yellow-300 text-gray-700 hover:bg-yellow-300'

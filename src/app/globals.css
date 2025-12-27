@@ -73,7 +73,7 @@
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
     border-bottom: var(--glass-border);
-    @apply sticky top-0 z-50 flex justify-between items-center px-8 py-4;
+    @apply sticky top-0 z-50 flex justify-between items-center px-4 md:px-8 py-3 md:py-4;
   }
 
   .nav-ul {
@@ -82,13 +82,13 @@
 
   .container {
     max-width: 1200px;
-    @apply mx-auto my-8 px-8;
+    @apply mx-auto my-4 md:my-8 px-4 md:px-8;
   }
 
   .card {
     background: var(--secondary-color);
     border: var(--glass-border);
-    @apply rounded-xl p-8 mb-6 shadow-sm transition-transform duration-200;
+    @apply rounded-xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm transition-transform duration-200;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 

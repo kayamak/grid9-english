@@ -43,7 +43,7 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
           value={selectedObject}
           onChange={(e) => onChange(e.target.value as Object)}
           disabled={disabled}
-          className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-lg disabled:opacity-50 disabled:bg-gray-100"
+          className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 md:py-3 px-3 md:px-4 pr-6 md:pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 font-handwriting text-base md:text-lg disabled:opacity-50 disabled:bg-gray-100"
         >
           {filteredOptions.map((option) => (
             <option key={option.id} value={option.value}>
