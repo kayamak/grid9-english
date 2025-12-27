@@ -14,24 +14,24 @@ export default async function Home() {
           <p className="text-xl text-slate-500 font-medium">Mastering English sentence structures through visual patterns.</p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {/* Entry: Free Practice */}
           <section>
             <div className="flex justify-between items-end mb-6">
-              <h2 className="text-3xl font-bold text-slate-800 tracking-tight">Free Practice</h2>
+              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Free Practice</h2>
               <Link 
                 href="/practice?mode=free" 
-                className="text-blue-600 font-bold hover:text-blue-700 transition-colors flex items-center gap-1 group"
+                className="text-blue-600 font-bold hover:text-blue-700 transition-colors flex items-center gap-1 group text-sm"
               >
                 Launch <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
               </Link>
             </div>
-            <div className="bg-white p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full">
-              <p className="text-slate-600 leading-relaxed mb-6 text-lg">
+            <div className="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full">
+              <p className="text-slate-600 leading-relaxed mb-4 text-sm">
                 Explore English sentence structures freely using our 3x3 grid system. No set challenges, just pure experimentation.
               </p>
               <div className="flex gap-2">
-                <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full uppercase tracking-wider">SANDBOX</span>
+                <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full uppercase tracking-wider">SANDBOX</span>
               </div>
             </div>
           </section>
@@ -39,34 +39,68 @@ export default async function Home() {
           {/* Entry: Sentence Drill Mode */}
           <section>
             <div className="flex justify-between items-end mb-6">
-              <h2 className="text-3xl font-bold text-slate-800 tracking-tight">Sentence Drill</h2>
+              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Sentence Drill</h2>
               <Link 
                 href="/practice?mode=drill" 
-                className="text-indigo-600 font-bold hover:text-indigo-700 transition-colors flex items-center gap-1 group"
+                className="text-indigo-600 font-bold hover:text-indigo-700 transition-colors flex items-center gap-1 group text-sm"
               >
                 All Drills <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
               </Link>
             </div>
-            <div className="bg-white p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full flex flex-col">
-              <p className="text-slate-600 leading-relaxed mb-6 text-lg">
+            <div className="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full flex flex-col">
+              <p className="text-slate-600 leading-relaxed mb-4 text-sm">
                 Master core patterns with guided challenges. Build specific sentences to complete the drill set.
               </p>
               
               <div className="mt-auto space-y-4">
-                <p className="text-xs font-black text-indigo-300 uppercase tracking-widest">Select a Pattern to Focus</p>
-                <div className="flex flex-wrap gap-2">
+                <p className="text-[10px] font-black text-indigo-300 uppercase tracking-widest">Patterns</p>
+                <div className="flex flex-wrap gap-1">
                   {patterns.map((pattern) => (
                     <Link
                       key={pattern}
                       href={`/practice?mode=drill&pattern=${pattern}`}
-                      className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-sm font-bold rounded-xl transition-all hover:scale-105"
+                      className="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-[10px] font-bold rounded-lg transition-all"
                     >
                       {pattern}
                     </Link>
                   ))}
                 </div>
                 <div className="flex gap-2 pt-2">
-                  <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full uppercase tracking-wider">CHALLENGE</span>
+                  <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-full uppercase tracking-wider">CHALLENGE</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Entry: Drill Quest Mode */}
+          <section>
+            <div className="flex justify-between items-end mb-6">
+              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Drill Quest</h2>
+              <Link 
+                href="/practice?mode=quest" 
+                className="text-amber-600 font-bold hover:text-amber-700 transition-colors flex items-center gap-1 group text-sm"
+              >
+                Start Quest <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+              </Link>
+            </div>
+            <div className="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 h-full flex flex-col">
+              <p className="text-slate-600 leading-relaxed mb-4 text-sm">
+                Embark on an RPG-style journey. Level up by completing challenges under pressure. How far can you go?
+              </p>
+              
+              <div className="mt-auto">
+                <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-amber-200 rounded-full flex items-center justify-center text-amber-700 font-black">Lv1</div>
+                    <div>
+                      <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest leading-none">Status</p>
+                      <p className="text-xs font-bold text-amber-800">Ready to Start</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <span className="px-3 py-1 bg-amber-50 text-amber-600 text-[10px] font-bold rounded-full uppercase tracking-wider">RPG MODE</span>
+                  <span className="px-3 py-1 bg-amber-50 text-amber-600 text-[10px] font-bold rounded-full uppercase tracking-wider">TIME ATTACK</span>
                 </div>
               </div>
             </div>
