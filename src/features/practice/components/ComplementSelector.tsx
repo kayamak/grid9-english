@@ -26,47 +26,41 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
   adjectiveWords,
   adverbWords
 }) => {
-  // Choose options based on pattern
-  let options: { value: BeComplement; label: string }[];
-  
-  if (pattern === 'SV') {
-    options = adverbWords.map(word => ({
-      value: word.value as BeComplement,
-      label: word.label
-    }));
-  } else {
-    // For SVC pattern, combine nouns and adjectives
-    // Convert nounWords to the format we need
-    const nounOptions = nounWords.map(noun => ({
-      value: noun.value as BeComplement,
-      label: noun.label,
-      numberForm: noun.numberForm as NumberForm
-    }));
-
-    // Convert adjectiveWords to the format we need
-    const adjectiveOptions = adjectiveWords.map(adj => ({
-      value: adj.value as BeComplement,
-      label: adj.label,
-      numberForm: 'adjective' as const
-    }));
+  const options = React.useMemo(() => {
+    let opts: { value: BeComplement; label: string; numberForm?: NumberForm }[];
     
-    // Combine all SVC options (nouns from database + adjectives)
-    const allSVCOptions = [...nounOptions, ...adjectiveOptions];
-    
-    // Filter by numberForm if provided
-    if (numberForm) {
-      // When 'the', possessive determiners, or 'no_article' are selected, show all complements except 'something'
-      const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
-      options = showAllExceptSomething
-        ? allSVCOptions.filter(option => option.value !== 'something')
-        : allSVCOptions.filter(option => option.numberForm === numberForm);
+    if (pattern === 'SV') {
+      opts = adverbWords.map(word => ({
+        value: word.value as BeComplement,
+        label: word.label
+      }));
     } else {
-      options = allSVCOptions;
+      const nounOptions = nounWords.map(noun => ({
+        value: noun.value as BeComplement,
+        label: noun.label,
+        numberForm: noun.numberForm as NumberForm
+      }));
+
+      const adjectiveOptions = adjectiveWords.map(adj => ({
+        value: adj.value as BeComplement,
+        label: adj.label,
+        numberForm: 'adjective' as const
+      }));
+      
+      const allSVCOptions = [...nounOptions, ...adjectiveOptions];
+      
+      if (numberForm) {
+        const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
+        opts = showAllExceptSomething
+          ? allSVCOptions.filter(option => option.value !== 'something')
+          : allSVCOptions.filter(option => option.numberForm === numberForm);
+      } else {
+        opts = allSVCOptions;
+      }
     }
-  }
-  
-  // Sort options alphabetically by value
-  options.sort((a, b) => a.value.localeCompare(b.value));
+    
+    return [...opts].sort((a, b) => a.value.localeCompare(b.value));
+  }, [pattern, numberForm, nounWords, adjectiveWords, adverbWords]);
   
   // Auto-select first option if current selection is not in the list
   React.useEffect(() => {
@@ -74,7 +68,7 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
     if (!isCurrentSelectionValid && options.length > 0) {
       onChange(options[0].value);
     }
-  }, [pattern, numberForm, selectedComplement, onChange, options]);
+  }, [selectedComplement, onChange, options]);
 
   return (
     <div className="flex items-center gap-3">

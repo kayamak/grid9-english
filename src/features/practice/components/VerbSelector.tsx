@@ -27,7 +27,6 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
       setError(null);
       
       try {
-        // Build query parameters
         const params = new URLSearchParams();
         params.append('verbType', verbType);
         
@@ -43,7 +42,6 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
 
         const verbWords: VerbWord[] = await response.json();
         
-        // Transform to options format and sort alphabetically
         const transformedOptions = verbWords
           .map(vw => ({
             value: vw.value as Verb,
@@ -52,12 +50,6 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
           .sort((a, b) => a.value.localeCompare(b.value));
         
         setOptions(transformedOptions);
-        
-        // If current selected verb is not in the new options, select the first one
-        if (transformedOptions.length > 0 && 
-            !transformedOptions.some(opt => opt.value === selectedVerb)) {
-          onChange(transformedOptions[0].value);
-        }
       } catch (err) {
         console.error('Error fetching verb words:', err);
         setError('動詞データの読み込みに失敗しました');
@@ -68,7 +60,14 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
     };
 
     fetchVerbWords();
-  }, [verbType, fiveSentencePattern, onChange, selectedVerb]); // Re-fetch when verbType, sentence pattern, or dependencies change
+  }, [verbType, fiveSentencePattern]); // Only re-fetch when criteria change
+
+  // Auto-select first option if current selection is not in filtered list
+  useEffect(() => {
+    if (!loading && options.length > 0 && !options.some(opt => opt.value === selectedVerb)) {
+      onChange(options[0].value);
+    }
+  }, [loading, options, selectedVerb, onChange]);
 
   return (
     <div className="flex items-center gap-3">

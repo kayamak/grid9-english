@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { NineKeyPanel } from '@/features/practice/components/NineKeyPanel';
 import { VerbTypeSelector } from '@/features/practice/components/VerbTypeSelector';
@@ -127,78 +127,82 @@ function PracticeContent() {
     return () => clearInterval(timer);
   }, [isQuestMode, isTimerActive, timeLeft, questStatus]);
 
-  const handleVerbTypeChange = (verbType: VerbType) => {
+  const handleVerbTypeChange = useCallback((verbType: VerbType) => {
     // When switching types, reset verb and pattern to defaults
-    if (verbType === 'be') {
-      setState(() => SentencePattern.create({
-        ...state.toObject(),
-        verbType,
-        verb: 'be',
-        fiveSentencePattern: 'SV',
-        beComplement: 'here',
-        numberForm: 'a'
-      }));
-    } else {
-      setState(() => SentencePattern.create({
-        ...state.toObject(),
-        verbType,
-        verb: 'do',
-        fiveSentencePattern: 'SV'
-      }));
-    }
-  };
+    setState((prev) => {
+      if (verbType === 'be') {
+        return SentencePattern.create({
+          ...prev.toObject(),
+          verbType,
+          verb: 'be',
+          fiveSentencePattern: 'SV',
+          beComplement: 'here',
+          numberForm: 'a'
+        });
+      } else {
+        return SentencePattern.create({
+          ...prev.toObject(),
+          verbType,
+          verb: 'do',
+          fiveSentencePattern: 'SV'
+        });
+      }
+    });
+  }, []);
 
-  const handleVerbChange = (verb: Verb) => {
-    setState(() => SentencePattern.create({ ...state.toObject(), verb }));
-  };
+  const handleVerbChange = useCallback((verb: Verb) => {
+    setState((prev) => SentencePattern.create({ ...prev.toObject(), verb }));
+  }, []);
 
-  const handleSentenceTypeChange = (sentenceType: SentenceType) => {
+  const handleSentenceTypeChange = useCallback((sentenceType: SentenceType) => {
     setState((prev) => prev.toggleSentenceType(sentenceType));
-  };
+  }, []);
 
-  const handleSubjectChange = (subject: Subject) => {
-    // Check if clicking same person to rotate (Invariant 1)
-    if (subject === state.subject) {
-      setState((prev) => prev.rotateSubject());
-    } else {
-      setState(() => SentencePattern.create({ ...state.toObject(), subject }));
-    }
-  };
+  const handleSubjectChange = useCallback((subject: Subject) => {
+    setState((prev) => {
+      // Check if clicking same person to rotate (Invariant 1)
+      if (subject === prev.subject) {
+        return prev.rotateSubject();
+      } else {
+        return SentencePattern.create({ ...prev.toObject(), subject });
+      }
+    });
+  }, []);
 
-  const handleTenseChange = (tense: Tense) => {
+  const handleTenseChange = useCallback((tense: Tense) => {
     setState((prev) => prev.changeTense(tense));
-  };
+  }, []);
 
-  const handleFiveSentencePatternChange = (fiveSentencePattern: FiveSentencePattern) => {
-    setState(() => SentencePattern.create({
-       ...state.toObject(),
+  const handleFiveSentencePatternChange = useCallback((fiveSentencePattern: FiveSentencePattern) => {
+    setState((prev) => SentencePattern.create({
+       ...prev.toObject(),
        fiveSentencePattern,
        verb: 'do'
     }));
-  };
+  }, []);
 
-  const handleObjectChange = (object: Object) => {
-    setState(() => SentencePattern.create({ ...state.toObject(), object }));
-  };
+  const handleObjectChange = useCallback((object: Object) => {
+    setState((prev) => SentencePattern.create({ ...prev.toObject(), object }));
+  }, []);
 
-  const handleNumberFormChange = (numberForm: NumberForm) => {
-    setState(() => SentencePattern.create({ ...state.toObject(), numberForm }));
-  };
+  const handleNumberFormChange = useCallback((numberForm: NumberForm) => {
+    setState((prev) => SentencePattern.create({ ...prev.toObject(), numberForm }));
+  }, []);
 
-  const handleBeComplementChange = (beComplement: BeComplement) => {
-    setState(() => SentencePattern.create({ ...state.toObject(), beComplement }));
-  };
+  const handleBeComplementChange = useCallback((beComplement: BeComplement) => {
+    setState((prev) => SentencePattern.create({ ...prev.toObject(), beComplement }));
+  }, []);
 
   const [sessionId, setSessionId] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
   }, []);
 
-  const generatedText = new GeneratePatternUseCase().execute(state, nounWords, verbWords);
+  const generatedText = useMemo(() => new GeneratePatternUseCase().execute(state, nounWords, verbWords), [state, nounWords, verbWords]);
 
   const currentDrill = drills[currentDrillIndex];
-  const isCorrect = isDrillMode && currentDrill && generatedText.toLowerCase().replace(/[.,?!]/g, '') === currentDrill.english.toLowerCase().replace(/[.,?!]/g, '');
+  const isCorrect = useMemo(() => isDrillMode && currentDrill && generatedText.toLowerCase().replace(/[.,?!]/g, '') === currentDrill.english.toLowerCase().replace(/[.,?!]/g, ''), [isDrillMode, currentDrill, generatedText]);
 
   const [hasMarkedCorrect, setHasMarkedCorrect] = useState(false);
 

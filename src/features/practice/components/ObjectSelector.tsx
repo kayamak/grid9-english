@@ -18,14 +18,13 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
   children,
   nounWords
 }) => {
-  // Filter options based on numberForm
-  // When 'the', possessive determiners, or 'no_article' are selected, show all objects except 'something'
-  // since these can be used with any noun (singular, plural, countable, uncountable)
-  const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
-  const filteredOptions = (showAllExceptSomething
-    ? nounWords.filter(option => option.value !== 'something')
-    : nounWords.filter(option => option.numberForm === numberForm))
-    .sort((a, b) => a.value.localeCompare(b.value));
+  const filteredOptions = React.useMemo(() => {
+    const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
+    return (showAllExceptSomething
+      ? nounWords.filter(option => option.value !== 'something')
+      : nounWords.filter(option => option.numberForm === numberForm))
+      .sort((a, b) => a.value.localeCompare(b.value));
+  }, [numberForm, nounWords]);
   
   // Auto-select first option if current selection is not in filtered list
   React.useEffect(() => {
@@ -33,7 +32,7 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
     if (!isCurrentSelectionValid && filteredOptions.length > 0) {
       onChange(filteredOptions[0].value as Object);
     }
-  }, [numberForm, selectedObject, onChange, filteredOptions]);
+  }, [selectedObject, onChange, filteredOptions]);
 
   return (
     <div className="flex items-center gap-3">
