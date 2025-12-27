@@ -46,6 +46,7 @@ function PracticeContent() {
   const [isLevelCleared, setIsLevelCleared] = useState(false);
   const [isAllCleared, setIsAllCleared] = useState(false);
   const [questStatus, setQuestStatus] = useState<'playing' | 'result' | 'failed' | 'all-cleared'>('playing');
+  const [questResults, setQuestResults] = useState<('correct' | 'wrong' | null)[]>(new Array(10).fill(null));
 
   const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
     verbType: 'do',
@@ -104,6 +105,7 @@ function PracticeContent() {
         setTimeLeft(timeLimit);
         setIsTimerActive(true);
         setQuestStatus('playing');
+        setQuestResults(new Array(10).fill(null));
       } else {
         const data = await getSentenceDrills(selectedPattern);
         setDrills(data);
@@ -123,9 +125,16 @@ function PracticeContent() {
       // Time up! Mark as finished but not necessarily fail yet, just this question is wrong
       // Actually, we should probably just stop the timer and let the user skip
       setIsTimerActive(false);
+      setQuestResults(prev => {
+        const next = [...prev];
+        if (!next[currentDrillIndex]) {
+          next[currentDrillIndex] = 'wrong';
+        }
+        return next;
+      });
     }
     return () => clearInterval(timer);
-  }, [isQuestMode, isTimerActive, timeLeft, questStatus]);
+  }, [isQuestMode, isTimerActive, timeLeft, questStatus, currentDrillIndex]);
 
   const handleVerbTypeChange = useCallback((verbType: VerbType) => {
     // When switching types, reset verb and pattern to defaults
@@ -209,10 +218,15 @@ function PracticeContent() {
   useEffect(() => {
     if (isCorrect && !hasMarkedCorrect && isQuestMode && questStatus === 'playing') {
       setCorrectCountInLevel(prev => prev + 1);
+      setQuestResults(prev => {
+        const next = [...prev];
+        next[currentDrillIndex] = 'correct';
+        return next;
+      });
       setHasMarkedCorrect(true);
       setIsTimerActive(false);
     }
-  }, [isCorrect, hasMarkedCorrect, isQuestMode, questStatus]);
+  }, [isCorrect, hasMarkedCorrect, isQuestMode, questStatus, currentDrillIndex]);
 
   useEffect(() => {
     setHasMarkedCorrect(false);
@@ -259,6 +273,7 @@ function PracticeContent() {
       setTimeLeft(timeLimit);
       setIsTimerActive(true);
       setQuestStatus('playing');
+      setQuestResults(new Array(10).fill(null));
     };
     fetchAgain();
   };
@@ -369,9 +384,11 @@ function PracticeContent() {
                          <div 
                            key={i} 
                            className={`w-3 h-3 rounded-full border-2 ${
-                             i < currentDrillIndex 
-                               ? (i < correctCountInLevel ? 'bg-green-500 border-green-600' : 'bg-red-500 border-red-600')
-                               : (i === currentDrillIndex ? 'bg-amber-400 border-amber-500 animate-pulse' : 'bg-slate-200 border-slate-300')
+                             questResults[i] === 'correct' 
+                               ? 'bg-green-500 border-green-600' 
+                               : questResults[i] === 'wrong' 
+                                 ? 'bg-red-500 border-red-600' 
+                                 : (i === currentDrillIndex ? 'bg-amber-400 border-amber-500 animate-pulse' : 'bg-slate-200 border-slate-300')
                            }`}
                          />
                        ))}
