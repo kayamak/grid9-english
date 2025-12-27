@@ -18,6 +18,14 @@ const MOTIVATIONAL_MESSAGES = [
   "きみの　なかに　ねむる　才能を　よびおこせ！"
 ];
 
+const OPERATION_MESSAGES = [
+  "マウスで　コマンドを　えらび　クリックして　けっていしよう！",
+  "スマホの　ときは　画面を　直接　タップするのだぞ。",
+  "「もどる」ボタンを　おすと　まえの　メニューに　もどれるぞ。",
+  "この　ウィンドウを　クリックすると　別の　メッセージが　きけるぞ。",
+  "さあ　コマンドを　えらんで　ぼうけんを　はじめよう！"
+];
+
 type MenuItem = {
   label: string;
   href: string;
@@ -102,9 +110,10 @@ const MENU_DATA: Record<string, CategoryData> = {
 
 export function MainMenu() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [descIndex, setDescIndex] = useState(0);
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
+  const [descMessage, setDescMessage] = useState<string>("コマンドを　えらんでください。");
   const [bottomMessage, setBottomMessage] = useState<string>("ぼうけんの　じゅんびは　いいかな？");
+  const [opIndex, setOpIndex] = useState(0);
   const router = useRouter();
 
   const updateMotivation = useCallback(() => {
@@ -112,10 +121,16 @@ export function MainMenu() {
     setBottomMessage(randomMsg);
   }, []);
 
+  const updateOperation = useCallback(() => {
+    const msg = OPERATION_MESSAGES[opIndex % OPERATION_MESSAGES.length];
+    setOpIndex(prev => prev + 1);
+    return msg;
+  }, [opIndex]);
+
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-    setDescIndex(0);
     setHoveredAction(null);
+    setDescMessage(MENU_DATA[category].descriptions[0]);
     updateMotivation();
   };
 
@@ -126,31 +141,28 @@ export function MainMenu() {
 
   const handleBack = () => {
     setSelectedCategory(null);
-    setDescIndex(0);
     setHoveredAction(null);
+    setDescMessage("コマンドを　えらんでください。");
     updateMotivation();
   };
 
-  const cycleDescription = () => {
-    setDescIndex((prev) => prev + 1);
-    updateMotivation();
+  const handleDescClick = () => {
+    setDescMessage(updateOperation());
   };
 
-  // Determine which descriptions to use
-  let currentDescriptions: string[] = ["コマンドを　えらんでください。"];
-  if (selectedCategory) {
-    if (hoveredAction) {
-      const catData = MENU_DATA[selectedCategory];
-      const item = catData.items.find(i => i.label === hoveredAction);
-      if (item) {
-        currentDescriptions = item.descriptions;
-      }
-    } else {
-      currentDescriptions = MENU_DATA[selectedCategory].descriptions;
+  const handleBottomClick = () => {
+    setBottomMessage(updateOperation());
+  };
+
+  const handleActionHover = (label: string | null) => {
+    setHoveredAction(label);
+    if (label && selectedCategory) {
+      const item = MENU_DATA[selectedCategory].items.find(i => i.label === label);
+      if (item) setDescMessage(item.descriptions[0]);
+    } else if (selectedCategory) {
+      setDescMessage(MENU_DATA[selectedCategory].descriptions[0]);
     }
-  }
-
-  const activeDescription = currentDescriptions[descIndex % currentDescriptions.length];
+  };
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -187,14 +199,8 @@ export function MainMenu() {
                 <button
                   key={item.label}
                   onClick={() => handleActionClick(item.href)}
-                  onMouseEnter={() => {
-                    setHoveredAction(item.label);
-                    setDescIndex(0);
-                  }}
-                  onMouseLeave={() => {
-                    setHoveredAction(null);
-                    setDescIndex(0);
-                  }}
+                  onMouseEnter={() => handleActionHover(item.label)}
+                  onMouseLeave={() => handleActionHover(null)}
                   className="dq-menu-item text-xl w-full text-left"
                 >
                   {item.label}
@@ -207,14 +213,14 @@ export function MainMenu() {
         {/* Description Area */}
         <section 
           className="dq-window md:col-span-2 relative overflow-hidden group cursor-pointer"
-          onClick={cycleDescription}
+          onClick={handleDescClick}
         >
           <div className="absolute top-2 right-4 text-[10px] text-white/20 group-hover:text-white/40">
-            Click to cycle
+            Click for Help
           </div>
           <div className="p-4 md:p-8 h-full flex items-center justify-center">
              <p className="text-xl md:text-2xl leading-relaxed text-center font-normal">
-               {activeDescription}
+               {descMessage}
              </p>
           </div>
         </section>
@@ -223,7 +229,7 @@ export function MainMenu() {
       {/* Message Window */}
       <div 
         className="dq-window h-24 flex items-center px-8 border-yellow-400 cursor-pointer"
-        onClick={updateMotivation}
+        onClick={handleBottomClick}
       >
         <p className="text-xl text-white">
           <span className="inline-block animate-bounce mr-2">▼</span>
