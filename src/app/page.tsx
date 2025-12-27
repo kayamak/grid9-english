@@ -13,13 +13,8 @@ export default async function Home() {
           <p className="text-lg md:text-xl text-yellow-200 typing-text">視覚的なパターンで英語をマスターせよ！</p>
         </header>
 
-        {/* Main Menu Component */}
+        {/* Main Menu Component (Now Includes Message Window) */}
         <MainMenu />
-
-        {/* Message Window (Lower) */}
-        <div className="dq-window h-24 flex items-center px-8 border-yellow-400">
-          <p className="text-xl animate-pulse text-white">▼ ぼうけんの　じゅんびは　いいかな？</p>
-        </div>
       </div>
     </main>
   );
