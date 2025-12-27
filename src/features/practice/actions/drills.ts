@@ -13,12 +13,18 @@ export async function getSentenceDrills(pattern?: string) {
 export async function getDrillQuestQuestions(level: number) {
   const repository = new PrismaSentenceDrillRepository();
   let pattern = '';
-  // Level mapping based on spec
-  if ([1, 4, 7].includes(level)) pattern = 'DO_SV';
-  else if ([2, 5, 8].includes(level)) pattern = 'DO_SVO';
-  else if ([3, 6, 9].includes(level)) pattern = 'BE_SVC';
+  let drills = [];
 
-  const drills = await repository.findByPattern(pattern);
+  if (level === 10) {
+    drills = await repository.findAll();
+  } else {
+    // Level mapping based on spec
+    if ([1, 4, 7].includes(level)) pattern = 'DO_SV';
+    else if ([2, 5, 8].includes(level)) pattern = 'DO_SVO';
+    else if ([3, 6, 9].includes(level)) pattern = 'BE_SVC';
+    drills = await repository.findByPattern(pattern);
+  }
+
   
   if (level <= 3) {
     // Lead 10 questions (First 10)

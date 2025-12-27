@@ -11,7 +11,8 @@ import { NounDeterminerSelector } from '@/features/practice/components/NounDeter
 import { ComplementSelector } from '@/features/practice/components/ComplementSelector';
 import { GeneratePatternUseCase } from '@/features/practice/actions/GeneratePatternUseCase';
 import { getSentenceDrills, getDrillQuestQuestions } from '@/features/practice/actions/drills';
-import { CheckCircle2, ArrowRightLeft, StepForward, Timer, Trophy, XCircle, ChevronRight, RotateCcw } from 'lucide-react';
+import { CheckCircle2, ArrowRightLeft, StepForward, Timer, Trophy, XCircle, ChevronRight, RotateCcw, PartyPopper, Beer } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import {
   SentencePattern,
@@ -100,8 +101,8 @@ function PracticeContent() {
         setDrills(data);
         setCurrentDrillIndex(0);
         setCorrectCountInLevel(0);
-        // Set time limit based on level: 30s base, L4+ has formula
-        const timeLimit = currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2));
+        // Set time limit based on level: 30s base, L4+ has formula, L10 is fixed 10s
+        const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
         setTimeLeft(timeLimit);
         setIsTimerActive(true);
         setQuestStatus('playing');
@@ -238,7 +239,7 @@ function PracticeContent() {
         // Evaluate level result
         const finalCorrect = isCorrect ? correctCountInLevel : correctCountInLevel; // already incremented by effect
         if (correctCountInLevel >= 8) {
-          if (currentLevel === 9) {
+          if (currentLevel === 10) {
             setQuestStatus('all-cleared');
           } else {
             setQuestStatus('result');
@@ -249,7 +250,7 @@ function PracticeContent() {
         setIsTimerActive(false);
       } else {
         setCurrentDrillIndex((prev) => prev + 1);
-        const timeLimit = currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2));
+        const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
         setTimeLeft(timeLimit);
         setIsTimerActive(true);
       }
@@ -269,7 +270,7 @@ function PracticeContent() {
       setDrills(data);
       setCurrentDrillIndex(0);
       setCorrectCountInLevel(0);
-      const timeLimit = currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2));
+      const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
       setTimeLeft(timeLimit);
       setIsTimerActive(true);
       setQuestStatus('playing');
@@ -474,30 +475,109 @@ function PracticeContent() {
         )}
 
         {isQuestMode && questStatus === 'all-cleared' && (
-          <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
-            <div className="bg-slate-900 p-12 rounded-[3.5rem] shadow-2xl border-8 border-amber-400 flex flex-col items-center gap-8 text-center max-w-lg w-full text-white relative overflow-hidden">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl font-sans">
+            {/* Celebration Background Particles */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ 
+                    top: -20, 
+                    left: `${Math.random() * 100}%`,
+                    rotate: 0,
+                    scale: 0.5 + Math.random()
+                   }}
+                  animate={{ 
+                    top: '120%', 
+                    rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
+                  }}
+                  transition={{ 
+                    duration: 3 + Math.random() * 4, 
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: Math.random() * 5
+                  }}
+                  className="absolute"
+                >
+                  {i % 3 === 0 ? (
+                    <PartyPopper className="text-amber-400 w-8 h-8 opacity-40 shadow-xl" />
+                  ) : i % 3 === 1 ? (
+                    <Beer className="text-amber-200 w-10 h-10 opacity-30" />
+                  ) : (
+                    <div className="w-4 h-4 rounded-sm bg-gradient-to-br from-indigo-400 to-purple-400 opacity-40" />
+                  )}
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ type: "spring", damping: 15 }}
+              className="bg-slate-900 p-12 rounded-[3.5rem] shadow-[0_0_100px_rgba(245,158,11,0.2)] border-8 border-amber-400 flex flex-col items-center gap-8 text-center max-w-lg w-full text-white relative overflow-hidden"
+            >
                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500/20 via-transparent to-transparent"></div>
                
-               <div className="relative">
-                 <Trophy className="w-32 h-32 text-amber-400 animate-pulse" />
-                 <div className="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-900 font-black shadow-lg">9</div>
+               <div className="relative flex items-center justify-center">
+                 <motion.div
+                   animate={{ 
+                     rotate: [0, -10, 10, -10, 10, 0],
+                     scale: [1, 1.1, 1, 1.1, 1]
+                   }}
+                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                 >
+                   <Trophy className="w-32 h-32 text-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.5)]" />
+                 </motion.div>
+                 <motion.div 
+                   className="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-900 font-black shadow-lg border-4 border-amber-400"
+                   initial={{ scale: 0 }}
+                   animate={{ scale: 1 }}
+                   transition={{ delay: 0.5 }}
+                 >
+                   10
+                 </motion.div>
                </div>
                
-               <div>
-                 <h2 className="text-5xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">GRAND MASTER</h2>
-                 <p className="text-slate-400 font-medium text-lg leading-relaxed">
-                   You have conquered all levels of the Drill Quest.<br/>Your pattern recognition is elite.
-                 </p>
+               <div className="z-10">
+                 <motion.h2 
+                   initial={{ y: 20, opacity: 0 }}
+                   animate={{ y: 0, opacity: 1 }}
+                   transition={{ delay: 0.3 }}
+                   className="text-5xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 animate-pulse"
+                 >
+                   GRAND MASTER
+                 </motion.h2>
+                 <motion.p 
+                   initial={{ y: 20, opacity: 0 }}
+                   animate={{ y: 0, opacity: 1 }}
+                   transition={{ delay: 0.4 }}
+                   className="text-slate-400 font-medium text-lg leading-relaxed"
+                 >
+                   すべてを制覇しました。<br/>
+                   あなたは真の英語マスターです。
+                 </motion.p>
                </div>
 
-               <div className="w-full h-px bg-slate-800"></div>
+               <motion.div 
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 transition={{ delay: 0.8 }}
+                 className="flex flex-col items-center gap-4 py-6 border-y border-slate-800 w-full"
+               >
+                 <div className="flex items-center gap-4">
+                    <Beer className="w-12 h-12 text-amber-400" />
+                    <span className="text-3xl font-black tracking-widest text-amber-200">CHEERS!</span>
+                    <Beer className="w-12 h-12 text-amber-400 scale-x-[-1]" />
+                 </div>
+                 <p className="text-xs font-bold text-amber-500/50 tracking-[0.3em] uppercase">Victory Celebration</p>
+               </motion.div>
 
-               <Link href="/" className="w-full">
-                 <Button className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-8 rounded-2xl text-xl font-black shadow-xl hover:scale-105 transition-all">
-                   Return as a Legend
+               <Link href="/" className="w-full z-10">
+                 <Button className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 py-8 rounded-2xl text-xl font-black shadow-[0_10px_30px_rgba(245,158,11,0.4)] hover:scale-105 transition-all active:scale-95">
+                   伝説として帰還する
                  </Button>
                </Link>
-            </div>
+            </motion.div>
           </div>
         )}
 
