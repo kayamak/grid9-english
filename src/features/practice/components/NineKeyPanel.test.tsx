@@ -17,9 +17,9 @@ describe('NineKeyPanel', () => {
     render(<NineKeyPanel {...defaultProps} />);
     
     // Check if rows are rendered
-    expect(screen.getByText('文の種類')).toBeDefined();
-    expect(screen.getByText('主語')).toBeDefined();
-    expect(screen.getByText('時制')).toBeDefined();
+    expect(screen.getByText('しゅるい')).toBeDefined();
+    expect(screen.getByText('しゅご')).toBeDefined();
+    expect(screen.getByText('じせい')).toBeDefined();
 
     // Check if expected buttons are present
     expect(screen.getAllByText('O')).toHaveLength(2); // One for positive, one for present
