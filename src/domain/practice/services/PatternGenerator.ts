@@ -156,8 +156,7 @@ export class PatternGenerator {
     if (pattern === 'SV') {
       const foundVerb = verbWords.find(v => v.value.toLowerCase() === verbBase.toLowerCase());
       if (foundVerb) {
-        // Handle both entity (getter) and POJO (property)
-        const adv = (foundVerb as any).adverb || (foundVerb as any)._adverb;
+        const adv = foundVerb.adverb;
         if (adv) {
           complement = adv;
         }

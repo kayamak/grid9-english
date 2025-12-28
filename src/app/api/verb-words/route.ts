@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/infrastructure/prisma/client';
+import { VerbWord } from '@/types/verbWord';
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +9,7 @@ export async function GET(request: NextRequest) {
     const sentencePattern = searchParams.get('sentencePattern');
 
     // Build where clause and fetch
-    let verbWords;
+    let verbWords: VerbWord[];
     if (verbType === 'be') {
       const beVerbs = await prisma.beVerbWord.findMany({
         orderBy: {
@@ -16,39 +17,34 @@ export async function GET(request: NextRequest) {
         },
       });
       // Normalize to match VerbWord type
-      verbWords = beVerbs.map((v: { id: string; value: string; label: string; sortOrder: number }) => ({
+      verbWords = beVerbs.map((v) => ({
         ...v,
         sentencePattern: null,
       }));
     } else if (verbType === 'do') {
-      let doVerbs: any[];
-      if (sentencePattern) {
-        doVerbs = await (prisma as any).$queryRawUnsafe(
-          `SELECT * FROM DoVerbWord WHERE sentencePattern = ? ORDER BY sortOrder ASC`,
-          sentencePattern
-        );
-      } else {
-        doVerbs = await (prisma as any).$queryRawUnsafe(
-          `SELECT * FROM DoVerbWord ORDER BY sortOrder ASC`
-        );
-      }
+      const doVerbs = await prisma.doVerbWord.findMany({
+        where: sentencePattern ? { sentencePattern } : {},
+        orderBy: {
+          sortOrder: 'asc',
+        },
+      });
       verbWords = doVerbs;
     } else {
       // Fetch both and combined if verbType is not specified
       const beVerbs = await prisma.beVerbWord.findMany({
         orderBy: { sortOrder: 'asc' },
       });
-      const doVerbs: any[] = await (prisma as any).$queryRawUnsafe(
-        `SELECT * FROM DoVerbWord ORDER BY sortOrder ASC`
-      );
+      const doVerbs = await prisma.doVerbWord.findMany({
+        orderBy: { sortOrder: 'asc' },
+      });
 
       verbWords = [
-        ...beVerbs.map((v: any) => ({
+        ...beVerbs.map((v) => ({
           ...v,
           sentencePattern: null,
         })),
         ...doVerbs,
-      ].sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0));
+      ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
     }
 
     return NextResponse.json(verbWords);
@@ -60,3 +56,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
