@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { NineKeyPanel } from '@/features/practice/components/NineKeyPanel';
 import { VerbTypeSelector } from '@/features/practice/components/VerbTypeSelector';
 import { FiveSentencePatternSelector } from '@/features/practice/components/FiveSentencePatternSelector';
@@ -210,6 +211,10 @@ function PracticeContent() {
   }, []);
 
   const [sessionId, setSessionId] = useState('');
+  const [showVictoryEffect, setShowVictoryEffect] = useState(false);
+  const [isScreenShaking, setIsScreenShaking] = useState(false);
+  const [isScreenFlashing, setIsScreenFlashing] = useState(false);
+  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated'>('idle');
 
   useEffect(() => {
     setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
@@ -222,6 +227,25 @@ function PracticeContent() {
 
   const [hasMarkedCorrect, setHasMarkedCorrect] = useState(false);
 
+  const triggerVictoryEffect = useCallback(() => {
+    // 1. Screen Flash
+    setIsScreenFlashing(true);
+    setTimeout(() => setIsScreenFlashing(false), 150);
+
+    // 2. Screen Shake
+    setIsScreenShaking(true);
+    setTimeout(() => setIsScreenShaking(false), 500);
+
+    // 3. Monster State
+    setMonsterState('hit');
+    setTimeout(() => {
+      setMonsterState('defeated');
+    }, 300);
+
+    setShowVictoryEffect(true);
+    // Effects last for a bit then reset for next
+  }, []);
+
   useEffect(() => {
     if (isCorrect && !hasMarkedCorrect && isQuestMode && questStatus === 'playing') {
       setCorrectCountInLevel(prev => prev + 1);
@@ -232,11 +256,23 @@ function PracticeContent() {
       });
       setHasMarkedCorrect(true);
       setIsTimerActive(false);
+
+      // Trigger Flashy RPG Victory Effect
+      triggerVictoryEffect();
     }
-  }, [isCorrect, hasMarkedCorrect, isQuestMode, questStatus, currentDrillIndex]);
+  }, [isCorrect, hasMarkedCorrect, isQuestMode, questStatus, currentDrillIndex, triggerVictoryEffect]);
+
+  useEffect(() => {
+    if (isCorrect && !isQuestMode && !hasMarkedCorrect) {
+      setHasMarkedCorrect(true);
+      triggerVictoryEffect();
+    }
+  }, [isCorrect, isDrillMode, isQuestMode, hasMarkedCorrect, triggerVictoryEffect]);
 
   useEffect(() => {
     setHasMarkedCorrect(false);
+    setMonsterState('idle');
+    setShowVictoryEffect(false);
   }, [currentDrillIndex]);
 
   const handleNextDrill = () => {
@@ -289,8 +325,27 @@ function PracticeContent() {
   // };
 
   return (
-    <main className="min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white">
-      <div className="w-full max-w-4xl">
+    <main className={`min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white transition-all duration-75 ${isScreenShaking ? 'translate-x-2 -translate-y-1 rotate-1' : ''}`}>
+      {/* Screen Flash Overlay */}
+      {isScreenFlashing && (
+        <div className="fixed inset-0 bg-white z-[1000] opacity-80 pointer-events-none" />
+      )}
+
+      {/* Victory Particles / Text Effect */}
+      {showVictoryEffect && (
+        <div className="fixed inset-0 z-[900] pointer-events-none flex items-center justify-center">
+          <motion.div 
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: [1, 1.2, 1], opacity: [0, 1, 0] }}
+            transition={{ duration: 0.8 }}
+            className="text-6xl md:text-8xl text-yellow-400 font-bold italic drop-shadow-[0_0_15px_rgba(255,215,0,0.8)]"
+          >
+            SMASH!
+          </motion.div>
+        </div>
+      )}
+
+      <div className="w-full max-w-4xl relative">
         <header className="mb-8 md:mb-12 flex justify-between items-center dq-window-fancy">
           <Link href="/" className="dq-button !py-1 !px-4 text-sm">
             &larr; もどる
@@ -303,7 +358,51 @@ function PracticeContent() {
 
         {isDrillMode && !isQuestMode && currentDrill && (
           <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
-            <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-4">
+            {/* Monster Battle Area for Drill Mode */}
+            <div className="relative w-full max-w-lg h-40 md:h-56 mb-4 flex justify-center items-end">
+              <motion.div
+                key={currentDrillIndex}
+                initial={{ y: 20, opacity: 0, scale: 0.8 }}
+                animate={{ 
+                  y: monsterState === 'hit' ? [0, -20, 0] : 0,
+                  opacity: monsterState === 'defeated' ? 0 : 1,
+                  scale: monsterState === 'hit' ? 1.1 : 1,
+                  filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
+                  x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                }}
+                transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                className="relative z-10"
+              >
+                <Image 
+                  src={currentDrillIndex % 2 === 0 ? "/assets/monsters/slime.png" : "/assets/monsters/dragon.png"} 
+                  alt="Monster" 
+                  width={200}
+                  height={200}
+                  className="w-32 h-32 md:w-48 md:h-48 object-contain pixelated"
+                />
+              {showVictoryEffect && (
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="absolute inset-0 flex items-center justify-center z-20"
+                >
+                  <div className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-2xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]">
+                    VICTORY!!
+                  </div>
+                </motion.div>
+              )}
+           </motion.div>
+              <div className="absolute bottom-0 w-32 h-4 bg-black/40 blur-md rounded-[100%]"></div>
+            </div>
+
+            <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-4 relative">
+              {showVictoryEffect && (
+                <div className="absolute inset-x-0 -top-12 flex justify-center z-50">
+                   <div className="dq-window bg-black border-yellow-400 py-1 px-6 animate-bounce">
+                      <p className="text-yellow-400 text-lg">かいしんの　いちげき！</p>
+                   </div>
+                </div>
+              )}
               <div className="flex flex-col items-center">
                 <p className="text-sm text-yellow-200">じょうほう: {currentDrillIndex + 1} / {drills.length}</p>
                 {selectedPattern && (
@@ -336,7 +435,46 @@ function PracticeContent() {
 
         {isQuestMode && currentDrill && questStatus === 'playing' && (
           <div className="mb-8 w-full flex flex-col items-center">
-            <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-6 overflow-hidden">
+            {/* Monster Battle Area */}
+            <div className="relative w-full max-w-lg h-40 md:h-56 mb-4 flex justify-center items-end">
+              <motion.div
+                key={currentDrillIndex}
+                initial={{ y: 20, opacity: 0, scale: 0.8 }}
+                animate={{ 
+                  y: monsterState === 'hit' ? [0, -20, 0] : 0,
+                  opacity: monsterState === 'defeated' ? 0 : 1,
+                  scale: monsterState === 'hit' ? 1.1 : 1,
+                  filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
+                  x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                }}
+                transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                className="relative z-10"
+              >
+                <Image 
+                  src={currentLevel % 2 === 1 ? "/assets/monsters/slime.png" : "/assets/monsters/dragon.png"} 
+                  alt="Monster" 
+                  width={200}
+                  height={200}
+                  className="w-32 h-32 md:w-48 md:h-48 object-contain pixelated"
+                />
+              {showVictoryEffect && (
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="absolute inset-0 flex items-center justify-center z-20"
+                >
+                  <div className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-2xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]">
+                    VICTORY!!
+                  </div>
+                </motion.div>
+              )}
+           </motion.div>
+              
+              {/* Ground shadow */}
+              <div className="absolute bottom-0 w-32 h-4 bg-black/40 blur-md rounded-[100%]"></div>
+            </div>
+
+            <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-6 overflow-hidden relative">
               {/* Timer Bar */}
               <div className="absolute top-0 left-0 h-2 bg-yellow-400 transition-all duration-1000" style={{ width: `${(timeLeft / (currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : 30 - currentLevel * 2))) * 100}%` }}></div>
               
@@ -359,15 +497,25 @@ function PracticeContent() {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center py-6 bg-black/40 w-full border-y-2 border-white/20">
-                <p className="text-sm text-white/60 mb-2">えいごに　なおせ！</p>
-                <h2 className="text-2xl md:text-3xl font-normal text-center px-4 md:px-8">
+              <div className="flex flex-col items-center py-6 bg-black/40 w-full border-y-2 border-white/20 relative">
+                {showVictoryEffect && (
+                  <div className="absolute inset-0 bg-yellow-400/20 animate-pulse z-0"></div>
+                )}
+                <p className="text-sm text-white/60 mb-2 z-10">えいごに　なおせ！</p>
+                <h2 className="text-2xl md:text-3xl font-normal text-center px-4 md:px-8 z-10">
                   {currentDrill.japanese}
                 </h2>
                 {(isCorrect || timeLeft === 0) && (
-                   <p className="mt-4 text-xl text-yellow-400 animate-in fade-in slide-in-from-top-4 duration-500">
-                     {currentDrill.english}
-                   </p>
+                   <div className="mt-4 flex flex-col items-center z-10 gap-2">
+                     <p className="text-xl text-yellow-400 animate-in fade-in slide-in-from-top-4 duration-500">
+                       {currentDrill.english}
+                     </p>
+                     {isCorrect && (
+                       <p className="text-sm text-green-400 font-bold animate-bounce mt-2 bg-black/60 px-4 py-1 border border-green-400">
+                         モンスターを　たおした！
+                       </p>
+                     )}
+                   </div>
                 )}
               </div>
 
