@@ -1,5 +1,5 @@
 import { Circle } from '../entities/Circle';
-import { CircleFullSpecification } from '../spec/CircleFullSpecification'; // Not strictly needed here but related
+
 
 export interface ICircleRepository {
   save(circle: Circle): Promise<void>;

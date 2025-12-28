@@ -11,9 +11,8 @@ import { NounDeterminerSelector } from '@/features/practice/components/NounDeter
 import { ComplementSelector } from '@/features/practice/components/ComplementSelector';
 import { GeneratePatternUseCase } from '@/features/practice/actions/GeneratePatternUseCase';
 import { getSentenceDrills, getDrillQuestQuestions } from '@/features/practice/actions/drills';
-import { CheckCircle2, ArrowRightLeft, StepForward, Timer, Trophy, XCircle, ChevronRight, RotateCcw, PartyPopper, Beer } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { Timer, Trophy, XCircle, PartyPopper, Beer } from 'lucide-react';
+import { motion } from 'framer-motion';
 import {
   SentencePattern,
   SentenceType,
@@ -43,9 +42,9 @@ function PracticeContent() {
   const [correctCountInLevel, setCorrectCountInLevel] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isTimerActive, setIsTimerActive] = useState(false);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isLevelCleared, setIsLevelCleared] = useState(false);
-  const [isAllCleared, setIsAllCleared] = useState(false);
+  // const [isGameOver, setIsGameOver] = useState(false);
+  // const [isLevelCleared, setIsLevelCleared] = useState(false);
+  // const [isAllCleared, setIsAllCleared] = useState(false);
   const [questStatus, setQuestStatus] = useState<'playing' | 'result' | 'failed' | 'all-cleared'>('playing');
   const [questResults, setQuestResults] = useState<('correct' | 'wrong' | null)[]>(new Array(10).fill(null));
 
@@ -66,8 +65,15 @@ function PracticeContent() {
   const [adjectiveWords, setAdjectiveWords] = useState<Word[]>([]);
   const [adverbWords, setAdverbWords] = useState<Word[]>([]);
   const [isLoadingNouns, setIsLoadingNouns] = useState(true);
-  const [drills, setDrills] = useState<any[]>([]);
-  const [isDrillMode, setIsDrillMode] = useState(initialMode);
+  interface Drill {
+    id: string;
+    english: string;
+    japanese: string;
+    sentencePattern: string;
+    sortOrder: number;
+  }
+  const [drills, setDrills] = useState<Drill[]>([]);
+  const [isDrillMode] = useState(initialMode);
   const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
 
   // Fetch noun words from Repository
@@ -237,7 +243,6 @@ function PracticeContent() {
     if (isQuestMode) {
       if (currentDrillIndex + 1 >= drills.length) {
         // Evaluate level result
-        const finalCorrect = isCorrect ? correctCountInLevel : correctCountInLevel; // already incremented by effect
         if (correctCountInLevel >= 8) {
           if (currentLevel === 10) {
             setQuestStatus('all-cleared');
@@ -279,9 +284,9 @@ function PracticeContent() {
     fetchAgain();
   };
 
-  const toggleDrillMode = () => {
-    setIsDrillMode(!isDrillMode);
-  };
+  // const toggleDrillMode = () => {
+  //   setIsDrillMode(!isDrillMode);
+  // };
 
   return (
     <main className="min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white">

@@ -1,0 +1,32 @@
+
+> grid9-english@0.1.0 lint
+> eslint
+
+
+/Users/k1/study/myapp/grid9-english/src/app/(auth)/users/[id]/page.tsx
+  16:12  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/k1/study/myapp/grid9-english/src/app/(auth)/users/page.tsx
+  4:10  warning  'prisma' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/k1/study/myapp/grid9-english/src/app/api/adjective-words/route.ts
+  4:27  warning  '_request' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/k1/study/myapp/grid9-english/src/app/api/adverb-words/route.ts
+  4:27  warning  '_request' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/k1/study/myapp/grid9-english/src/app/circles/[id]/page.tsx
+  19:12  warning  'e' is defined but never used                   @typescript-eslint/no-unused-vars
+  25:9   warning  'memberIds' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/k1/study/myapp/grid9-english/src/app/practice/page.tsx
+  76:23  warning  'setIsDrillMode' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/k1/study/myapp/grid9-english/src/domain/circles/repositories/ICircleRepository.ts
+  2:10  warning  'CircleFullSpecification' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/k1/study/myapp/grid9-english/src/features/home/components/MainMenu.tsx
+  113:10  warning  'hoveredAction' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 9 problems (0 errors, 9 warnings)
+

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/infrastructure/prisma/client';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Fetch adverb words from database
     const adverbWords = await prisma.adverbWord.findMany({

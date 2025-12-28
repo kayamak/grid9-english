@@ -16,13 +16,12 @@ export default async function CircleDetailPage({ params }: Props) {
   let circle;
   try {
     circle = await circleService.get(id);
-  } catch (e) {
+  } catch {
     notFound();
   }
 
   const allUsers = await userService.getAll();
   // Filter users who are not owner and not members
-  const memberIds = new Set(circle.members.map((m: string) => m)); // circle.members is string[] in service response? Wait, let's check Service return type.
   // CircleService.get returns { members: string[] }? 
   // Let's verify CircleService.get implementation. 
   // It returns { members: circle.members } which is string[] in Circle.ts.

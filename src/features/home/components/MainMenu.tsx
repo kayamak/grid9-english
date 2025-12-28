@@ -110,7 +110,6 @@ const MENU_DATA: Record<string, CategoryData> = {
 
 export function MainMenu() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [hoveredAction, setHoveredAction] = useState<string | null>(null);
   const [descMessage, setDescMessage] = useState<string>("コマンドを　えらんでください。");
   const [bottomMessage, setBottomMessage] = useState<string>("ぼうけんの　じゅんびは　いいかな？");
   const [opIndex, setOpIndex] = useState(0);
@@ -129,7 +128,6 @@ export function MainMenu() {
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-    setHoveredAction(null);
     setDescMessage(MENU_DATA[category].descriptions[0]);
     updateMotivation();
   };
@@ -141,7 +139,6 @@ export function MainMenu() {
 
   const handleBack = () => {
     setSelectedCategory(null);
-    setHoveredAction(null);
     setDescMessage("コマンドを　えらんでください。");
     updateMotivation();
   };
@@ -155,7 +152,6 @@ export function MainMenu() {
   };
 
   const handleActionHover = (label: string | null) => {
-    setHoveredAction(label);
     if (label && selectedCategory) {
       const item = MENU_DATA[selectedCategory].items.find(i => i.label === label);
       if (item) setDescMessage(item.descriptions[0]);

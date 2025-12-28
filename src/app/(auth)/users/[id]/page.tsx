@@ -13,7 +13,7 @@ export default async function UserDetailPage({ params }: Props) {
   let user;
   try {
     user = await service.get(id);
-  } catch (e) {
+  } catch {
     notFound();
   }
 
