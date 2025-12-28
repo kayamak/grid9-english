@@ -8,6 +8,7 @@ interface ApiWordResponse {
   numberForm?: string;
   pastForm?: string;
   thirdPersonForm?: string;
+  adverb?: string;
   sortOrder?: number;
 }
 

@@ -39,6 +39,7 @@ model DoVerbWord {
   pastForm        String?
   thirdPersonForm String?
   sortOrder       Int
+  adverb          String?
 
   @@index([sentencePattern])
 }

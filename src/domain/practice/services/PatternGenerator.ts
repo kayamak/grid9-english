@@ -150,7 +150,19 @@ export class PatternGenerator {
 
   private static generateDoVerb(sentenceType: SentenceType, subject: Subject, tense: Tense, verbBase: string, pattern: FiveSentencePattern = 'SVO', object: Object = 'something', numberForm: NumberForm = 'a', verbWords: Word[] = []): string {
     const subjectText = this.getSubjectText(subject);
-    const complement = this.getPatternComplement(pattern, subject, object, numberForm);
+    let complement = this.getPatternComplement(pattern, subject, object, numberForm);
+
+    // Handle verb-specific adverbs for SV patterns
+    if (pattern === 'SV') {
+      const foundVerb = verbWords.find(v => v.value.toLowerCase() === verbBase.toLowerCase());
+      if (foundVerb) {
+        // Handle both entity (getter) and POJO (property)
+        const adv = (foundVerb as any).adverb || (foundVerb as any)._adverb;
+        if (adv) {
+          complement = adv;
+        }
+      }
+    }
 
     if (tense === 'future') {
         if (sentenceType === 'positive') return `${subjectText} will ${verbBase}${complement ? ' ' + complement : ''}`;

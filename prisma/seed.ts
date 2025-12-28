@@ -45,15 +45,15 @@ async function main() {
 
   // Do Verbs - SV Pattern (Intransitive)
   const doVerbSV = [
-    { value: 'do', label: 'do (する)', sortOrder: 1, pastForm: 'did', thirdPersonForm: 'does' },
-    { value: 'live', label: 'live (住む)', sortOrder: 2, pastForm: 'lived', thirdPersonForm: 'lives' },
-    { value: 'go', label: 'go (行く)', sortOrder: 3, pastForm: 'went', thirdPersonForm: 'goes' },
-    { value: 'arrive', label: 'arrive (着く)', sortOrder: 4, pastForm: 'arrived', thirdPersonForm: 'arrives' },
-    { value: 'talk', label: 'talk (話す)', sortOrder: 5, pastForm: 'talked', thirdPersonForm: 'talks' },
-    { value: 'run', label: 'run (走る)', sortOrder: 6, pastForm: 'ran', thirdPersonForm: 'runs' },
-    { value: 'walk', label: 'walk (歩く)', sortOrder: 7, pastForm: 'walked', thirdPersonForm: 'walks' },
-    { value: 'smile', label: 'smile (笑う)', sortOrder: 8, pastForm: 'smiled', thirdPersonForm: 'smiles' },
-    { value: 'laugh', label: 'laugh (笑う)', sortOrder: 9, pastForm: 'laughed', thirdPersonForm: 'laughs' },
+    { value: 'do', label: 'do (する)', sortOrder: 1, pastForm: 'did', thirdPersonForm: 'does', adverb: 'well' },
+    { value: 'live', label: 'live (住む)', sortOrder: 2, pastForm: 'lived', thirdPersonForm: 'lives', adverb: 'here' },
+    { value: 'go', label: 'go (行く)', sortOrder: 3, pastForm: 'went', thirdPersonForm: 'goes', adverb: 'there' },
+    { value: 'arrive', label: 'arrive (着く)', sortOrder: 4, pastForm: 'arrived', thirdPersonForm: 'arrives', adverb: 'late' },
+    { value: 'talk', label: 'talk (話す)', sortOrder: 5, pastForm: 'talked', thirdPersonForm: 'talks', adverb: 'loudly' },
+    { value: 'run', label: 'run (走る)', sortOrder: 6, pastForm: 'ran', thirdPersonForm: 'runs', adverb: 'fast' },
+    { value: 'walk', label: 'walk (歩く)', sortOrder: 7, pastForm: 'walked', thirdPersonForm: 'walks', adverb: 'slowly' },
+    { value: 'smile', label: 'smile (笑う)', sortOrder: 8, pastForm: 'smiled', thirdPersonForm: 'smiles', adverb: 'happily' },
+    { value: 'laugh', label: 'laugh (笑う)', sortOrder: 9, pastForm: 'laughed', thirdPersonForm: 'laughs', adverb: 'loudly' },
   ];
 
   for (const verb of doVerbSV) {
@@ -62,6 +62,7 @@ async function main() {
       update: {
         pastForm: verb.pastForm,
         thirdPersonForm: verb.thirdPersonForm,
+        adverb: verb.adverb,
       },
       create: {
         value: verb.value,
@@ -70,6 +71,7 @@ async function main() {
         sortOrder: verb.sortOrder,
         pastForm: verb.pastForm,
         thirdPersonForm: verb.thirdPersonForm,
+        adverb: verb.adverb,
       },
     });
   }
@@ -293,20 +295,20 @@ async function main() {
 
   const sentenceDrills = [
     // DO_SV
-    { sentencePattern: 'DO_SV', english: 'You live.', japanese: 'あなたは住んでいます。', sortOrder: 1 },
-    { sentencePattern: 'DO_SV', english: 'I ran.', japanese: '私は走りました。', sortOrder: 2 },
-    { sentencePattern: 'DO_SV', english: 'They won\'t laugh.', japanese: '彼らは笑わないでしょう。', sortOrder: 3 },
-    { sentencePattern: 'DO_SV', english: 'I didn\'t smile', japanese: '私は微笑みませんでした。', sortOrder: 4 },
-    { sentencePattern: 'DO_SV', english: 'Will he live?', japanese: '彼は住むでしょうか？', sortOrder: 5 },
-    { sentencePattern: 'DO_SV', english: 'Do we arrive?', japanese: '私たちは到着しますか？', sortOrder: 6 },
-    { sentencePattern: 'DO_SV', english: 'He walks.', japanese: '彼は歩きます。', sortOrder: 7 },
-    { sentencePattern: 'DO_SV', english: 'You won\'t go.', japanese: 'あなたは行かないでしょう。', sortOrder: 8 },
-    { sentencePattern: 'DO_SV', english: 'Did you talk?', japanese: 'あなたたちは話しましたか？', sortOrder: 9 },
-    { sentencePattern: 'DO_SV', english: 'You don\'t run.', japanese: 'あなたは走りません。', sortOrder: 10 },
-    { sentencePattern: 'DO_SV', english: 'They will arrive.', japanese: '彼らは到着するでしょう。', sortOrder: 11 },
-    { sentencePattern: 'DO_SV', english: 'Did I laugh?', japanese: '私は笑いましたか？', sortOrder: 12 },
-    { sentencePattern: 'DO_SV', english: 'Does he talk?', japanese: '彼は会話しますか？', sortOrder: 13 },
-    { sentencePattern: 'DO_SV', english: 'We walk.', japanese: '私たちは歩きます。', sortOrder: 14 },
+    { sentencePattern: 'DO_SV', english: 'You live here.', japanese: 'あなたはここに住んでいます。', sortOrder: 1 },
+    { sentencePattern: 'DO_SV', english: 'I ran fast.', japanese: '私は速く走りました。', sortOrder: 2 },
+    { sentencePattern: 'DO_SV', english: 'They won\'t laugh loudly.', japanese: '彼らは大声で笑わないでしょう。', sortOrder: 3 },
+    { sentencePattern: 'DO_SV', english: 'I didn\'t smile happily.', japanese: '私は幸せそうに微笑みませんでした。', sortOrder: 4 },
+    { sentencePattern: 'DO_SV', english: 'Will he live here?', japanese: '彼はここに住むでしょうか？', sortOrder: 5 },
+    { sentencePattern: 'DO_SV', english: 'Do we arrive late?', japanese: '私たちは遅れて到着しますか？', sortOrder: 6 },
+    { sentencePattern: 'DO_SV', english: 'He walks slowly.', japanese: '彼はゆっくり歩きます。', sortOrder: 7 },
+    { sentencePattern: 'DO_SV', english: 'You won\'t go there.', japanese: 'あなたはそこに行かないでしょう。', sortOrder: 8 },
+    { sentencePattern: 'DO_SV', english: 'Did you talk loudly?', japanese: 'あなたたちは大声で話しましたか？', sortOrder: 9 },
+    { sentencePattern: 'DO_SV', english: 'You don\'t run fast.', japanese: 'あなたは速く走りません。', sortOrder: 10 },
+    { sentencePattern: 'DO_SV', english: 'They will arrive late.', japanese: '彼らは遅れて到着するでしょう。', sortOrder: 11 },
+    { sentencePattern: 'DO_SV', english: 'Did I laugh loudly?', japanese: '私は大声で笑いましたか？', sortOrder: 12 },
+    { sentencePattern: 'DO_SV', english: 'Does he talk loudly?', japanese: '彼は大声で話しますか？', sortOrder: 13 },
+    { sentencePattern: 'DO_SV', english: 'We walk slowly.', japanese: '私たちはゆっくり歩きます。', sortOrder: 14 },
     // BE_SVC
     { sentencePattern: 'BE_SVC', english: 'I was a carpenter.', japanese: '私は木工でした。', sortOrder: 15 },
     { sentencePattern: 'BE_SVC', english: 'I will be a hairdresser.', japanese: '私は美容師になるつもりです。', sortOrder: 16 },

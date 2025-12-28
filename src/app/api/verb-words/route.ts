@@ -21,38 +21,34 @@ export async function GET(request: NextRequest) {
         sentencePattern: null,
       }));
     } else if (verbType === 'do') {
-      const where: {
-        sentencePattern?: string;
-      } = {};
-
+      let doVerbs: any[];
       if (sentencePattern) {
-        where.sentencePattern = sentencePattern;
+        doVerbs = await (prisma as any).$queryRawUnsafe(
+          `SELECT * FROM DoVerbWord WHERE sentencePattern = ? ORDER BY sortOrder ASC`,
+          sentencePattern
+        );
+      } else {
+        doVerbs = await (prisma as any).$queryRawUnsafe(
+          `SELECT * FROM DoVerbWord ORDER BY sortOrder ASC`
+        );
       }
-
-      verbWords = await prisma.doVerbWord.findMany({
-        where,
-        orderBy: {
-          sortOrder: 'asc',
-        },
-      });
+      verbWords = doVerbs;
     } else {
       // Fetch both and combined if verbType is not specified
-      const [beVerbs, doVerbs] = await Promise.all([
-        prisma.beVerbWord.findMany({
-          orderBy: { sortOrder: 'asc' },
-        }),
-        prisma.doVerbWord.findMany({
-          orderBy: { sortOrder: 'asc' },
-        }),
-      ]);
+      const beVerbs = await prisma.beVerbWord.findMany({
+        orderBy: { sortOrder: 'asc' },
+      });
+      const doVerbs: any[] = await (prisma as any).$queryRawUnsafe(
+        `SELECT * FROM DoVerbWord ORDER BY sortOrder ASC`
+      );
 
       verbWords = [
-        ...beVerbs.map((v: { id: string; value: string; label: string; sortOrder: number }) => ({
+        ...beVerbs.map((v: any) => ({
           ...v,
           sentencePattern: null,
         })),
         ...doVerbs,
-      ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+      ].sort((a: any, b: any) => (a.sortOrder || 0) - (b.sortOrder || 0));
     }
 
     return NextResponse.json(verbWords);

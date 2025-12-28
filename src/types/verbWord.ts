@@ -5,5 +5,6 @@ export interface VerbWord {
   sentencePattern: string | null;
   pastForm?: string | null;
   thirdPersonForm?: string | null;
+  adverb?: string | null;
   sortOrder: number;
 }
