@@ -64,7 +64,7 @@ const MENU_DATA: Record<string, CategoryData> = {
     ],
     items: [
       { 
-        label: "基本の型", 
+        label: "主語+動詞(DO)", 
         href: "/practice?mode=drill&pattern=DO_SV", 
         descriptions: [
           "いっぱんどうしの　きほんけい。しゅごと　どうしの　きずなを　たしかめろ！",
@@ -72,7 +72,7 @@ const MENU_DATA: Record<string, CategoryData> = {
         ]
       },
       { 
-        label: "武者修行", 
+        label: "主語+動詞(DO)+補語", 
         href: "/practice?mode=drill&pattern=DO_SVO", 
         descriptions: [
           "なにかを　たいしょうにする　うごき。もくてきを　とらえる　いちげきを！",
@@ -80,7 +80,7 @@ const MENU_DATA: Record<string, CategoryData> = {
         ]
       },
       { 
-        label: "魔導の神髄", 
+        label: "BE動詞", 
         href: "/practice?mode=drill&pattern=BE_SVC", 
         descriptions: [
           "じょうたいを　しめす　じゅもん。ありのままの　すがたを　ひょうげんせよ！",

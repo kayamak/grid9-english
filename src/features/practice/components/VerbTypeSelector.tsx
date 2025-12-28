@@ -17,7 +17,7 @@ export const VerbTypeSelector: React.FC<VerbTypeSelectorProps> = ({ selectedVerb
             : 'bg-[#000840] border-white/20 text-white/40 hover:text-white hover:border-white/40'
         }`}
       >
-        行動 (Do)
+        Do動詞
       </button>
       <button
         onClick={() => onChange('be')}
@@ -27,7 +27,7 @@ export const VerbTypeSelector: React.FC<VerbTypeSelectorProps> = ({ selectedVerb
             : 'bg-[#000840] border-white/20 text-white/40 hover:text-white hover:border-white/40'
         }`}
       >
-        存在 (Be)
+        Be動詞
       </button>
     </div>
   );

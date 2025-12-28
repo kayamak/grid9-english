@@ -71,7 +71,7 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
 
   return (
     <div className="flex items-center gap-3">
-      <label className="text-white font-normal whitespace-nowrap">わざ</label>
+      <label className="text-white font-normal whitespace-nowrap">どうし</label>
       <div className="relative flex-1">
         <select
           value={selectedVerb}

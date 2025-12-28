@@ -36,7 +36,7 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
 
   return (
     <div className="flex items-center gap-3">
-      <label className="text-white font-normal whitespace-nowrap">たいしょう</label>
+      <label className="text-white font-normal whitespace-nowrap">もくてきご</label>
       {children}
       <div className="relative flex-1">
         <select

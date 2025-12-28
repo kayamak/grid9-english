@@ -27,7 +27,7 @@ export const FiveSentencePatternSelector: React.FC<FiveSentencePatternSelectorPr
 
   return (
     <div className="flex items-center gap-3">
-      <label className="text-white font-normal whitespace-nowrap">せんぽう</label>
+      <label className="text-white font-normal whitespace-nowrap">ぶんけい</label>
       <div className="relative w-auto">
         <select
           value={selectedPattern}

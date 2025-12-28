@@ -73,7 +73,7 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
   return (
     <div className="flex items-center gap-3">
       <label className="text-white font-normal whitespace-nowrap">
-        {pattern === 'SV' ? 'ばしょ' : 'しょうたい'}
+        {pattern === 'SV' ? 'ばしょ・じょうたい' : 'ほご'}
       </label>
       {children}
       <div className="relative flex-1">
