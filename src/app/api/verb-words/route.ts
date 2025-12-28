@@ -7,27 +7,53 @@ export async function GET(request: NextRequest) {
     const verbType = searchParams.get('verbType');
     const sentencePattern = searchParams.get('sentencePattern');
 
-    // Build where clause
-    const where: {
-      verbType?: string;
-      sentencePattern?: string | null;
-    } = {};
+    // Build where clause and fetch
+    let verbWords;
+    if (verbType === 'be') {
+      const beVerbs = await prisma.beVerbWord.findMany({
+        orderBy: {
+          sortOrder: 'asc',
+        },
+      });
+      // Normalize to match VerbWord type
+      verbWords = beVerbs.map((v: { id: string; value: string; label: string; sortOrder: number }) => ({
+        ...v,
+        sentencePattern: null,
+      }));
+    } else if (verbType === 'do') {
+      const where: {
+        sentencePattern?: string;
+      } = {};
 
-    if (verbType) {
-      where.verbType = verbType;
+      if (sentencePattern) {
+        where.sentencePattern = sentencePattern;
+      }
+
+      verbWords = await prisma.doVerbWord.findMany({
+        where,
+        orderBy: {
+          sortOrder: 'asc',
+        },
+      });
+    } else {
+      // Fetch both and combined if verbType is not specified
+      const [beVerbs, doVerbs] = await Promise.all([
+        prisma.beVerbWord.findMany({
+          orderBy: { sortOrder: 'asc' },
+        }),
+        prisma.doVerbWord.findMany({
+          orderBy: { sortOrder: 'asc' },
+        }),
+      ]);
+
+      verbWords = [
+        ...beVerbs.map((v: { id: string; value: string; label: string; sortOrder: number }) => ({
+          ...v,
+          sentencePattern: null,
+        })),
+        ...doVerbs,
+      ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
     }
-
-    if (sentencePattern) {
-      where.sentencePattern = sentencePattern;
-    }
-
-    // Fetch verb words from database
-    const verbWords = await prisma.verbWord.findMany({
-      where,
-      orderBy: {
-        sortOrder: 'asc',
-      },
-    });
 
     return NextResponse.json(verbWords);
   } catch (error) {

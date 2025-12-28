@@ -70,11 +70,11 @@ TURSO_AUTH_TOKEN="your-auth-token"
 Turso 環境では `prisma db push` は使用せず、手動またはスキーマから SQL を生成して反映させます。
 - **テーブル作成例**:
   ```bash
-  turso db shell grid9-english-db "CREATE TABLE IF NOT EXISTS VerbWord (...);"
+  turso db shell grid9-english-db "CREATE TABLE IF NOT EXISTS DoVerbWord (...);"
   ```
 - **データ確認**:
   ```bash
-  turso db shell grid9-english-db "SELECT * FROM VerbWord;"
+  turso db shell grid9-english-db "SELECT * FROM DoVerbWord;"
   ```
 
 ---
@@ -91,14 +91,23 @@ Turso 環境では `prisma db push` は使用せず、手動またはスキー�
 
 ### モデル構成例
 ```prisma
-model VerbWord {
+model BeVerbWord {
+  id        String @id @default(cuid())
+  value     String @unique
+  label     String
+  sortOrder Int
+}
+
+model DoVerbWord {
   id              String  @id @default(cuid())
   value           String  @unique
   label           String
-  verbType        String  // "do" | "be"
-  sentencePattern String? // "SV" | "SVO" | "SVC"
+  sentencePattern String?
   pastForm        String?
+  thirdPersonForm String?
   sortOrder       Int
+
+  @@index([sentencePattern])
 }
 ```
 
@@ -112,7 +121,7 @@ model VerbWord {
 
 ### Staging (`npm run stg`)
 - **接続エラー**: `.env` の `TURSO_AUTH_TOKEN` が正しいか確認（`turso db tokens create` で再発行可能）。
-- **`prisma.verbWord is undefined`**: `npm run stg` を使用しているか確認（`npm run dev` では Local を見てしまいます）。
+- **`prisma.doVerbWord is undefined`**: `npm run stg` を使用しているか確認（`npm run dev` では Local を見てしまいます）。
 - **テーブルが存在しない**: Turso shell で `CREATE TABLE` が実行されているか確認。
 
 ---

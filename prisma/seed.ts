@@ -57,7 +57,7 @@ async function main() {
   ];
 
   for (const verb of doVerbSV) {
-    await prisma.verbWord.upsert({
+    await prisma.doVerbWord.upsert({
       where: { value: verb.value },
       update: {
         pastForm: verb.pastForm,
@@ -66,7 +66,6 @@ async function main() {
       create: {
         value: verb.value,
         label: verb.label,
-        verbType: 'do',
         sentencePattern: 'SV',
         sortOrder: verb.sortOrder,
         pastForm: verb.pastForm,
@@ -104,7 +103,7 @@ async function main() {
     // Skip 'do' as it's already created in SV section
     if (verb.value === 'do') continue;
     
-    await prisma.verbWord.upsert({
+    await prisma.doVerbWord.upsert({
       where: { value: verb.value },
       update: {
         pastForm: verb.pastForm,
@@ -113,7 +112,6 @@ async function main() {
       create: {
         value: verb.value,
         label: verb.label,
-        verbType: 'do',
         sentencePattern: 'SVO',
         sortOrder: verb.sortOrder,
         pastForm: verb.pastForm,
@@ -137,14 +135,12 @@ async function main() {
   ];
 
   for (const verb of beVerbs) {
-    await prisma.verbWord.upsert({
+    await prisma.beVerbWord.upsert({
       where: { value: verb.value },
       update: {},
       create: {
         value: verb.value,
         label: verb.label,
-        verbType: 'be',
-        sentencePattern: null,
         sortOrder: verb.sortOrder,
       },
     });

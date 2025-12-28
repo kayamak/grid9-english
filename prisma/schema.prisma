@@ -24,17 +24,23 @@ model Circle {
   members User[] @relation("CircleMembers")
 }
 
-model VerbWord {
+model BeVerbWord {
+  id        String @id @default(cuid())
+  value     String @unique
+  label     String
+  sortOrder Int
+}
+
+model DoVerbWord {
   id              String  @id @default(cuid())
   value           String  @unique
   label           String
-  verbType        String
   sentencePattern String?
   pastForm        String?
   thirdPersonForm String?
   sortOrder       Int
 
-  @@index([verbType, sentencePattern])
+  @@index([sentencePattern])
 }
 
 model NounWord {
