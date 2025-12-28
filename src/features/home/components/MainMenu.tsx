@@ -40,7 +40,7 @@ type CategoryData = {
 const MENU_DATA: Record<string, CategoryData> = {
   "たたかう": {
     descriptions: [
-      "きびしい　ドリルに　いどみ、おのれの　スキルを　みがきあげろ！",
+      "きびしい　しれんに　いどみ、おのれの　スキルを　みがきあげろ！",
       "しれんを　のりこえたさきに、あらたな　ちからが　やどるだろう。",
       "こころを　むにして、もんだいを　なぎたおせ！"
     ],
@@ -58,13 +58,13 @@ const MENU_DATA: Record<string, CategoryData> = {
   },
   "じゅもん": {
     descriptions: [
-      "ぶんぽうというなの　じゅもんを　じざいに　つかいこなせ！",
+      "ぶんぽうというなの　まほうを　じざいに　つかいこなせ！",
       "ことばの　ならびを　あやつるものは、せかいを　あやつる。",
       "ただしい　えいごは、ひとの　こころを　うごかす　まほうだ。"
     ],
     items: [
       { 
-        label: "DO_SV", 
+        label: "基本の型", 
         href: "/practice?mode=drill&pattern=DO_SV", 
         descriptions: [
           "いっぱんどうしの　きほんけい。しゅごと　どうしの　きずなを　たしかめろ！",
@@ -72,7 +72,7 @@ const MENU_DATA: Record<string, CategoryData> = {
         ]
       },
       { 
-        label: "DO_SVO", 
+        label: "武者修行", 
         href: "/practice?mode=drill&pattern=DO_SVO", 
         descriptions: [
           "なにかを　たいしょうにする　うごき。もくてきを　とらえる　いちげきを！",
@@ -80,7 +80,7 @@ const MENU_DATA: Record<string, CategoryData> = {
         ]
       },
       { 
-        label: "BE_SVC", 
+        label: "魔導の神髄", 
         href: "/practice?mode=drill&pattern=BE_SVC", 
         descriptions: [
           "じょうたいを　しめす　じゅもん。ありのままの　すがたを　ひょうげんせよ！",

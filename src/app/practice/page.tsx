@@ -628,7 +628,7 @@ function PracticeContent() {
                     {state.verbType === 'be' && (
                         state.fiveSentencePattern === 'SVC' ? (
                           <ComplementSelector
-                            selectedComplement={state.beComplement || 'carpenter'}
+                            selectedComplement={state.beComplement || 'warrior'}
                             onChange={handleBeComplementChange}
                             pattern={state.fiveSentencePattern || 'SV'}
                             numberForm={state.numberForm || 'a'}

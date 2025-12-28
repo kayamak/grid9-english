@@ -28,10 +28,10 @@ export const NOUN_DETERMINER_OPTIONS: {
   value: NounDeterminer;
   label: string;
 }[] = [
-  { value: 'none', label: '不可算' },
+  { value: 'none', label: '無形' },
   { value: 'a', label: 'a' },
   { value: 'an', label: 'an' },
-  { value: 'plural', label: '複数' },
+  { value: 'plural', label: '多数' },
   { value: 'the', label: 'the' },
   { value: 'my', label: 'my' },
   { value: 'our', label: 'our' },
@@ -45,7 +45,7 @@ export const NOUN_DETERMINER_OPTIONS: {
 // SVCの補語（名詞+形容詞）
 export const SVC_COMPLEMENT_OPTIONS = [
   ...NOUN_DETERMINER_OPTIONS,
-  { value: 'adjective', label: '形容詞' },
+  { value: 'adjective', label: '属性' },
 ];
 
 export const NounDeterminerSelector: React.FC<NounDeterminerSelectorProps> = ({ 
