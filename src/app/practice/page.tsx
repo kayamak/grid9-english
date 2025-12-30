@@ -1152,7 +1152,7 @@ export function PracticeContent() {
 
                 {/* Verb and Sentence Pattern Selector Dropdowns */}
                 {(state.verbType === 'do' || state.verbType === 'be') && (
-                  <div className="mt-8 mb-2 w-full max-w-xl flex flex-col gap-4 relative z-20">
+                  <div className="mt-6 w-full max-w-xl flex flex-col gap-4 relative z-20">
                     <div className="flex flex-col md:flex-row gap-4">
                       <FiveSentencePatternSelector
                         selectedPattern={state.fiveSentencePattern || (state.verbType === 'do' ? 'SVO' : 'SV')}
@@ -1216,7 +1216,7 @@ export function PracticeContent() {
                   </div>
                 )}
 
-                <div className="mt-12 w-full max-w-lg relative">
+                <div className="mt-8 w-full max-w-lg relative">
                     {/* DQ style result box */}
                     <div className={`dq-window transition-colors duration-500 p-4 text-center ${isCorrect ? 'border-yellow-400 bg-black/80' : 'border-white bg-black'}`}>
                         <p className={`text-sm uppercase tracking-widest mb-1 ${isCorrect ? 'text-yellow-400' : (isQuestMode && timeLeft === 0 ? 'text-red-500' : 'text-white/40')}`}>
