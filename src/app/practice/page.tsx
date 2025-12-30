@@ -375,7 +375,7 @@ export function PracticeContent() {
     }
 
     return { subjectImg, monsterImg, itemImg, monsterScale };
-  }, [state.subject, state.verb, state.verbType, state.object, state.fiveSentencePattern]);
+  }, [state.subject, state.verb, state.verbType, state.fiveSentencePattern]);
 
   const handleNextDrill = async (isEscape?: boolean) => {
     if (isEscape === true) {

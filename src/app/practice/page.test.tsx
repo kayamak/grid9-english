@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PracticeContent } from './page';
 import React from 'react';
@@ -46,9 +46,9 @@ vi.mock('@/features/practice/actions/drills', () => ({
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children: React.ReactNode } & Record<string, unknown>) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 describe('PracticeContent', () => {
@@ -56,7 +56,7 @@ describe('PracticeContent', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useSearchParams as any).mockReturnValue({
+    (useSearchParams as unknown as Mock).mockReturnValue({
       get: mockGet,
     });
     mockGet.mockReturnValue(null);
@@ -76,7 +76,7 @@ describe('PracticeContent', () => {
             ok: true,
             json: () => Promise.resolve([]),
         });
-    }) as any;
+    }) as unknown as typeof fetch;
   });
 
   afterEach(() => {
@@ -121,7 +121,7 @@ describe('PracticeContent', () => {
 
   it('renders Drill Quest elements when in quest mode', async () => {
     // Re-mock useSearchParams for this test specifically
-    (useSearchParams as any).mockReturnValue({
+    (useSearchParams as unknown as Mock).mockReturnValue({
       get: (key: string) => {
          if (key === 'mode') return 'quest';
          return null;
