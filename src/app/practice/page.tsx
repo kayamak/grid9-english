@@ -22,7 +22,7 @@ import {
   VerbType,
   Verb,
   FiveSentencePattern,
-  Object,
+  Object as ObjectType,
   NumberForm,
   BeComplement,
   Word,
@@ -65,1024 +65,377 @@ function DragonVEffect() {
   );
 }
 
+interface PracticeBattleAreaProps {
+    isQuestMode: boolean;
+    state: SentencePattern;
+    currentDrillIndex: number;
+    heroAction: 'idle' | 'run-away' | 'defeated';
+    monsterState: 'idle' | 'hit' | 'defeated';
+    battleImages: { subjectImg: string; monsterImg: string; itemImg: string | null; monsterScale: number };
+    heroOpacity: number;
+    monsterOpacity: number;
+}
 
-export function PracticeContent() {
-  const searchParams = useSearchParams();
-  const isQuestMode = searchParams.get('mode') === 'quest';
-  const initialMode = searchParams.get('mode') === 'drill' || isQuestMode;
-  const selectedPattern = searchParams.get('pattern') || undefined;
-  const initialDrillIndex = parseInt(searchParams.get('drill') || '1') - 1;
-  const isAdmin = searchParams.get('role') === 'ADMIN';
-
-  const [currentLevel, setCurrentLevel] = useState(() => {
-    if (typeof document === 'undefined') return 1;
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; playerLevel=`);
-    if (parts.length === 2) {
-      const val = parts.pop()?.split(';').shift();
-      return val ? parseInt(val) : 1;
-    }
-    return 1;
-  });
-  const [correctCountInLevel, setCorrectCountInLevel] = useState(0);
-
-  // Cookie helper
-  const setCookie = useCallback((name: string, value: string, days = 365) => {
-    if (typeof document === 'undefined') return;
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    const expires = `; expires=${date.toUTCString()}`;
-    document.cookie = `${name}=${value}${expires}; path=/`;
-  }, []);
-
-  // Sync level to cookie whenever it changes
-  useEffect(() => {
-    setCookie('playerLevel', currentLevel.toString());
-  }, [currentLevel, setCookie]);
-
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [isTimerActive, setIsTimerActive] = useState(false);
-  // const [isGameOver, setIsGameOver] = useState(false);
-  // const [isLevelCleared, setIsLevelCleared] = useState(false);
-  // const [isAllCleared, setIsAllCleared] = useState(false);
-  const [questStatus, setQuestStatus] = useState<'playing' | 'result' | 'failed' | 'all-cleared'>('playing');
-  const [questResults, setQuestResults] = useState<('correct' | 'wrong' | null)[]>(new Array(10).fill(null));
-  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated'>('idle');
-
-  const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
-    verbType: 'do',
-    verb: 'do',
-    sentenceType: 'positive',
-    subject: 'first_s',
-    tense: 'present',
-    fiveSentencePattern: 'SV',
-    object: 'something',
-    numberForm: 'none',
-    beComplement: 'here',
-  }));
-
-  const [nounWords, setNounWords] = useState<Word[]>([]);
-  const [verbWords, setVerbWords] = useState<Word[]>([]);
-  const [adjectiveWords, setAdjectiveWords] = useState<Word[]>([]);
-  const [adverbWords, setAdverbWords] = useState<Word[]>([]);
-  const [isLoadingNouns, setIsLoadingNouns] = useState(true);
-  interface Drill {
-    id: string;
-    english: string;
-    japanese: string;
-    sentencePattern: string;
-    sortOrder: number;
-  }
-  const [drills, setDrills] = useState<Drill[]>([]);
-  const [isDrillMode] = useState(initialMode);
-  const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
-  const [activeTab, setActiveTab] = useState<VerbType | 'admin'>(state.verbType);
-
-
-
-// ... (other code)
-
-  // Fetch noun words from Repository
-  useEffect(() => {
-    const fetchWords = async () => {
-      try {
-        const [nounsData, verbsData, adjectivesData, adverbsData] = await Promise.all([
-          getNounWords(),
-          getVerbWords(),
-          getAdjectiveWords(),
-          getAdverbWords(),
-        ]);
-
-        setNounWords(nounsData.map((w: WordProps) => Word.reconstruct(w)));
-        setVerbWords(verbsData.map((w: WordProps) => Word.reconstruct(w)));
-        setAdjectiveWords(adjectivesData.map((w: WordProps) => Word.reconstruct(w)));
-        setAdverbWords(adverbsData.map((w: WordProps) => Word.reconstruct(w)));
-      } catch (error) {
-        console.error('Error fetching words:', error);
-      } finally {
-        setIsLoadingNouns(false);
-      }
-    };
-
-    fetchWords();
-
-    const fetchDrills = async () => {
-      if (isQuestMode) {
-        const data = await getDrillQuestQuestions(currentLevel);
-        setDrills(data);
-        setCurrentDrillIndex(0);
-        setCorrectCountInLevel(0);
-        // Set time limit based on level: 30s base, L4+ has formula, L10 is fixed 10s
-        const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
-        setTimeLeft(timeLimit);
-        setIsTimerActive(true);
-        setQuestStatus('playing');
-        setQuestResults(new Array(10).fill(null));
-      } else {
-        const data = await getSentenceDrills(selectedPattern);
-        setDrills(data);
-      }
-    };
-    fetchDrills();
-  }, [selectedPattern, isQuestMode, currentLevel]);
-
-  // Timer logic for Quest Mode
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isQuestMode && isTimerActive && timeLeft > 0 && questStatus === 'playing') {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && questStatus === 'playing') {
-      // Time up! Mark as finished but not necessarily fail yet, just this question is wrong
-      // Actually, we should probably just stop the timer and let the user skip
-      setIsTimerActive(false);
-      setQuestResults(prev => {
-        const next = [...prev];
-        if (!next[currentDrillIndex]) {
-          next[currentDrillIndex] = 'wrong';
-        }
-        return next;
-      });
-      setHeroAction('defeated');
-    }
-    return () => clearInterval(timer);
-  }, [isQuestMode, isTimerActive, timeLeft, questStatus, currentDrillIndex]);
-
-  const handleVerbTypeChange = useCallback((verbType: VerbType) => {
-    // When switching types, reset verb and pattern to defaults
-    setActiveTab(verbType);
-    setState((prev) => {
-      if (verbType === 'be') {
-        return SentencePattern.create({
-          ...prev.toObject(),
-          verbType,
-          verb: 'be',
-          fiveSentencePattern: 'SV',
-          beComplement: 'here',
-          numberForm: 'a'
-        });
-      } else {
-        return SentencePattern.create({
-          ...prev.toObject(),
-          verbType,
-          verb: 'do',
-          fiveSentencePattern: 'SV'
-        });
-      }
-    });
-  }, []);
-
-  const handleTabChange = useCallback((tab: VerbType | 'admin') => {
-    if (tab === 'admin') {
-      setActiveTab('admin');
-    } else {
-      handleVerbTypeChange(tab);
-    }
-  }, [handleVerbTypeChange]);
-
-  const handleVerbChange = useCallback((verb: Verb) => {
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), verb }));
-  }, []);
-
-  const handleSentenceTypeChange = useCallback((sentenceType: SentenceType) => {
-    setState((prev) => prev.toggleSentenceType(sentenceType));
-  }, []);
-
-  const handleSubjectChange = useCallback((subject: Subject) => {
-    setState((prev) => {
-      // Check if clicking same person to rotate (Invariant 1)
-      if (subject === prev.subject) {
-        return prev.rotateSubject();
-      } else {
-        return SentencePattern.create({ ...prev.toObject(), subject });
-      }
-    });
-  }, []);
-
-  const handleTenseChange = useCallback((tense: Tense) => {
-    setState((prev) => prev.changeTense(tense));
-  }, []);
-
-  const handleFiveSentencePatternChange = useCallback((fiveSentencePattern: FiveSentencePattern) => {
-    setState((prev) => SentencePattern.create({
-       ...prev.toObject(),
-       fiveSentencePattern,
-       verb: 'do'
-    }));
-  }, []);
-
-  const handleObjectChange = useCallback((object: Object) => {
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), object }));
-  }, []);
-
-  const handleNumberFormChange = useCallback((numberForm: NumberForm) => {
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), numberForm }));
-  }, []);
-
-  const handleBeComplementChange = useCallback((beComplement: BeComplement) => {
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), beComplement }));
-  }, []);
-
-  const [sessionId, setSessionId] = useState('');
-  const [showVictoryEffect, setShowVictoryEffect] = useState(false);
-  const [isScreenShaking, setIsScreenShaking] = useState(false);
-  const [isScreenFlashing, setIsScreenFlashing] = useState(false);
-  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated'>('idle');
-
-  useEffect(() => {
-    setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
-  }, []);
-
-  const generatedText = useMemo(() => new GeneratePatternUseCase().execute(state, nounWords, verbWords), [state, nounWords, verbWords]);
-
-  const currentDrill = drills[currentDrillIndex];
-  const isCorrect = useMemo(() => isDrillMode && currentDrill && generatedText.toLowerCase().replace(/[.,?!]/g, '') === currentDrill.english.toLowerCase().replace(/[.,?!]/g, ''), [isDrillMode, currentDrill, generatedText]);
-
-  const [hasMarkedCorrect, setHasMarkedCorrect] = useState(false);
-
-  const triggerVictoryEffect = useCallback(() => {
-    // 1. Screen Flash
-    setIsScreenFlashing(true);
-    setTimeout(() => setIsScreenFlashing(false), 150);
-
-    // 2. Screen Shake
-    setIsScreenShaking(true);
-    setTimeout(() => setIsScreenShaking(false), 500);
-
-    // 3. Monster State
-    setMonsterState('hit');
-    setTimeout(() => {
-      setMonsterState('defeated');
-    }, 300);
-
-    setShowVictoryEffect(true);
-    // Effects last for a bit then reset for next
-  }, []);
-
-  useEffect(() => {
-    if (isCorrect && !hasMarkedCorrect && isQuestMode && questStatus === 'playing') {
-      setCorrectCountInLevel(prev => prev + 1);
-      setQuestResults(prev => {
-        const next = [...prev];
-        next[currentDrillIndex] = 'correct';
-        return next;
-      });
-      setHasMarkedCorrect(true);
-      setIsTimerActive(false);
-
-      // Trigger Flashy RPG Victory Effect
-      triggerVictoryEffect();
-    }
-  }, [isCorrect, hasMarkedCorrect, isQuestMode, questStatus, currentDrillIndex, triggerVictoryEffect]);
-
-  useEffect(() => {
-    if (isCorrect && !isQuestMode && !hasMarkedCorrect) {
-      setHasMarkedCorrect(true);
-      triggerVictoryEffect();
-    }
-  }, [isCorrect, isDrillMode, isQuestMode, hasMarkedCorrect, triggerVictoryEffect]);
-
-  useEffect(() => {
-    setHasMarkedCorrect(false);
-    setMonsterState('idle');
-    setShowVictoryEffect(false);
-  }, [currentDrillIndex, state.subject, state.verb, state.object]);
-
-  // Image mappings for the 3 battle areas
-  const battleImages = useMemo(() => {
-    // 1. Subject Area
-    let subjectImg = '/assets/heroes/hero.png';
-    if (state.subject === 'second' || state.subject === 'second_p') subjectImg = '/assets/heroes/mage.png';
-    else if (state.subject === 'third_s' || state.subject === 'third_p') subjectImg = '/assets/heroes/warrior.png';
-
-    // 2. Verb Area (Monster)
-    let monsterImg = '/assets/monsters/slime.png';
-    let monsterScale = 1.0; 
-    if (state.verbType === 'be' && (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVC')) {
-      monsterImg = '/assets/monsters/bit_golem.png';
-      monsterScale = 1.0;
-    } else if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
-      monsterImg = '/assets/monsters/void_dragon_v2.png';
-      monsterScale = 1.7; // Dragon scaled to 1.7x
-    } else if (state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
-      monsterImg = '/assets/monsters/dragon.png';
-      monsterScale = 1.7;
-    }
-
-    // 3. Object / Complement Area (Item)
-    let itemImg = null;
-    if (state.fiveSentencePattern === 'SVO') {
-      itemImg = '/assets/monsters/o_slime.png';
-    } else if (state.verbType === 'be' && state.fiveSentencePattern === 'SVC') {
-      itemImg = '/assets/monsters/crescent_beast.png';
-    }
-
-    return { subjectImg, monsterImg, itemImg, monsterScale };
-  }, [state.subject, state.verb, state.verbType, state.fiveSentencePattern]);
-
-  const handleNextDrill = async (isEscape?: boolean) => {
-    if (isEscape === true) {
-      setHeroAction('run-away');
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-
-    if (isQuestMode) {
-      if (currentDrillIndex + 1 >= drills.length) {
-        // Evaluate level result
-        if (correctCountInLevel >= 8) {
-          if (currentLevel === 10) {
-            setQuestStatus('all-cleared');
-          } else {
-            setQuestStatus('result');
-          }
-        } else {
-          setQuestStatus('failed');
-        }
-        setIsTimerActive(false);
-      } else {
-        setCurrentDrillIndex((prev) => prev + 1);
-        const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
-        setTimeLeft(timeLimit);
-        setIsTimerActive(true);
-      }
-    } else {
-      setCurrentDrillIndex((prev) => (prev + 1) % drills.length);
-    }
-
-    setHeroAction('idle');
-  };
-
-  const handleLevelUp = () => {
-    setCurrentLevel(prev => prev + 1);
-  };
-
-  const handleRetryLevel = () => {
-    // Just re-trigger effect by currentLevel or same state
-    const fetchAgain = async () => {
-      const data = await getDrillQuestQuestions(currentLevel);
-      setDrills(data);
-      setCurrentDrillIndex(0);
-      setCorrectCountInLevel(0);
-      const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
-      setTimeLeft(timeLimit);
-      setIsTimerActive(true);
-      setQuestStatus('playing');
-      setQuestResults(new Array(10).fill(null));
-    };
-    fetchAgain();
-  };
-
-  // const toggleDrillMode = () => {
-  //   setIsDrillMode(!isDrillMode);
-  // };
-
-  // Calculate battle opacities based on quest results
-  const { heroOpacity, monsterOpacity } = useMemo(() => {
-    const correct = questResults.filter(r => r === 'correct').length;
-    const wrong = questResults.filter(r => r === 'wrong').length;
-    let h = 1;
-    let m = 1;
-    if (correct < wrong) h = 0.5;
-    else if (correct > wrong) m = 0.5;
-    return { heroOpacity: h, monsterOpacity: m };
-  }, [questResults]);
-
-  return (
-    <main className={`min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white transition-all duration-75 ${isScreenShaking ? 'translate-x-2 -translate-y-1 rotate-1' : ''}`}>
-      {/* Screen Flash Overlay */}
-      {isScreenFlashing && (
-        <div className="fixed inset-0 bg-white z-[1000] opacity-80 pointer-events-none" />
-      )}
-
-
-
-      <div className="w-full max-w-4xl relative">
-
-        {isDrillMode && !isQuestMode && currentDrill && (
-          <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
-            {/* Monster Battle Area for Drill Mode */}
-            <div className="dq-battle-bg relative w-full max-w-4xl h-[212px] md:h-[306px] mb-4 flex justify-around items-end px-4 gap-2">
-              <div className="absolute top-2 left-2 z-20">
-                  <Link href="/" className="dq-button !py-1 !px-3 text-xs bg-black/40 hover:bg-black/60 border-white/40">
-                    &larr; もどる
-                  </Link>
-              </div>
-              <div className="absolute top-2 right-2 z-20 text-white font-bold drop-shadow-md pointer-events-none bg-black/30 px-2 py-1 rounded">
-                ぶんしょうトレーニング
-              </div>
-              {/* Subject Area (Hero) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
+function PracticeBattleArea({
+    isQuestMode,
+    state,
+    currentDrillIndex,
+    heroAction,
+    monsterState,
+    battleImages,
+    heroOpacity,
+    monsterOpacity
+}: PracticeBattleAreaProps) {
+    return (
+        <div className="dq-battle-bg relative w-full h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl">
+            <div className="absolute top-2 left-2 z-20">
+                <Link href="/" className="dq-button !py-1 !px-3 text-xs bg-black/40 hover:bg-black/60 border-white/40">
+                &larr; もどる
+                </Link>
+            </div>
+            <div className="absolute top-2 right-2 z-20 text-white font-bold drop-shadow-md pointer-events-none bg-black/30 px-2 py-1 rounded">
+                {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
+            </div>
+            {/* Subject Area (Hero) */}
+            <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <div className="z-10 flex flex-col items-center">
-                  {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
+                {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
                     <motion.div
-                      key={`hero-sub-${state.subject}-${currentDrillIndex}`}
-                      initial={{ x: -20, opacity: 0 }}
-                      animate={
-                        heroAction === 'run-away' ? { x: -100, opacity: 0 } : 
+                    key={`hero-sub-${state.subject}-${currentDrillIndex}`}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={
+                        heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
                         heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
-                        { x: 0, opacity: 1, rotate: 0, y: 0, filter: 'none' }
-                      }
-                      transition={{ duration: 0.5 }}
+                        { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
+                    }
+                    transition={{ duration: 0.5 }}
                     >
-                      <Image 
+                    <Image 
                         src={battleImages.subjectImg} 
                         alt="Hero Second" 
                         width={150}
                         height={150}
                         className={`w-12 h-12 md:w-20 md:h-20 object-contain pixelated mix-blend-multiply ${
-                          state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                        state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                         }`}
-                      />
+                    />
                     </motion.div>
-                  )}
-                  <motion.div
+                )}
+                <motion.div
                     key={`hero-main-${state.subject}-${currentDrillIndex}`}
                     initial={{ x: -20, opacity: 0 }}
                     animate={
-                      heroAction === 'run-away' ? { x: -100, opacity: 0 } : 
-                      heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
-                      { x: 0, opacity: 1, rotate: 0, y: 0, filter: 'none' }
+                    heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
+                    heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                    { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
                     }
                     transition={{ duration: 0.5 }}
-                  >
+                >
                     <Image 
-                      src={battleImages.subjectImg} 
-                      alt="Hero" 
-                      width={150}
-                      height={150}
-                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                    src={battleImages.subjectImg} 
+                    alt="Hero" 
+                    width={150}
+                    height={150}
+                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
                         state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
-                      }`}
+                    }`}
                     />
-                  </motion.div>
+                </motion.div>
                 </div>
                 <div className="w-20 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
-              </div>
+            </div>
 
-              {/* Verb Area (Monster) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
+            {/* Verb Area (Monster) */}
+            <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <div className="relative" style={{ transformOrigin: 'bottom' }}>
-                  {/* Monster Image Layer - Multiplied */}
-                  <motion.div
+                {/* Monster Image Layer - Multiplied */}
+                <motion.div
                     key={`monster-img-${currentDrillIndex}-${battleImages.monsterImg}`}
                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                     animate={{ 
-                      y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
-                      rotate: monsterState === 'defeated' ? 90 : 0,
-                      opacity: monsterState === 'defeated' ? 0.6 : 1,
-                      scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                      filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : (monsterState === 'defeated' ? 'grayscale(100%)' : 'none'),
-                      x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                    y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
+                    rotate: monsterState === 'defeated' ? 90 : 0,
+                    opacity: monsterState === 'defeated' ? 0.6 : monsterOpacity,
+                    scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
+                    filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : (monsterState === 'defeated' ? 'grayscale(100%)' : 'none'),
+                    x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                     }}
                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
                     className="z-10" 
                     style={{ transformOrigin: 'bottom' }}
-                  >
+                >
                     <Image 
-                      src={battleImages.monsterImg} 
-                      alt="Monster" 
-                      width={180}
-                      height={180}
-                      className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated block"
-                      style={{ 
+                    src={battleImages.monsterImg} 
+                    alt="Monster" 
+                    width={180}
+                    height={180}
+                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated block"
+                    style={{ 
                         mixBlendMode: battleImages.monsterImg.includes('bit_golem.png') ? 'normal' : 'multiply' 
-                      }}
+                    }}
                     />
-                  </motion.div>
+                </motion.div>
 
-                  {/* Effects Layer - Normal Blend (Overlay on top of multiplied image) */}
-                  <motion.div
-                     key={`monster-fx-${currentDrillIndex}-${battleImages.monsterImg}`}
-                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
-                     animate={{ 
-                       y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
-                       rotate: monsterState === 'defeated' ? 90 : 0,
-                       opacity: monsterState === 'defeated' ? 0 : 1, // Hide FX on defeat
-                       scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                     }}
-                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                     className="absolute inset-0 pointer-events-none z-10"
-                     style={{ transformOrigin: 'bottom' }}
-                  >
+                {/* Effects Layer - Normal Blend (Overlay on top of multiplied image) */}
+                <motion.div
+                    key={`monster-fx-${currentDrillIndex}-${battleImages.monsterImg}`}
+                    initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
+                    animate={{ 
+                    y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
+                    rotate: monsterState === 'defeated' ? 90 : 0,
+                    opacity: monsterState === 'defeated' ? 0 : monsterOpacity, // Hide FX on defeat
+                    scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
+                    x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                    }}
+                    transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                    className="absolute inset-0 pointer-events-none z-10"
+                    style={{ transformOrigin: 'bottom' }}
+                >
                     {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
-                      <DragonVEffect />
+                    <DragonVEffect />
                     )}
                     {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
-                      <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center">
                         <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: [0, 0.5, 0] }}
-                          transition={{ duration: 2.0, times: [0, 0.2, 1], ease: "easeOut" }}
-                          className="w-full h-full absolute flex items-center justify-center"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: [0, 0.5, 0] }}
+                        transition={{ duration: 2.0, times: [0, 0.2, 1], ease: "easeOut" }}
+                        className="w-full h-full absolute flex items-center justify-center"
                         >
-                           <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg flex items-center justify-center">
-                              <div className="w-full h-full bg-blue-500/10"></div>
-                           </div>
+                            <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg flex items-center justify-center">
+                            <div className="w-full h-full bg-blue-500/10"></div>
+                            </div>
                         </motion.div>
-                      </div>
+                    </div>
                     )}
-                  </motion.div>
+                </motion.div>
 
 
                 </div>
                 <div className="w-24 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
-              </div>
+            </div>
 
-              {/* Object Area (Item) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-4">
+            {/* Object Area (Item) */}
+            <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-4">
                 {battleImages.itemImg && (
-                  <motion.div
+                <motion.div
                     key={`item-${state.object}`}
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     className="z-10 flex flex-col items-center"
-                  >
+                >
                     <Image 
-                      src={battleImages.itemImg} 
-                      alt="Item" 
-                      width={120}
-                      height={120}
-                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
+                    src={battleImages.itemImg} 
+                    alt="Item" 
+                    width={120}
+                    height={120}
+                    className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
                     />
-                  </motion.div>
+                </motion.div>
                 )}
                 <div className="w-16 h-2 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
-              </div>
+            </div>
+        </div>
+    );
+}
+
+interface PracticeQuestionAreaProps {
+  isQuestMode: boolean;
+  currentLevel: number;
+  currentDrillIndex: number;
+  totalDrills: number;
+  timeLeft: number;
+  questResults: ('correct' | 'wrong' | null)[];
+  correctCountInLevel: number;
+  currentDrill: { english: string; japanese: string };
+  isCorrect: boolean;
+  onNext: (isEscape?: boolean) => void;
+  showVictoryEffect: boolean;
+  displayEnglish?: boolean;
+}
+
+function PracticeQuestionArea({
+  isQuestMode,
+  currentLevel,
+  currentDrillIndex,
+  totalDrills,
+  timeLeft,
+  questResults,
+  correctCountInLevel,
+  currentDrill,
+  isCorrect,
+  onNext,
+  showVictoryEffect,
+  displayEnglish = false
+}: PracticeQuestionAreaProps) {
+    const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : 30 - currentLevel * 2);
+
+    return (
+        <div className="dq-window w-full flex flex-col items-center gap-2 overflow-hidden relative shadow-xl">
+            {/* Timer Bar */}
+            {isQuestMode && (
+                <div className="absolute top-0 left-0 h-2 bg-yellow-400 transition-all duration-1000" style={{ width: `${Math.max(0, (timeLeft / timeLimit) * 100)}%` }}></div>
+            )}
+            
+            <div className="w-full flex justify-between items-center px-4 mt-2">
+            <div className="flex items-center gap-3">
+                <div className="dq-window bg-black px-3 py-1 text-white font-normal text-xl">
+                Lv{currentLevel}
+                </div>
+                <div>
+                <p className="text-xs text-white/60">しんちょく</p>
+                <p className="text-sm">{currentDrillIndex + 1} / {totalDrills}</p>
+                </div>
             </div>
 
-            <div className="dq-window w-full max-w-4xl flex flex-col items-center gap-2 relative">
-              {showVictoryEffect && (
-                <div className="absolute inset-x-0 -top-12 flex justify-center z-50">
-                   <div className="dq-window bg-black border-yellow-400 py-1 px-6 animate-bounce">
-                      <p className="text-yellow-400 text-lg">かいしんの　いちげき！</p>
-                   </div>
-                </div>
-              )}
-              <div className="flex flex-col items-center gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="dq-window bg-black px-3 py-1 text-white font-normal text-xl">
-                    Lv{currentLevel}
-                  </div>
-                  <p className="text-sm text-yellow-200">じょうほう: {currentDrillIndex + 1} / {drills.length}</p>
-                </div>
-                {selectedPattern && (
-                  <span className="text-yellow-400 text-sm">
-                    [{selectedPattern}]
-                  </span>
-                )}
-              </div>
-
-              <div className="flex flex-col items-center border-t-2 border-white/20 pt-1 w-full">
-                <h2 className="text-2xl md:text-3xl text-center px-4 text-white">
-                  {currentDrill.english}
-                </h2>
-                <p className="text-lg text-white/80 text-center mt-2 px-4 italic">
-                  {currentDrill.japanese}
-                </p>
-              </div>
-
-              <div className="flex gap-4 mt-2">
-                {isCorrect ? (
-                  <button 
-                     onClick={() => handleNextDrill()}
-                     className="dq-button animate-bounce"
-                  >
-                    つぎの　しれんへ
-                  </button>
-                ) : (
-                  <button 
-                     onClick={() => handleNextDrill(true)}
-                     className="dq-button text-sm"
-                  >
-                    にげる (Skip)
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {isQuestMode && currentDrill && questStatus === 'playing' && (
-          <div className="mb-8 w-full flex flex-col items-center">
-            {/* Monster Battle Area for Quest Mode */}
-            <div className="dq-battle-bg relative w-full max-w-4xl h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2">
-              <div className="absolute top-2 left-2 z-20">
-                  <Link href="/" className="dq-button !py-1 !px-3 text-xs bg-black/40 hover:bg-black/60 border-white/40">
-                    &larr; もどる
-                  </Link>
-              </div>
-              <div className="absolute top-2 right-2 z-20 text-white font-bold drop-shadow-md pointer-events-none bg-black/30 px-2 py-1 rounded">
-                ドリルクエスト
-              </div>
-              {/* Subject Area (Hero) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
-                <div className="z-10 flex flex-col items-center">
-                  {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
-                    <motion.div
-                      key={`hero-q-sub-${state.subject}-${currentDrillIndex}`}
-                      initial={{ x: -20, opacity: 0 }}
-                      animate={
-                        heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
-                        heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
-                        { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
-                      }
-                      transition={{ duration: 0.5 }}
-                    >
-                      <Image 
-                        src={battleImages.subjectImg} 
-                        alt="Hero Second" 
-                        width={150}
-                        height={150}
-                        className={`w-12 h-12 md:w-20 md:h-20 object-contain pixelated mix-blend-multiply ${
-                          state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
-                        }`}
-                      />
-                    </motion.div>
-                  )}
-                  <motion.div
-                    key={`hero-q-main-${state.subject}-${currentDrillIndex}`}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={
-                      heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
-                      heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
-                      { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
-                    }
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Image 
-                      src={battleImages.subjectImg} 
-                      alt="Hero" 
-                      width={150}
-                      height={150}
-                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
-                        state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
-                      }`}
-                    />
-                  </motion.div>
-                </div>
-                <div className="w-20 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
-              </div>
-
-              {/* Verb Area (Monster) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
-                <div className="relative" style={{ transformOrigin: 'bottom' }}>
-                  {/* Monster Image Layer - Multiplied */}
-                   <motion.div
-                    key={`monster-img-q-${currentDrillIndex}-${battleImages.monsterImg}`}
-                    initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
-                    animate={{ 
-                      y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
-                      rotate: monsterState === 'defeated' ? 90 : 0,
-                      opacity: monsterState === 'defeated' ? 0.6 : monsterOpacity,
-                      scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                      filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : (monsterState === 'defeated' ? 'grayscale(100%)' : 'none'),
-                      x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                    }}
-                    transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                    className="z-10"
-                    style={{ transformOrigin: 'bottom' }}
-                  >
-                    <Image 
-                      src={battleImages.monsterImg} 
-                      alt="Monster" 
-                      width={180}
-                      height={180}
-                      className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated block"
-                      style={{ 
-                        mixBlendMode: battleImages.monsterImg.includes('bit_golem.png') ? 'normal' : 'multiply' 
-                      }}
-                    />
-                  </motion.div>
-
-                  {/* Effects Layer */}
-                  <motion.div
-                     key={`monster-fx-q-${currentDrillIndex}-${battleImages.monsterImg}`}
-                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
-                     animate={{ 
-                       y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
-                       rotate: monsterState === 'defeated' ? 90 : 0,
-                       opacity: monsterState === 'defeated' ? 0 : monsterOpacity, // Hide FX on defeat
-                       scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                     }}
-                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                     className="absolute inset-0 pointer-events-none z-10"
-                     style={{ transformOrigin: 'bottom' }}
-                  >
-                    {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
-                      <DragonVEffect />
-                    )}
-                    {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: [0, 0.5, 0] }}
-                          transition={{ duration: 2.0, times: [0, 0.2, 1], ease: "easeOut" }}
-                          className="w-full h-full absolute flex items-center justify-center"
-                        >
-                           <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg flex items-center justify-center">
-                              <div className="w-full h-full bg-blue-500/10"></div>
-                           </div>
-                        </motion.div>
-                      </div>
-                    )}
-                  </motion.div>
-
-
-                </div>
-                <div className="w-24 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
-              </div>
-
-              {/* Object Area (Item) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-4">
-                {battleImages.itemImg && (
-                  <motion.div
-                    key={`item-q-${state.object}`}
-                    initial={{ x: 20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    className="z-10 flex flex-col items-center"
-                  >
-                    <Image 
-                      src={battleImages.itemImg} 
-                      alt="Item" 
-                      width={120}
-                      height={120}
-                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
-                    />
-                  </motion.div>
-                )}
-                <div className="w-16 h-2 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
-              </div>
-            </div>
-
-            <div className="dq-window w-full max-w-4xl flex flex-col items-center gap-2 overflow-hidden relative">
-              {/* Timer Bar */}
-              <div className="absolute top-0 left-0 h-2 bg-yellow-400 transition-all duration-1000" style={{ width: `${(timeLeft / (currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : 30 - currentLevel * 2))) * 100}%` }}></div>
-              
-              <div className="w-full flex justify-between items-center px-4 mt-2">
-                <div className="flex items-center gap-3">
-                  <div className="dq-window bg-black px-3 py-1 text-white font-normal text-xl">
-                    Lv{currentLevel}
-                  </div>
-                  <div>
-                    <p className="text-xs text-white/60">しんちょく</p>
-                    <p className="text-sm">{currentDrillIndex + 1} / {drills.length}</p>
-                  </div>
-                </div>
-
-                <div className={`flex flex-col items-end ${timeLeft <= 5 ? 'animate-pulse text-red-500' : 'text-white'}`}>
-                  <div className="flex items-center gap-2">
+            {isQuestMode && (
+                 <div className={`flex flex-col items-end ${timeLeft <= 5 ? 'animate-pulse text-red-500' : 'text-white'}`}>
+                    <div className="flex items-center gap-2">
                     <Timer className={`w-5 h-5 ${timeLeft <= 5 ? 'text-red-500' : 'text-yellow-400'}`} />
                     <span className="text-2xl font-normal tabular-nums">{timeLeft}びょう</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col items-center py-2 bg-black/40 w-full border-y-2 border-white/20 relative">
-                {showVictoryEffect && (
-                  <div className="absolute inset-0 bg-yellow-400/20 animate-pulse z-0"></div>
-                )}
-                <p className="text-sm text-white/60 mb-2 z-10">えいごに　なおせ！</p>
-                <h2 className="text-2xl md:text-3xl font-normal text-center px-4 md:px-8 z-10">
-                  {currentDrill.japanese}
-                </h2>
-                {(isCorrect || timeLeft === 0) && (
-                   <div className="mt-4 flex flex-col items-center z-10 gap-2">
-                     {isCorrect && (
-                       <p className="text-sm text-green-400 font-bold animate-bounce mt-2 bg-black/60 px-4 py-1 border border-green-400">
-                         モンスターを　たおした！
-                       </p>
-                     )}
-                   </div>
-                )}
-              </div>
-
-              <div className="w-full flex justify-between items-center px-4">
-                 <div className="flex items-center gap-4">
-                    <div className="flex gap-1">
-                       {[...Array(10)].map((_, i) => (
-                         <div 
-                           key={i} 
-                           className={`w-3 h-3 border-2 ${
-                             questResults[i] === 'correct' 
-                               ? 'bg-green-500 border-white' 
-                               : questResults[i] === 'wrong' 
-                                 ? 'bg-red-500 border-white' 
-                                 : (i === currentDrillIndex ? 'bg-yellow-400 border-white animate-pulse' : 'bg-transparent border-white/30')
-                           }`}
-                         />
-                       ))}
                     </div>
-                    <span className="text-xs text-white/60">{correctCountInLevel} / 10 せいかい</span>
-                 </div>
-
-                 {(isCorrect || timeLeft === 0) ? (
-                   <button 
-                      onClick={() => handleNextDrill()}
-                      className="dq-button animate-bounce"
-                   >
-                     {currentDrillIndex + 1 === drills.length ? 'けっかへ' : 'つぎへ'}
-                   </button>
-                 ) : (
-                   <button 
-                      onClick={() => handleNextDrill(true)}
-                      className="dq-button text-xs py-1"
-                   >
-                     にげる
-                   </button>
-                 )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {isQuestMode && questStatus === 'result' && (
-          <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
-            <div className="dq-window p-10 flex flex-col items-center gap-6 text-center max-w-md w-full">
-               <Trophy className="w-24 h-24 text-yellow-400 animate-bounce" />
-               <div>
-                 <h2 className="text-4xl font-normal text-white mb-2">レベルアップ！</h2>
-                 <p className="text-white/60">みごとだ！　わかき　せんしよ。</p>
-               </div>
-               
-               <div className="flex gap-8 my-4">
-                  <div>
-                    <p className="text-4xl font-normal">{correctCountInLevel}/10</p>
-                    <p className="text-xs text-white/40 uppercase">せいかいすう</p>
-                  </div>
-                  <div className="w-px h-12 bg-white/20"></div>
-                  <div>
-                    <p className="text-4xl font-normal text-yellow-400">Lv {currentLevel + 1}</p>
-                    <p className="text-xs text-white/40 uppercase">つぎのしれん</p>
-                  </div>
-               </div>
-
-               <button 
-                 onClick={handleLevelUp}
-                 className="dq-button w-full py-4 text-xl"
-               >
-                 Lv {currentLevel + 1} に　すすむ
-               </button>
-               <div className="w-full mt-2">
-                 <Link href="/" className="block w-full">
-                    <button className="dq-button w-full py-2 text-sm bg-black/50 border-white/30 text-white/60">
-                      ホームへもどる
-                    </button>
-                 </Link>
-               </div>
-            </div>
-          </div>
-        )}
-
-        {isQuestMode && questStatus === 'failed' && (
-          <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
-            <div className="dq-window p-10 border-red-500 flex flex-col items-center gap-6 text-center max-w-md w-full">
-               <XCircle className="w-24 h-24 text-red-500" />
-               <div>
-                 <h2 className="text-4xl font-normal text-white mb-2">しっぱい！</h2>
-                 <p className="text-white/60">８もんいじょう　せいかい　しなければならない。</p>
-               </div>
-               
-               <div className="bg-red-900/20 p-6 border-2 border-red-500/20 w-full">
-                  <p className="text-5xl font-normal text-red-500">{correctCountInLevel}/10</p>
-                  <p className="text-sm text-red-400 mt-2">きみの　せいせき</p>
-               </div>
-
-               <div className="grid grid-cols-2 gap-4 w-full">
-                 <button 
-                   onClick={handleRetryLevel}
-                   className="dq-button py-2"
-                 >
-                   さいちょうせん
-                 </button>
-                 <Link href="/" className="w-full">
-                    <button className="dq-button w-full py-2 text-white/40 border-white/20">あきらめる</button>
-                 </Link>
-               </div>
-            </div>
-          </div>
-        )}
-
-        {isQuestMode && questStatus === 'all-cleared' && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 font-dot">
-            {/* Celebration Background Particles */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(20)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ 
-                    top: -20, 
-                    left: `${Math.random() * 100}%`,
-                    rotate: 0,
-                    scale: 0.5 + Math.random()
-                   }}
-                  animate={{ 
-                    top: '120%', 
-                    rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
-                  }}
-                  transition={{ 
-                    duration: 3 + Math.random() * 4, 
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: Math.random() * 5
-                  }}
-                  className="absolute"
-                >
-                  {i % 3 === 0 ? (
-                    <PartyPopper className="text-yellow-400 w-8 h-8 opacity-40 shadow-xl" />
-                  ) : i % 3 === 1 ? (
-                    <Beer className="text-yellow-200 w-10 h-10 opacity-30" />
-                  ) : (
-                    <div className="w-4 h-4 bg-white opacity-40" />
-                  )}
-                </motion.div>
-              ))}
+                </div>
+            )}
             </div>
 
-            <motion.div 
-              initial={{ scale: 0.8, opacity: 0, y: 50 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              transition={{ type: "spring", damping: 15 }}
-              className="dq-window p-12 flex flex-col items-center gap-8 text-center max-w-lg w-full text-white"
-            >
-               <div className="relative flex items-center justify-center">
-                 <motion.div
-                   animate={{ 
-                     rotate: [0, -10, 10, -10, 10, 0],
-                     scale: [1, 1.1, 1, 1.1, 1]
-                   }}
-                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                 >
-                   <Trophy className="w-32 h-32 text-yellow-400" />
-                 </motion.div>
-                 <motion.div 
-                   className="absolute -top-4 -right-4 dq-window bg-black px-2 py-1 text-white font-normal"
-                   initial={{ scale: 0 }}
-                   animate={{ scale: 1 }}
-                   transition={{ delay: 0.5 }}
-                 >
-                   10
-                 </motion.div>
-               </div>
-               
-               <div className="z-10">
-                 <motion.h2 
-                   initial={{ y: 20, opacity: 0 }}
-                   animate={{ y: 0, opacity: 1 }}
-                   transition={{ delay: 0.3 }}
-                   className="text-5xl font-normal text-yellow-400 animate-pulse"
-                 >
-                   グランドマスター
-                 </motion.h2>
-                 <motion.p 
-                   initial={{ y: 20, opacity: 0 }}
-                   animate={{ y: 0, opacity: 1 }}
-                   transition={{ delay: 0.4 }}
-                   className="text-white/60 text-lg leading-relaxed"
-                 >
-                   すべてを　せいした！<br/>
-                   あなたは　しんの　えいごマスターだ。
-                 </motion.p>
-               </div>
-
-               <motion.div 
-                 initial={{ opacity: 0 }}
-                 animate={{ opacity: 1 }}
-                 transition={{ delay: 0.8 }}
-                 className="flex flex-col items-center gap-4 py-6 border-y-2 border-white/20 w-full"
-               >
-                 <div className="flex items-center gap-4">
-                    <Beer className="w-12 h-12 text-yellow-400" />
-                    <span className="text-3xl font-normal tracking-widest text-yellow-200">かんぱーい！</span>
-                    <Beer className="w-12 h-12 text-yellow-400 scale-x-[-1]" />
-                 </div>
-               </motion.div>
-
-               <Link href="/" className="w-full z-10">
-                 <button className="dq-button w-full py-4 text-xl">
-                   でんせつとして　きかんする
-                 </button>
-               </Link>
-            </motion.div>
-          </div>
-        )}
-
-        {/* The Notebook Assembly */}
-        <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center py-2 bg-black/40 w-full border-y-2 border-white/20 relative min-h-[120px] justify-center">
+            {showVictoryEffect && (
+                <div className="absolute inset-0 bg-yellow-400/20 animate-pulse z-0"></div>
+            )}
             
+            <p className="text-sm text-white/60 mb-2 z-10">
+                {displayEnglish ? 'えいご:' : 'えいごに　なおせ！'}
+            </p>
+            
+            {displayEnglish && (
+                 <h2 className="text-2xl md:text-3xl font-normal text-center px-4 md:px-8 z-10 text-yellow-200 mb-2">
+                    {currentDrill.english}
+                 </h2>
+            )}
+
+            <h2 className={`text-2xl md:text-3xl font-normal text-center px-4 md:px-8 z-10 ${displayEnglish ? 'text-white/80' : 'text-white'}`}>
+                {currentDrill.japanese}
+            </h2>
+
+            {(isCorrect || (isQuestMode && timeLeft === 0)) && (
+                <div className="mt-4 flex flex-col items-center z-10 gap-2">
+                    {isCorrect && (
+                    <p className="text-sm text-green-400 font-bold animate-bounce mt-2 bg-black/60 px-4 py-1 border border-green-400">
+                        モンスターを　たおした！
+                    </p>
+                    )}
+                </div>
+            )}
+            </div>
+
+            <div className="w-full flex justify-between items-center px-4 pb-2">
+                <div className="flex items-center gap-4">
+                <div className="flex gap-1">
+                    {isQuestMode && [...Array(10)].map((_, i) => (
+                        <div 
+                        key={i} 
+                        className={`w-3 h-3 border-2 ${
+                            questResults[i] === 'correct' 
+                            ? 'bg-green-500 border-white' 
+                            : questResults[i] === 'wrong' 
+                                ? 'bg-red-500 border-white' 
+                                : (i === currentDrillIndex ? 'bg-yellow-400 border-white animate-pulse' : 'bg-transparent border-white/30')
+                        }`}
+                        />
+                    ))}
+                </div>
+                {isQuestMode && (
+                    <span className="text-xs text-white/60">{correctCountInLevel} / 10 せいかい</span>
+                )}
+                </div>
+
+                {(isCorrect || (isQuestMode && timeLeft === 0)) ? (
+                <button 
+                    onClick={() => onNext()}
+                    className="dq-button animate-bounce"
+                >
+                    {isQuestMode && currentDrillIndex + 1 === totalDrills ? 'けっかへ' : 'つぎへ'}
+                </button>
+                ) : (
+                <button 
+                    onClick={() => onNext(true)}
+                    className="dq-button text-xs py-1"
+                >
+                    にげる
+                </button>
+                )}
+            </div>
+        </div>
+    );
+}
+
+interface PracticeAnswerAreaProps {
+    activeTab: VerbType | 'admin';
+    onChangeTab: (tab: VerbType | 'admin') => void;
+    isAdmin: boolean;
+    currentLevel: number;
+    setCurrentLevel: React.Dispatch<React.SetStateAction<number>>;
+    correctCountInLevel: number;
+    setCorrectCountInLevel: React.Dispatch<React.SetStateAction<number>>;
+    state: SentencePattern;
+    handleSentenceTypeChange: (type: SentenceType) => void;
+    handleSubjectChange: (sub: Subject) => void;
+    handleTenseChange: (tense: Tense) => void;
+    handleFiveSentencePatternChange: (p: FiveSentencePattern) => void;
+    handleVerbChange: (v: Verb) => void;
+    handleObjectChange: (o: ObjectType) => void;
+    handleNumberFormChange: (n: NumberForm) => void;
+    handleBeComplementChange: (c: BeComplement) => void;
+    nounWords: Word[];
+    verbWords: Word[]; // Actually internal usage but required for selectors if used
+    adjectiveWords: Word[];
+    adverbWords: Word[];
+    isLoadingNouns: boolean;
+    generatedText: string;
+    isCorrect: boolean;
+    isQuestMode: boolean;
+    timeLeft: number;
+}
+
+function PracticeAnswerArea({
+    activeTab,
+    onChangeTab,
+    isAdmin,
+    currentLevel,
+    setCurrentLevel,
+    correctCountInLevel,
+    setCorrectCountInLevel,
+    state,
+    handleSentenceTypeChange,
+    handleSubjectChange,
+    handleTenseChange,
+    handleFiveSentencePatternChange,
+    handleVerbChange,
+    handleObjectChange,
+    handleNumberFormChange,
+    handleBeComplementChange,
+    nounWords,
+    adjectiveWords,
+    adverbWords,
+    isLoadingNouns,
+    generatedText,
+    isCorrect,
+    isQuestMode,
+    timeLeft
+}: PracticeAnswerAreaProps) {
+    return (
+        <div className="flex flex-col items-center w-full">
             {/* 1. Tabs Area */}
-            <div className="w-full max-w-4xl px-4 md:px-8 flex justify-start">
+            <div className="w-full px-4 md:px-8 flex justify-start">
                <VerbTypeSelector
                  activeTab={activeTab}
-                 onChange={handleTabChange}
+                 onChange={onChangeTab}
                  isAdmin={isAdmin}
                />
             </div>
 
             {/* 2. DQ Window Container */}
-            <section className="dq-window-fancy w-full max-w-4xl p-4 md:p-8 flex flex-col items-center min-h-[500px]">
+            <section className="dq-window-fancy w-full p-4 md:p-8 flex flex-col items-center min-h-[500px]">
                 
                 {activeTab === 'admin' ? (
                   <div className="w-full max-w-xl flex flex-col gap-8 py-8 animate-in fade-in duration-500">
@@ -1226,13 +579,603 @@ export function PracticeContent() {
                         {generatedText}
                         </p>
                     </div>
-
-
                 </div>
                 </>
                 )}
             </section>
         </div>
+    )
+}
+
+export function PracticeContent() {
+  const searchParams = useSearchParams();
+  const isQuestMode = searchParams.get('mode') === 'quest';
+  // Default to true so that Drill mode is active by default (if not quest mode)
+  const initialMode = true;
+  const selectedPattern = searchParams.get('pattern') || undefined;
+  const initialDrillIndex = parseInt(searchParams.get('drill') || '1') - 1;
+  const isAdmin = searchParams.get('role') === 'ADMIN';
+
+  const [currentLevel, setCurrentLevel] = useState(() => {
+    if (typeof document === 'undefined') return 1;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; playerLevel=`);
+    if (parts.length === 2) {
+      const val = parts.pop()?.split(';').shift();
+      return val ? parseInt(val) : 1;
+    }
+    return 1;
+  });
+  const [correctCountInLevel, setCorrectCountInLevel] = useState(0);
+
+  // Cookie helper
+  const setCookie = useCallback((name: string, value: string, days = 365) => {
+    if (typeof document === 'undefined') return;
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `; expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value}${expires}; path=/`;
+  }, []);
+
+  // Sync level to cookie whenever it changes
+  useEffect(() => {
+    setCookie('playerLevel', currentLevel.toString());
+  }, [currentLevel, setCookie]);
+
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [questStatus, setQuestStatus] = useState<'playing' | 'result' | 'failed' | 'all-cleared'>('playing');
+  const [questResults, setQuestResults] = useState<('correct' | 'wrong' | null)[]>(new Array(10).fill(null));
+  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated'>('idle');
+
+  const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
+    verbType: 'do',
+    verb: 'do',
+    sentenceType: 'positive',
+    subject: 'first_s',
+    tense: 'present',
+    fiveSentencePattern: 'SV',
+    object: 'something',
+    numberForm: 'none',
+    beComplement: 'here',
+  }));
+
+  const [nounWords, setNounWords] = useState<Word[]>([]);
+  const [verbWords, setVerbWords] = useState<Word[]>([]);
+  const [adjectiveWords, setAdjectiveWords] = useState<Word[]>([]);
+  const [adverbWords, setAdverbWords] = useState<Word[]>([]);
+  const [isLoadingNouns, setIsLoadingNouns] = useState(true);
+  interface Drill {
+    id: string;
+    english: string;
+    japanese: string;
+    sentencePattern: string;
+    sortOrder: number;
+  }
+  const [drills, setDrills] = useState<Drill[]>([]);
+  const [isDrillMode] = useState(initialMode);
+  const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
+  const [activeTab, setActiveTab] = useState<VerbType | 'admin'>(state.verbType);
+
+  // Fetch noun words from Repository
+  useEffect(() => {
+    const fetchWords = async () => {
+      try {
+        const [nounsData, verbsData, adjectivesData, adverbsData] = await Promise.all([
+          getNounWords(),
+          getVerbWords(),
+          getAdjectiveWords(),
+          getAdverbWords(),
+        ]);
+
+        setNounWords(nounsData.map((w: WordProps) => Word.reconstruct(w)));
+        setVerbWords(verbsData.map((w: WordProps) => Word.reconstruct(w)));
+        setAdjectiveWords(adjectivesData.map((w: WordProps) => Word.reconstruct(w)));
+        setAdverbWords(adverbsData.map((w: WordProps) => Word.reconstruct(w)));
+      } catch (error) {
+        console.error('Error fetching words:', error);
+      } finally {
+        setIsLoadingNouns(false);
+      }
+    };
+
+    fetchWords();
+
+    const fetchDrills = async () => {
+      if (isQuestMode) {
+        const data = await getDrillQuestQuestions(currentLevel);
+        setDrills(data);
+        setCurrentDrillIndex(0);
+        setCorrectCountInLevel(0);
+        const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
+        setTimeLeft(timeLimit);
+        setIsTimerActive(true);
+        setQuestStatus('playing');
+        setQuestResults(new Array(10).fill(null));
+      } else {
+        const data = await getSentenceDrills(selectedPattern);
+        setDrills(data);
+      }
+    };
+    fetchDrills();
+  }, [selectedPattern, isQuestMode, currentLevel]);
+
+  // Timer logic for Quest Mode
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isQuestMode && isTimerActive && timeLeft > 0 && questStatus === 'playing') {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && questStatus === 'playing') {
+      setIsTimerActive(false);
+      setQuestResults(prev => {
+        const next = [...prev];
+        if (!next[currentDrillIndex]) {
+          next[currentDrillIndex] = 'wrong';
+        }
+        return next;
+      });
+      setHeroAction('defeated');
+    }
+    return () => clearInterval(timer);
+  }, [isQuestMode, isTimerActive, timeLeft, questStatus, currentDrillIndex]);
+
+  const handleVerbTypeChange = useCallback((verbType: VerbType) => {
+    setActiveTab(verbType);
+    setState((prev) => {
+      if (verbType === 'be') {
+        return SentencePattern.create({
+          ...prev.toObject(),
+          verbType,
+          verb: 'be',
+          fiveSentencePattern: 'SV',
+          beComplement: 'here',
+          numberForm: 'a'
+        });
+      } else {
+        return SentencePattern.create({
+          ...prev.toObject(),
+          verbType,
+          verb: 'do',
+          fiveSentencePattern: 'SV'
+        });
+      }
+    });
+  }, []);
+
+  const handleTabChange = useCallback((tab: VerbType | 'admin') => {
+    if (tab === 'admin') {
+      setActiveTab('admin');
+    } else {
+      handleVerbTypeChange(tab);
+    }
+  }, [handleVerbTypeChange]);
+
+  const handleVerbChange = useCallback((verb: Verb) => {
+    setState((prev) => SentencePattern.create({ ...prev.toObject(), verb }));
+  }, []);
+
+  const handleSentenceTypeChange = useCallback((sentenceType: SentenceType) => {
+    setState((prev) => prev.toggleSentenceType(sentenceType));
+  }, []);
+
+  const handleSubjectChange = useCallback((subject: Subject) => {
+    setState((prev) => {
+      if (subject === prev.subject) {
+        return prev.rotateSubject();
+      } else {
+        return SentencePattern.create({ ...prev.toObject(), subject });
+      }
+    });
+  }, []);
+
+  const handleTenseChange = useCallback((tense: Tense) => {
+    setState((prev) => prev.changeTense(tense));
+  }, []);
+
+  const handleFiveSentencePatternChange = useCallback((fiveSentencePattern: FiveSentencePattern) => {
+    setState((prev) => SentencePattern.create({
+       ...prev.toObject(),
+       fiveSentencePattern,
+       verb: 'do'
+    }));
+  }, []);
+
+  const handleObjectChange = useCallback((object: ObjectType) => {
+    setState((prev) => SentencePattern.create({ ...prev.toObject(), object }));
+  }, []);
+
+  const handleNumberFormChange = useCallback((numberForm: NumberForm) => {
+    setState((prev) => SentencePattern.create({ ...prev.toObject(), numberForm }));
+  }, []);
+
+  const handleBeComplementChange = useCallback((beComplement: BeComplement) => {
+    setState((prev) => SentencePattern.create({ ...prev.toObject(), beComplement }));
+  }, []);
+
+  const [sessionId, setSessionId] = useState('');
+  const [showVictoryEffect, setShowVictoryEffect] = useState(false);
+  const [isScreenShaking, setIsScreenShaking] = useState(false);
+  const [isScreenFlashing, setIsScreenFlashing] = useState(false);
+  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated'>('idle');
+
+  useEffect(() => {
+    setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
+  }, []);
+
+  const generatedText = useMemo(() => new GeneratePatternUseCase().execute(state, nounWords, verbWords), [state, nounWords, verbWords]);
+
+  const currentDrill = drills[currentDrillIndex];
+  const isCorrect = useMemo(() => isDrillMode && currentDrill && generatedText.toLowerCase().replace(/[.,?!]/g, '') === currentDrill.english.toLowerCase().replace(/[.,?!]/g, ''), [isDrillMode, currentDrill, generatedText]);
+
+  const [hasMarkedCorrect, setHasMarkedCorrect] = useState(false);
+
+  const triggerVictoryEffect = useCallback(() => {
+    setIsScreenFlashing(true);
+    setTimeout(() => setIsScreenFlashing(false), 150);
+
+    setIsScreenShaking(true);
+    setTimeout(() => setIsScreenShaking(false), 500);
+
+    setMonsterState('hit');
+    setTimeout(() => {
+      setMonsterState('defeated');
+    }, 300);
+
+    setShowVictoryEffect(true);
+  }, []);
+
+  useEffect(() => {
+    if (isCorrect && !hasMarkedCorrect && isQuestMode && questStatus === 'playing') {
+      setCorrectCountInLevel(prev => prev + 1);
+      setQuestResults(prev => {
+        const next = [...prev];
+        next[currentDrillIndex] = 'correct';
+        return next;
+      });
+      setHasMarkedCorrect(true);
+      setIsTimerActive(false);
+      triggerVictoryEffect();
+    }
+  }, [isCorrect, hasMarkedCorrect, isQuestMode, questStatus, currentDrillIndex, triggerVictoryEffect]);
+
+  useEffect(() => {
+    if (isCorrect && !isQuestMode && !hasMarkedCorrect) {
+      setHasMarkedCorrect(true);
+      triggerVictoryEffect();
+    }
+  }, [isCorrect, isDrillMode, isQuestMode, hasMarkedCorrect, triggerVictoryEffect]);
+
+  useEffect(() => {
+    setHasMarkedCorrect(false);
+    setMonsterState('idle');
+    setShowVictoryEffect(false);
+  }, [currentDrillIndex, state.subject, state.verb, state.object]);
+
+  const battleImages = useMemo(() => {
+    let subjectImg = '/assets/heroes/hero.png';
+    if (state.subject === 'second' || state.subject === 'second_p') subjectImg = '/assets/heroes/mage.png';
+    else if (state.subject === 'third_s' || state.subject === 'third_p') subjectImg = '/assets/heroes/warrior.png';
+
+    let monsterImg = '/assets/monsters/slime.png';
+    let monsterScale = 1.0; 
+    if (state.verbType === 'be' && (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVC')) {
+      monsterImg = '/assets/monsters/bit_golem.png';
+      monsterScale = 1.0;
+    } else if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
+      monsterImg = '/assets/monsters/void_dragon_v2.png';
+      monsterScale = 1.7;
+    } else if (state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
+      monsterImg = '/assets/monsters/dragon.png';
+      monsterScale = 1.7;
+    }
+
+    let itemImg = null;
+    if (state.fiveSentencePattern === 'SVO') {
+      itemImg = '/assets/monsters/o_slime.png';
+    } else if (state.verbType === 'be' && state.fiveSentencePattern === 'SVC') {
+      itemImg = '/assets/monsters/crescent_beast.png';
+    }
+
+    return { subjectImg, monsterImg, itemImg, monsterScale };
+  }, [state.subject, state.verb, state.verbType, state.fiveSentencePattern]);
+
+  const handleNextDrill = async (isEscape?: boolean) => {
+    if (isEscape === true) {
+      setHeroAction('run-away');
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    if (isQuestMode) {
+      if (currentDrillIndex + 1 >= drills.length) {
+        if (correctCountInLevel >= 8) {
+          if (currentLevel === 10) {
+            setQuestStatus('all-cleared');
+          } else {
+            setQuestStatus('result');
+          }
+        } else {
+          setQuestStatus('failed');
+        }
+        setIsTimerActive(false);
+      } else {
+        setCurrentDrillIndex((prev) => prev + 1);
+        const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
+        setTimeLeft(timeLimit);
+        setIsTimerActive(true);
+      }
+    } else {
+      setCurrentDrillIndex((prev) => (prev + 1) % drills.length);
+    }
+
+    setHeroAction('idle');
+  };
+
+  const handleLevelUp = () => {
+    setCurrentLevel(prev => prev + 1);
+  };
+
+  const handleRetryLevel = () => {
+    const fetchAgain = async () => {
+      const data = await getDrillQuestQuestions(currentLevel);
+      setDrills(data);
+      setCurrentDrillIndex(0);
+      setCorrectCountInLevel(0);
+      const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
+      setTimeLeft(timeLimit);
+      setIsTimerActive(true);
+      setQuestStatus('playing');
+      setQuestResults(new Array(10).fill(null));
+    };
+    fetchAgain();
+  };
+
+  const { heroOpacity, monsterOpacity } = useMemo(() => {
+    const correct = questResults.filter(r => r === 'correct').length;
+    const wrong = questResults.filter(r => r === 'wrong').length;
+    let h = 1;
+    let m = 1;
+    if (correct < wrong) h = 0.5;
+    else if (correct > wrong) m = 0.5;
+    return { heroOpacity: h, monsterOpacity: m };
+  }, [questResults]);
+  
+  return (
+    <main className={`min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white transition-all duration-75 ${isScreenShaking ? 'translate-x-2 -translate-y-1 rotate-1' : ''}`}>
+      {isScreenFlashing && (
+        <div className="fixed inset-0 bg-white z-[1000] opacity-80 pointer-events-none" />
+      )}
+
+      <div className="w-full max-w-4xl relative flex flex-col gap-4">
+
+        {((isDrillMode && !isQuestMode && currentDrill) || 
+          (isQuestMode && currentDrill && questStatus === 'playing')) && (
+            <>
+            <PracticeBattleArea 
+                isQuestMode={isQuestMode}
+                state={state}
+                currentDrillIndex={currentDrillIndex}
+                heroAction={heroAction}
+                monsterState={monsterState}
+                battleImages={battleImages}
+                heroOpacity={heroOpacity}
+                monsterOpacity={monsterOpacity}
+            />
+            <PracticeQuestionArea
+                isQuestMode={isQuestMode}
+                currentLevel={currentLevel}
+                currentDrillIndex={currentDrillIndex}
+                totalDrills={drills.length}
+                timeLeft={timeLeft}
+                questResults={questResults}
+                correctCountInLevel={correctCountInLevel}
+                currentDrill={currentDrill}
+                isCorrect={isCorrect}
+                onNext={handleNextDrill}
+                showVictoryEffect={showVictoryEffect}
+                displayEnglish={!isQuestMode}
+            />
+            </>
+        )}
+
+        {isQuestMode && questStatus === 'result' && (
+          <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
+            <div className="dq-window p-10 flex flex-col items-center gap-6 text-center max-w-md w-full">
+               <Trophy className="w-24 h-24 text-yellow-400 animate-bounce" />
+               <div>
+                 <h2 className="text-4xl font-normal text-white mb-2">レベルアップ！</h2>
+                 <p className="text-white/60">みごとだ！　わかき　せんしよ。</p>
+               </div>
+               
+               <div className="flex gap-8 my-4">
+                  <div>
+                    <p className="text-4xl font-normal">{correctCountInLevel}/10</p>
+                    <p className="text-xs text-white/40 uppercase">せいかいすう</p>
+                  </div>
+                  <div className="w-px h-12 bg-white/20"></div>
+                  <div>
+                    <p className="text-4xl font-normal text-yellow-400">Lv {currentLevel + 1}</p>
+                    <p className="text-xs text-white/40 uppercase">つぎのしれん</p>
+                  </div>
+               </div>
+
+               <button 
+                 onClick={handleLevelUp}
+                 className="dq-button w-full py-4 text-xl"
+               >
+                 Lv {currentLevel + 1} に　すすむ
+               </button>
+               <div className="w-full mt-2">
+                 <Link href="/" className="block w-full">
+                    <button className="dq-button w-full py-2 text-sm bg-black/50 border-white/30 text-white/60">
+                      ホームへもどる
+                    </button>
+                 </Link>
+               </div>
+            </div>
+          </div>
+        )}
+
+        {isQuestMode && questStatus === 'failed' && (
+          <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
+            <div className="dq-window p-10 border-red-500 flex flex-col items-center gap-6 text-center max-w-md w-full">
+               <XCircle className="w-24 h-24 text-red-500" />
+               <div>
+                 <h2 className="text-4xl font-normal text-white mb-2">しっぱい！</h2>
+                 <p className="text-white/60">８もんいじょう　せいかい　しなければならない。</p>
+               </div>
+               
+               <div className="bg-red-900/20 p-6 border-2 border-red-500/20 w-full">
+                  <p className="text-5xl font-normal text-red-500">{correctCountInLevel}/10</p>
+                  <p className="text-sm text-red-400 mt-2">きみの　せいせき</p>
+               </div>
+
+               <div className="grid grid-cols-2 gap-4 w-full">
+                 <button 
+                   onClick={handleRetryLevel}
+                   className="dq-button py-2"
+                 >
+                   さいちょうせん
+                 </button>
+                 <Link href="/" className="w-full">
+                    <button className="dq-button w-full py-2 text-white/40 border-white/20">あきらめる</button>
+                 </Link>
+               </div>
+            </div>
+          </div>
+        )}
+        
+        {isQuestMode && questStatus === 'all-cleared' && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 font-dot">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ 
+                    top: -20, 
+                    left: `${Math.random() * 100}%`,
+                    rotate: 0,
+                    scale: 0.5 + Math.random()
+                   }}
+                  animate={{ 
+                    top: '120%', 
+                    rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
+                  }}
+                  transition={{ 
+                    duration: 3 + Math.random() * 4, 
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: Math.random() * 5
+                  }}
+                  className="absolute"
+                >
+                  {i % 3 === 0 ? (
+                    <PartyPopper className="text-yellow-400 w-8 h-8 opacity-40 shadow-xl" />
+                  ) : i % 3 === 1 ? (
+                    <Beer className="text-yellow-200 w-10 h-10 opacity-30" />
+                  ) : (
+                    <div className="w-4 h-4 bg-white opacity-40" />
+                  )}
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ type: "spring", damping: 15 }}
+              className="dq-window p-12 flex flex-col items-center gap-8 text-center max-w-lg w-full text-white"
+            >
+               <div className="relative flex items-center justify-center">
+                 <motion.div
+                   animate={{ 
+                     rotate: [0, -10, 10, -10, 10, 0],
+                     scale: [1, 1.1, 1, 1.1, 1]
+                   }}
+                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                 >
+                   <Trophy className="w-32 h-32 text-yellow-400" />
+                 </motion.div>
+                 <motion.div 
+                   className="absolute -top-4 -right-4 dq-window bg-black px-2 py-1 text-white font-normal"
+                   initial={{ scale: 0 }}
+                   animate={{ scale: 1 }}
+                   transition={{ delay: 0.5 }}
+                 >
+                   10
+                 </motion.div>
+               </div>
+               
+               <div className="z-10">
+                 <motion.h2 
+                   initial={{ y: 20, opacity: 0 }}
+                   animate={{ y: 0, opacity: 1 }}
+                   transition={{ delay: 0.3 }}
+                   className="text-5xl font-normal text-yellow-400 animate-pulse"
+                 >
+                   グランドマスター
+                 </motion.h2>
+                 <motion.p 
+                   initial={{ y: 20, opacity: 0 }}
+                   animate={{ y: 0, opacity: 1 }}
+                   transition={{ delay: 0.4 }}
+                   className="text-white/60 text-lg leading-relaxed"
+                 >
+                   すべてを　せいした！<br/>
+                   あなたは　しんの　えいごマスターだ。
+                 </motion.p>
+               </div>
+
+               <motion.div 
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 transition={{ delay: 0.8 }}
+                 className="flex flex-col items-center gap-4 py-6 border-y-2 border-white/20 w-full"
+               >
+                 <div className="flex items-center gap-4">
+                    <Beer className="w-12 h-12 text-yellow-400" />
+                    <span className="text-3xl font-normal tracking-widest text-yellow-200">かんぱーい！</span>
+                    <Beer className="w-12 h-12 text-yellow-400 scale-x-[-1]" />
+                 </div>
+               </motion.div>
+
+               <Link href="/" className="w-full z-10">
+                 <button className="dq-button w-full py-4 text-xl">
+                   でんせつとして　きかんする
+                 </button>
+               </Link>
+            </motion.div>
+          </div>
+        )}
+
+        <PracticeAnswerArea
+            activeTab={activeTab}
+            onChangeTab={handleTabChange}
+            isAdmin={isAdmin}
+            currentLevel={currentLevel}
+            setCurrentLevel={setCurrentLevel}
+            correctCountInLevel={correctCountInLevel}
+            setCorrectCountInLevel={setCorrectCountInLevel}
+            state={state}
+            handleSentenceTypeChange={handleSentenceTypeChange}
+            handleSubjectChange={handleSubjectChange}
+            handleTenseChange={handleTenseChange}
+            handleFiveSentencePatternChange={handleFiveSentencePatternChange}
+            handleVerbChange={handleVerbChange}
+            handleObjectChange={handleObjectChange}
+            handleNumberFormChange={handleNumberFormChange}
+            handleBeComplementChange={handleBeComplementChange}
+            nounWords={nounWords}
+            verbWords={verbWords}
+            adjectiveWords={adjectiveWords}
+            adverbWords={adverbWords}
+            isLoadingNouns={isLoadingNouns}
+            generatedText={generatedText}
+            isCorrect={isCorrect}
+            isQuestMode={isQuestMode}
+            timeLeft={timeLeft}
+        />
         
         <div className="mt-12 text-center opacity-30 text-xs font-mono">
            SESSION_ID: {sessionId}

@@ -85,16 +85,16 @@ describe('PracticeContent', () => {
 
   it('renders the title correctly', async () => {
     render(<PracticeContent />);
-    expect(screen.getByText('ぶんしょうトレーニング')).toBeDefined();
+    expect(await screen.findByText('ぶんしょうトレーニング')).toBeDefined();
   });
 
-  it('renders "Drill Quest" title when mode is quest', () => {
+  it('renders "Drill Quest" title when mode is quest', async () => {
     mockGet.mockImplementation((key) => {
       if (key === 'mode') return 'quest';
       return null;
     });
     render(<PracticeContent />);
-    expect(screen.getByText('ドリルクエスト')).toBeDefined();
+    expect(await screen.findByText('ドリルクエスト')).toBeDefined();
   });
 
   it('renders NineKeyPanel in normal mode', async () => {
