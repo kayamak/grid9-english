@@ -327,10 +327,12 @@ function PracticeContent() {
       monsterImg = '/assets/monsters/dragon.png';
     }
 
-    // 3. Object Area (Item)
+    // 3. Object / Complement Area (Item)
     let itemImg = null;
     if (state.fiveSentencePattern === 'SVO') {
       itemImg = '/assets/monsters/o_slime.png';
+    } else if (state.verbType === 'be' && state.fiveSentencePattern === 'SVC') {
+      itemImg = '/assets/monsters/crescent_beast.png';
     }
 
     return { subjectImg, monsterImg, itemImg };
@@ -451,7 +453,6 @@ function PracticeContent() {
                   )}
                 </motion.div>
                 <div className="w-20 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
-                <div className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">Subject</div>
               </div>
 
               {/* Verb Area (Monster) */}
@@ -525,7 +526,6 @@ function PracticeContent() {
                   )}
                 </motion.div>
                 <div className="w-24 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
-                <div className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">Verb</div>
               </div>
 
               {/* Object Area (Item) */}
@@ -547,7 +547,6 @@ function PracticeContent() {
                   </motion.div>
                 )}
                 <div className="w-16 h-2 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
-                <div className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">Object</div>
               </div>
             </div>
 
