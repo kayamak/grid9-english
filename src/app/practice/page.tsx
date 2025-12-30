@@ -426,9 +426,9 @@ function PracticeContent() {
         {isDrillMode && !isQuestMode && currentDrill && (
           <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Drill Mode */}
-            <div className="relative w-full max-w-2xl h-48 md:h-64 mb-4 flex justify-around items-end px-4 gap-2">
+            <div className="dq-battle-bg relative w-full max-w-2xl h-48 md:h-64 mb-4 flex justify-around items-end px-4 gap-2">
               {/* Subject Area (Hero) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end">
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <motion.div
                   key={`hero-${state.subject}`}
                   initial={{ x: -20, opacity: 0 }}
@@ -440,7 +440,7 @@ function PracticeContent() {
                     alt="Hero" 
                     width={150}
                     height={150}
-                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated ${
                       state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                     }`}
                   />
@@ -450,17 +450,17 @@ function PracticeContent() {
                       alt="Hero Second" 
                       width={150}
                       height={150}
-                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated ${
                         state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                       }`}
                     />
                   )}
                 </motion.div>
-                <div className="w-20 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="w-20 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
 
               {/* Verb Area (Monster) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end">
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <motion.div
                   key={`monster-${currentDrillIndex}`}
                   initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
@@ -480,7 +480,7 @@ function PracticeContent() {
                     alt="Monster" 
                     width={180}
                     height={180}
-                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
+                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated"
                   />
                   {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -530,11 +530,11 @@ function PracticeContent() {
                     </motion.div>
                   )}
                 </motion.div>
-                <div className="w-24 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="w-24 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
 
               {/* Object Area (Item) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px]">
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-4">
                 {battleImages.itemImg && (
                   <motion.div
                     key={`item-${state.object}`}
@@ -547,11 +547,11 @@ function PracticeContent() {
                       alt="Item" 
                       width={120}
                       height={120}
-                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
+                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated"
                     />
                   </motion.div>
                 )}
-                <div className="w-16 h-2 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="w-16 h-2 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
             </div>
 
@@ -601,9 +601,9 @@ function PracticeContent() {
         {isQuestMode && currentDrill && questStatus === 'playing' && (
           <div className="mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Quest Mode */}
-            <div className="relative w-full max-w-2xl h-48 md:h-64 mb-4 flex justify-around items-end px-4 gap-2">
+            <div className="dq-battle-bg relative w-full max-w-2xl h-48 md:h-64 mb-4 flex justify-around items-end px-4 gap-2">
               {/* Subject Area (Hero) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end">
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <motion.div
                   key={`hero-q-${state.subject}`}
                   initial={{ x: -20, opacity: 0 }}
@@ -615,7 +615,7 @@ function PracticeContent() {
                     alt="Hero" 
                     width={150}
                     height={150}
-                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated ${
                       state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                     }`}
                   />
@@ -625,17 +625,17 @@ function PracticeContent() {
                       alt="Hero Second" 
                       width={150}
                       height={150}
-                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated ${
                         state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                       }`}
                     />
                   )}
                 </motion.div>
-                <div className="w-20 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="w-20 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
 
               {/* Verb Area (Monster) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end">
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <motion.div
                   key={`monster-q-${currentDrillIndex}`}
                   initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
@@ -655,7 +655,7 @@ function PracticeContent() {
                     alt="Monster" 
                     width={180}
                     height={180}
-                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
+                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated"
                   />
                   {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -705,11 +705,11 @@ function PracticeContent() {
                     </motion.div>
                   )}
                 </motion.div>
-                <div className="w-24 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="w-24 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
 
               {/* Object Area (Item) */}
-              <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px]">
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-4">
                 {battleImages.itemImg && (
                   <motion.div
                     key={`item-q-${state.object}`}
@@ -722,11 +722,11 @@ function PracticeContent() {
                       alt="Item" 
                       width={120}
                       height={120}
-                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
+                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated"
                     />
                   </motion.div>
                 )}
-                <div className="w-16 h-2 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="w-16 h-2 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
             </div>
 
