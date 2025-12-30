@@ -482,7 +482,7 @@ function PracticeContent() {
                       alt="Monster" 
                       width={180}
                       height={180}
-                      className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply block"
+                      className={`w-28 h-28 md:w-44 md:h-44 object-contain pixelated block ${battleImages.monsterImg.includes('bit_golem.png') ? '' : 'mix-blend-multiply'}`}
                     />
                   </motion.div>
 
@@ -686,7 +686,7 @@ function PracticeContent() {
                       alt="Monster" 
                       width={180}
                       height={180}
-                      className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply block"
+                      className={`w-28 h-28 md:w-44 md:h-44 object-contain pixelated block ${battleImages.monsterImg.includes('bit_golem.png') ? '' : 'mix-blend-multiply'}`}
                     />
                   </motion.div>
 
