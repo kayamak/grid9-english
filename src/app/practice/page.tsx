@@ -39,8 +39,32 @@ function PracticeContent() {
   const selectedPattern = searchParams.get('pattern') || undefined;
   const initialDrillIndex = parseInt(searchParams.get('drill') || '1') - 1;
 
-  const [currentLevel, setCurrentLevel] = useState(1);
+  const [currentLevel, setCurrentLevel] = useState(() => {
+    if (typeof document === 'undefined') return 1;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; playerLevel=`);
+    if (parts.length === 2) {
+      const val = parts.pop()?.split(';').shift();
+      return val ? parseInt(val) : 1;
+    }
+    return 1;
+  });
   const [correctCountInLevel, setCorrectCountInLevel] = useState(0);
+
+  // Cookie helper
+  const setCookie = useCallback((name: string, value: string, days = 365) => {
+    if (typeof document === 'undefined') return;
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `; expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value}${expires}; path=/`;
+  }, []);
+
+  // Sync level to cookie whenever it changes
+  useEffect(() => {
+    setCookie('playerLevel', currentLevel.toString());
+  }, [currentLevel, setCookie]);
+
   const [timeLeft, setTimeLeft] = useState(30);
   const [isTimerActive, setIsTimerActive] = useState(false);
   // const [isGameOver, setIsGameOver] = useState(false);
@@ -403,8 +427,13 @@ function PracticeContent() {
                    </div>
                 </div>
               )}
-              <div className="flex flex-col items-center">
-                <p className="text-sm text-yellow-200">じょうほう: {currentDrillIndex + 1} / {drills.length}</p>
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="dq-window bg-black px-3 py-1 text-white font-normal text-xl">
+                    Lv{currentLevel}
+                  </div>
+                  <p className="text-sm text-yellow-200">じょうほう: {currentDrillIndex + 1} / {drills.length}</p>
+                </div>
                 {selectedPattern && (
                   <span className="text-yellow-400 text-sm">
                     [{selectedPattern}]
