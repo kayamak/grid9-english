@@ -474,38 +474,50 @@ export function PracticeContent() {
             <div className="dq-battle-bg relative w-full max-w-2xl h-[212px] md:h-[306px] mb-4 flex justify-around items-end px-4 gap-2">
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
-                <motion.div
-                  key={`hero-${state.subject}-${currentDrillIndex}`}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={
-                    heroAction === 'run-away' ? { x: -100, opacity: 0 } : 
-                    heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
-                    { x: 0, opacity: 1, rotate: 0, y: 0, filter: 'none' }
-                  }
-                  transition={{ duration: 0.5 }}
-                  className="z-10 flex flex-col items-center"
-                >
+                <div className="z-10 flex flex-col items-center">
                   {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
+                    <motion.div
+                      key={`hero-sub-${state.subject}-${currentDrillIndex}`}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={
+                        heroAction === 'run-away' ? { x: -100, opacity: 0 } : 
+                        heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                        { x: 0, opacity: 1, rotate: 0, y: 0, filter: 'none' }
+                      }
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Image 
+                        src={battleImages.subjectImg} 
+                        alt="Hero Second" 
+                        width={150}
+                        height={150}
+                        className={`w-12 h-12 md:w-20 md:h-20 object-contain pixelated mix-blend-multiply ${
+                          state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                        }`}
+                      />
+                    </motion.div>
+                  )}
+                  <motion.div
+                    key={`hero-main-${state.subject}-${currentDrillIndex}`}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={
+                      heroAction === 'run-away' ? { x: -100, opacity: 0 } : 
+                      heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                      { x: 0, opacity: 1, rotate: 0, y: 0, filter: 'none' }
+                    }
+                    transition={{ duration: 0.5 }}
+                  >
                     <Image 
                       src={battleImages.subjectImg} 
-                      alt="Hero Second" 
+                      alt="Hero" 
                       width={150}
                       height={150}
-                      className={`w-12 h-12 md:w-20 md:h-20 object-contain pixelated mix-blend-multiply ${
-                        state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                        state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                       }`}
                     />
-                  )}
-                  <Image 
-                    src={battleImages.subjectImg} 
-                    alt="Hero" 
-                    width={150}
-                    height={150}
-                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
-                      state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
-                    }`}
-                  />
-                </motion.div>
+                  </motion.div>
+                </div>
                 <div className="w-20 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
 
@@ -650,38 +662,50 @@ export function PracticeContent() {
             <div className="dq-battle-bg relative w-full max-w-2xl h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2">
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
-                <motion.div
-                  key={`hero-q-${state.subject}-${currentDrillIndex}`}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={
-                    heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
-                    heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
-                    { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
-                  }
-                  transition={{ duration: 0.5 }}
-                  className="z-10 flex flex-col items-center"
-                >
+                <div className="z-10 flex flex-col items-center">
                   {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
+                    <motion.div
+                      key={`hero-q-sub-${state.subject}-${currentDrillIndex}`}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={
+                        heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
+                        heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                        { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
+                      }
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Image 
+                        src={battleImages.subjectImg} 
+                        alt="Hero Second" 
+                        width={150}
+                        height={150}
+                        className={`w-12 h-12 md:w-20 md:h-20 object-contain pixelated mix-blend-multiply ${
+                          state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                        }`}
+                      />
+                    </motion.div>
+                  )}
+                  <motion.div
+                    key={`hero-q-main-${state.subject}-${currentDrillIndex}`}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={
+                      heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
+                      heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                      { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
+                    }
+                    transition={{ duration: 0.5 }}
+                  >
                     <Image 
                       src={battleImages.subjectImg} 
-                      alt="Hero Second" 
+                      alt="Hero" 
                       width={150}
                       height={150}
-                      className={`w-12 h-12 md:w-20 md:h-20 object-contain pixelated mix-blend-multiply ${
-                        state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                        state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                       }`}
                     />
-                  )}
-                  <Image 
-                    src={battleImages.subjectImg} 
-                    alt="Hero" 
-                    width={150}
-                    height={150}
-                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
-                      state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
-                    }`}
-                  />
-                </motion.div>
+                  </motion.div>
+                </div>
                 <div className="w-20 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
 
