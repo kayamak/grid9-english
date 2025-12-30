@@ -315,7 +315,7 @@ function PracticeContent() {
     // 1. Subject Area
     let subjectImg = '/assets/heroes/hero.png';
     if (state.subject === 'second' || state.subject === 'second_p') subjectImg = '/assets/heroes/mage.png';
-    else if (state.subject === 'third_s') subjectImg = '/assets/heroes/warrior.png';
+    else if (state.subject === 'third_s' || state.subject === 'third_p') subjectImg = '/assets/heroes/warrior.png';
 
     // 2. Verb Area (Monster)
     let monsterImg = '/assets/monsters/slime.png';
