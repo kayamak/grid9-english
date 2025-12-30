@@ -391,6 +391,17 @@ function PracticeContent() {
   //   setIsDrillMode(!isDrillMode);
   // };
 
+  // Calculate battle opacities based on quest results
+  const { heroOpacity, monsterOpacity } = useMemo(() => {
+    const correct = questResults.filter(r => r === 'correct').length;
+    const wrong = questResults.filter(r => r === 'wrong').length;
+    let h = 1;
+    let m = 1;
+    if (correct < wrong) h = 0.5;
+    else if (correct > wrong) m = 0.5;
+    return { heroOpacity: h, monsterOpacity: m };
+  }, [questResults]);
+
   return (
     <main className={`min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white transition-all duration-75 ${isScreenShaking ? 'translate-x-2 -translate-y-1 rotate-1' : ''}`}>
       {/* Screen Flash Overlay */}
@@ -638,7 +649,7 @@ function PracticeContent() {
                 <motion.div
                   key={`hero-q-${state.subject}`}
                   initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
+                  animate={{ x: 0, opacity: heroOpacity }}
                   className="z-10 flex flex-col items-center"
                 >
                   <Image 
@@ -674,7 +685,7 @@ function PracticeContent() {
                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                     animate={{ 
                       y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                      opacity: monsterState === 'defeated' ? 0 : 1,
+                      opacity: monsterState === 'defeated' ? 0 : monsterOpacity,
                       scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
                       filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'none',
                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
@@ -701,7 +712,7 @@ function PracticeContent() {
                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                      animate={{ 
                        y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                       opacity: monsterState === 'defeated' ? 0 : 1,
+                       opacity: monsterState === 'defeated' ? 0 : monsterOpacity,
                        scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                      }}
