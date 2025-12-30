@@ -1,5 +1,18 @@
 export type WordType = 'noun' | 'verb' | 'adjective' | 'adverb';
 
+export interface WordProps {
+  id: string;
+  value: string;
+  label: string;
+  type: WordType;
+  numberForm?: string;
+  pastForm?: string;
+  thirdPersonForm?: string;
+  adverb?: string;
+  sentencePattern?: string;
+  sortOrder?: number;
+}
+
 export class Word {
   private constructor(
     private readonly _id: string,
@@ -10,23 +23,14 @@ export class Word {
     private readonly _pastForm?: string,
     private readonly _thirdPersonForm?: string,
     private readonly _adverb?: string,
+    private readonly _sentencePattern?: string,
     private readonly _sortOrder?: number
   ) {
     if (!_id) throw new Error('Word ID is required');
     if (!_value) throw new Error('Word value is required');
   }
 
-  static create(props: {
-    id: string;
-    value: string;
-    label: string;
-    type: WordType;
-    numberForm?: string;
-    pastForm?: string;
-    thirdPersonForm?: string;
-    adverb?: string;
-    sortOrder?: number;
-  }): Word {
+  static create(props: WordProps): Word {
     return new Word(
       props.id,
       props.value,
@@ -36,21 +40,12 @@ export class Word {
       props.pastForm,
       props.thirdPersonForm,
       props.adverb,
+      props.sentencePattern,
       props.sortOrder
     );
   }
 
-  static reconstruct(props: {
-    id: string;
-    value: string;
-    label: string;
-    type: WordType;
-    numberForm?: string;
-    pastForm?: string;
-    thirdPersonForm?: string;
-    adverb?: string;
-    sortOrder?: number;
-  }): Word {
+  static reconstruct(props: WordProps): Word {
     return new Word(
       props.id,
       props.value,
@@ -60,6 +55,7 @@ export class Word {
       props.pastForm,
       props.thirdPersonForm,
       props.adverb,
+      props.sentencePattern,
       props.sortOrder
     );
   }
@@ -72,6 +68,7 @@ export class Word {
   get pastForm(): string | undefined { return this._pastForm; }
   get thirdPersonForm(): string | undefined { return this._thirdPersonForm; }
   get adverb(): string | undefined { return this._adverb; }
+  get sentencePattern(): string | undefined { return this._sentencePattern; }
   get sortOrder(): number | undefined { return this._sortOrder; }
 
   // Business logic (example from specs: defensive copy if needed)
@@ -85,6 +82,7 @@ export class Word {
       pastForm: this._pastForm,
       thirdPersonForm: this._thirdPersonForm,
       adverb: this._adverb,
+      sentencePattern: this._sentencePattern,
       sortOrder: this._sortOrder,
     };
   }

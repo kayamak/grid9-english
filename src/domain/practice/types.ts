@@ -1,4 +1,4 @@
-import { Word } from '@/domain/shared/entities/Word';
+import { Word, WordProps } from '@/domain/shared/entities/Word';
 import { SentencePattern } from './vo/SentencePattern';
 
 export type VerbType = 'do' | 'be';
@@ -13,5 +13,5 @@ export type Verb = string;
 export type Object = string;
 export type BeComplement = string;
 
-export { Word, SentencePattern };
+export { Word, type WordProps, SentencePattern };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Verb, VerbType, FiveSentencePattern } from '@/domain/practice/types';
-import { VerbWord } from '@/types/verbWord';
+import { getVerbWords } from '@/features/practice/actions/words';
 
 interface VerbSelectorProps {
   verbType: VerbType;
@@ -27,20 +27,7 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
       setError(null);
       
       try {
-        const params = new URLSearchParams();
-        params.append('verbType', verbType);
-        
-        if (verbType === 'do' && fiveSentencePattern) {
-          params.append('sentencePattern', fiveSentencePattern);
-        }
-
-        const response = await fetch(`/api/verb-words?${params.toString()}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch verb words');
-        }
-
-        const verbWords: VerbWord[] = await response.json();
+        const verbWords = await getVerbWords(verbType, fiveSentencePattern);
         
         const transformedOptions = verbWords
           .map(vw => ({

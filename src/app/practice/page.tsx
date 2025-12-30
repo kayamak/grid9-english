@@ -26,8 +26,9 @@ import {
   NumberForm,
   BeComplement,
   Word,
+  WordProps,
 } from '@/domain/practice/types';
-import { ApiWordRepository } from '@/infrastructure/repositories/ApiWordRepository';
+import { getNounWords, getVerbWords, getAdjectiveWords, getAdverbWords } from '@/features/practice/actions/words';
 
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -137,22 +138,25 @@ export function PracticeContent() {
   const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
   const [activeTab, setActiveTab] = useState<VerbType | 'admin'>(state.verbType);
 
+
+
+// ... (other code)
+
   // Fetch noun words from Repository
   useEffect(() => {
     const fetchWords = async () => {
-      const repository = new ApiWordRepository();
       try {
-        const nouns = await repository.getNounWords();
-        setNounWords(nouns);
+        const [nounsData, verbsData, adjectivesData, adverbsData] = await Promise.all([
+          getNounWords(),
+          getVerbWords(),
+          getAdjectiveWords(),
+          getAdverbWords(),
+        ]);
 
-        const verbs = await repository.getVerbWords();
-        setVerbWords(verbs);
-
-        const adjectives = await repository.getAdjectiveWords();
-        setAdjectiveWords(adjectives);
-
-        const adverbs = await repository.getAdverbWords();
-        setAdverbWords(adverbs);
+        setNounWords(nounsData.map((w: WordProps) => Word.reconstruct(w)));
+        setVerbWords(verbsData.map((w: WordProps) => Word.reconstruct(w)));
+        setAdjectiveWords(adjectivesData.map((w: WordProps) => Word.reconstruct(w)));
+        setAdverbWords(adverbsData.map((w: WordProps) => Word.reconstruct(w)));
       } catch (error) {
         console.error('Error fetching words:', error);
       } finally {
