@@ -322,10 +322,13 @@ function PracticeContent() {
     let monsterScale = 1.0; 
     if (state.verbType === 'be' && (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVC')) {
       monsterImg = '/assets/monsters/bit_golem.png';
+      monsterScale = 1.0;
     } else if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
       monsterImg = '/assets/monsters/void_dragon_v2.png';
+      monsterScale = 1.7; // Dragon scaled to 1.7x
     } else if (state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
       monsterImg = '/assets/monsters/dragon.png';
+      monsterScale = 1.7;
     }
 
     // 3. Object / Complement Area (Item)
@@ -470,6 +473,7 @@ function PracticeContent() {
                   }}
                   transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
                   className="relative z-10"
+                  style={{ transformOrigin: 'bottom' }}
                 >
                   <Image 
                     src={battleImages.monsterImg} 
@@ -644,6 +648,7 @@ function PracticeContent() {
                   }}
                   transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
                   className="relative z-10"
+                  style={{ transformOrigin: 'bottom' }}
                 >
                   <Image 
                     src={battleImages.monsterImg} 
