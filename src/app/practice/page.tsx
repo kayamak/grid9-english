@@ -461,7 +461,7 @@ function PracticeContent() {
 
               {/* Verb Area (Monster) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
-                <div className="relative z-10" style={{ transformOrigin: 'bottom' }}>
+                <div className="relative" style={{ transformOrigin: 'bottom' }}>
                   {/* Monster Image Layer - Multiplied */}
                   <motion.div
                     key={`monster-img-${currentDrillIndex}`}
@@ -474,7 +474,7 @@ function PracticeContent() {
                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                     }}
                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                    className="" 
+                    className="z-10" 
                     style={{ transformOrigin: 'bottom' }}
                   >
                     <Image 
@@ -497,7 +497,7 @@ function PracticeContent() {
                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                      }}
                      transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                     className="absolute inset-0 pointer-events-none"
+                     className="absolute inset-0 pointer-events-none z-10"
                      style={{ transformOrigin: 'bottom' }}
                   >
                     {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
@@ -569,7 +569,7 @@ function PracticeContent() {
                     key={`item-${state.object}`}
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    className="z-10"
+                    className="z-10 flex flex-col items-center"
                   >
                     <Image 
                       src={battleImages.itemImg} 
@@ -665,7 +665,7 @@ function PracticeContent() {
 
               {/* Verb Area (Monster) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
-                <div className="relative z-10" style={{ transformOrigin: 'bottom' }}>
+                <div className="relative" style={{ transformOrigin: 'bottom' }}>
                   {/* Monster Image Layer - Multiplied */}
                    <motion.div
                     key={`monster-img-q-${currentDrillIndex}`}
@@ -678,7 +678,7 @@ function PracticeContent() {
                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                     }}
                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                    className=""
+                    className="z-10"
                     style={{ transformOrigin: 'bottom' }}
                   >
                     <Image 
@@ -701,7 +701,7 @@ function PracticeContent() {
                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                      }}
                      transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                     className="absolute inset-0 pointer-events-none"
+                     className="absolute inset-0 pointer-events-none z-10"
                      style={{ transformOrigin: 'bottom' }}
                   >
                     {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
@@ -773,7 +773,7 @@ function PracticeContent() {
                     key={`item-q-${state.object}`}
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    className="z-10"
+                    className="z-10 flex flex-col items-center"
                   >
                     <Image 
                       src={battleImages.itemImg} 
