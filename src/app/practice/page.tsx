@@ -319,16 +319,16 @@ function PracticeContent() {
 
     // 2. Verb Area (Monster)
     let monsterImg = '/assets/monsters/slime.png';
-    if (state.fiveSentencePattern === 'SVO' || state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
+    if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
+      monsterImg = '/assets/monsters/void_dragon_v2.png';
+    } else if (state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
       monsterImg = '/assets/monsters/dragon.png';
     }
 
     // 3. Object Area (Item)
     let itemImg = null;
     if (state.fiveSentencePattern === 'SVO') {
-      if (state.object === 'herb') itemImg = '/assets/items/herb.png';
-      else if (state.object === 'something' || state.object === 'potion') itemImg = '/assets/items/herb.png'; // Placeholder for potion
-      else itemImg = '/assets/monsters/slime.png'; // Default item placeholder
+      itemImg = '/assets/monsters/o_slime.png';
     }
 
     return { subjectImg, monsterImg, itemImg };
@@ -474,6 +474,27 @@ function PracticeContent() {
                     height={180}
                     className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
                   />
+                  {(state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') && monsterState !== 'defeated' && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <motion.div
+                        animate={{ 
+                          scale: [1, 1.1, 1],
+                          opacity: [0.4, 0.7, 0.4],
+                        }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        className="w-full h-full absolute flex items-center justify-center"
+                      >
+                        <svg viewBox="0 0 100 100" className="w-3/4 h-3/4 opacity-60">
+                           {/* Outer breath flame */}
+                           <path d="M20 30 L50 90 L80 30" stroke="orange" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                           {/* Core breath energy */}
+                           <path d="M25 35 L50 85 L75 35" stroke="yellow" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                           {/* Inner white heat */}
+                           <path d="M30 40 L50 80 L70 40" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
+                        </svg>
+                      </motion.div>
+                    </div>
+                  )}
                   {showVictoryEffect && (
                     <motion.div 
                       initial={{ scale: 0, opacity: 0 }}
@@ -614,6 +635,27 @@ function PracticeContent() {
                     height={180}
                     className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
                   />
+                  {(state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') && monsterState !== 'defeated' && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <motion.div
+                        animate={{ 
+                          scale: [1, 1.1, 1],
+                          opacity: [0.4, 0.7, 0.4],
+                        }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        className="w-full h-full absolute flex items-center justify-center"
+                      >
+                        <svg viewBox="0 0 100 100" className="w-3/4 h-3/4 opacity-60">
+                           {/* Outer breath flame */}
+                           <path d="M20 30 L50 90 L80 30" stroke="orange" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                           {/* Core breath energy */}
+                           <path d="M25 35 L50 85 L75 35" stroke="yellow" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                           {/* Inner white heat */}
+                           <path d="M30 40 L50 80 L70 40" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
+                        </svg>
+                      </motion.div>
+                    </div>
+                  )}
                   {showVictoryEffect && (
                     <motion.div 
                       initial={{ scale: 0, opacity: 0 }}
