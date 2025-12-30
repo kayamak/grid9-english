@@ -138,6 +138,10 @@
     overflow: hidden;
   }
 
+  .dq-battle-bg img {
+    mix-blend-mode: multiply;
+  }
+
   .dq-battle-bg::before {
     content: "";
     position: absolute;

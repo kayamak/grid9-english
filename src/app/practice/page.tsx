@@ -440,7 +440,7 @@ function PracticeContent() {
                     alt="Hero" 
                     width={150}
                     height={150}
-                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated ${
+                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
                       state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                     }`}
                   />
@@ -450,7 +450,7 @@ function PracticeContent() {
                       alt="Hero Second" 
                       width={150}
                       height={150}
-                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated ${
+                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
                         state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                       }`}
                     />
@@ -480,7 +480,7 @@ function PracticeContent() {
                     alt="Monster" 
                     width={180}
                     height={180}
-                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated"
+                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
                   />
                   {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -547,7 +547,7 @@ function PracticeContent() {
                       alt="Item" 
                       width={120}
                       height={120}
-                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated"
+                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
                     />
                   </motion.div>
                 )}
@@ -615,7 +615,7 @@ function PracticeContent() {
                     alt="Hero" 
                     width={150}
                     height={150}
-                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated ${
+                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
                       state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                     }`}
                   />
@@ -625,7 +625,7 @@ function PracticeContent() {
                       alt="Hero Second" 
                       width={150}
                       height={150}
-                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated ${
+                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
                         state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                       }`}
                     />
@@ -655,7 +655,7 @@ function PracticeContent() {
                     alt="Monster" 
                     width={180}
                     height={180}
-                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated"
+                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
                   />
                   {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -722,7 +722,7 @@ function PracticeContent() {
                       alt="Item" 
                       width={120}
                       height={120}
-                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated"
+                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
                     />
                   </motion.div>
                 )}
