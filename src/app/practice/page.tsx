@@ -425,17 +425,28 @@ function PracticeContent() {
                   key={`hero-${state.subject}`}
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  className="z-10"
+                  className="z-10 flex flex-col items-center"
                 >
                   <Image 
                     src={battleImages.subjectImg} 
                     alt="Hero" 
                     width={150}
                     height={150}
-                    className={`w-24 h-24 md:w-36 md:h-36 object-contain pixelated mix-blend-multiply ${
+                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
                       state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                     }`}
                   />
+                  {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
+                    <Image 
+                      src={battleImages.subjectImg} 
+                      alt="Hero Second" 
+                      width={150}
+                      height={150}
+                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                        state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                      }`}
+                    />
+                  )}
                 </motion.div>
                 <div className="w-20 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
                 <div className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">Subject</div>
@@ -555,17 +566,28 @@ function PracticeContent() {
                   key={`hero-q-${state.subject}`}
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  className="z-10"
+                  className="z-10 flex flex-col items-center"
                 >
                   <Image 
                     src={battleImages.subjectImg} 
                     alt="Hero" 
                     width={150}
                     height={150}
-                    className={`w-24 h-24 md:w-36 md:h-36 object-contain pixelated mix-blend-multiply ${
+                    className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
                       state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
                     }`}
                   />
+                  {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
+                    <Image 
+                      src={battleImages.subjectImg} 
+                      alt="Hero Second" 
+                      width={150}
+                      height={150}
+                      className={`w-20 h-20 md:w-32 md:h-32 object-contain pixelated mix-blend-multiply ${
+                        state.subject === 'first_p' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                      }`}
+                    />
+                  )}
                 </motion.div>
                 <div className="w-20 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
               </div>
