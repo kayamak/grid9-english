@@ -461,75 +461,104 @@ function PracticeContent() {
 
               {/* Verb Area (Monster) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
-                <motion.div
-                  key={`monster-${currentDrillIndex}`}
-                  initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
-                  animate={{ 
-                    y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                    opacity: monsterState === 'defeated' ? 0 : 1,
-                    scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                    filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
-                    x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                  }}
-                  transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                  className="relative z-10"
-                  style={{ transformOrigin: 'bottom' }}
-                >
-                  <Image 
-                    src={battleImages.monsterImg} 
-                    alt="Monster" 
-                    width={180}
-                    height={180}
-                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
-                  />
-                  {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <motion.div
-                        animate={{ 
-                          scale: [1, 1.1, 1],
-                          opacity: [0.4, 0.7, 0.4],
-                        }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-full h-full absolute flex items-center justify-center"
-                      >
-                        <svg viewBox="0 0 100 100" className="w-3/4 h-3/4 opacity-60">
-                           {/* Outer breath flame */}
-                           <path d="M20 30 L50 90 L80 30" stroke="orange" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                           {/* Core breath energy */}
-                           <path d="M25 35 L50 85 L75 35" stroke="yellow" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                           {/* Inner white heat */}
-                           <path d="M30 40 L50 80 L70 40" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
-                        </svg>
-                      </motion.div>
-                    </div>
-                  )}
-                  {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <motion.div
-                        animate={{ 
-                          opacity: [0.3, 0.6, 0.3],
-                        }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-full h-full absolute flex items-center justify-center"
-                      >
-                         <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg animate-pulse flex items-center justify-center">
-                            <div className="w-full h-full bg-blue-500/10 backdrop-blur-[1px]"></div>
-                         </div>
-                      </motion.div>
-                    </div>
-                  )}
+                <div className="relative z-10" style={{ transformOrigin: 'bottom' }}>
+                  {/* Monster Image Layer - Multiplied */}
+                  <motion.div
+                    key={`monster-img-${currentDrillIndex}`}
+                    initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
+                    animate={{ 
+                      y: monsterState === 'hit' ? [0, -20, 0] : 0,
+                      opacity: monsterState === 'defeated' ? 0 : 1,
+                      scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
+                      filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'none',
+                      x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                    }}
+                    transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                    className="" 
+                    style={{ transformOrigin: 'bottom' }}
+                  >
+                    <Image 
+                      src={battleImages.monsterImg} 
+                      alt="Monster" 
+                      width={180}
+                      height={180}
+                      className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply block"
+                    />
+                  </motion.div>
+
+                  {/* Effects Layer - Normal Blend (Overlay on top of multiplied image) */}
+                  <motion.div
+                     key={`monster-fx-${currentDrillIndex}`}
+                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
+                     animate={{ 
+                       y: monsterState === 'hit' ? [0, -20, 0] : 0,
+                       opacity: monsterState === 'defeated' ? 0 : 1,
+                       scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
+                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                     }}
+                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                     className="absolute inset-0 pointer-events-none"
+                     style={{ transformOrigin: 'bottom' }}
+                  >
+                    {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.1, 1],
+                            opacity: [0.4, 0.7, 0.4],
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                          className="w-full h-full absolute flex items-center justify-center"
+                        >
+                          <svg viewBox="0 0 100 100" className="w-3/4 h-3/4 opacity-60">
+                             <path d="M20 30 L50 90 L80 30" stroke="orange" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                             <path d="M25 35 L50 85 L75 35" stroke="yellow" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                             <path d="M30 40 L50 80 L70 40" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
+                          </svg>
+                        </motion.div>
+                      </div>
+                    )}
+                    {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.div
+                          animate={{ 
+                            opacity: [0.3, 0.6, 0.3],
+                          }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          className="w-full h-full absolute flex items-center justify-center"
+                        >
+                           <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg animate-pulse flex items-center justify-center">
+                              <div className="w-full h-full bg-blue-500/10 backdrop-blur-[1px]"></div>
+                           </div>
+                        </motion.div>
+                      </div>
+                    )}
+                  </motion.div>
+
+                  {/* Victory Text Layer - floating on top */}
                   {showVictoryEffect && (
                     <motion.div 
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="absolute inset-0 flex items-center justify-center z-20"
+                      key="victory-text"
+                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
+                      animate={{ 
+                        scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
+                        opacity: 1,
+                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                      }}
+                       transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                      className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
+                      style={{ transformOrigin: 'bottom' }}
                     >
-                      <div className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]">
-                        SMASH!
-                      </div>
+                         <motion.div 
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]"
+                         >
+                           SMASH!
+                         </motion.div>
                     </motion.div>
                   )}
-                </motion.div>
+                </div>
                 <div className="w-24 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
 
@@ -636,75 +665,104 @@ function PracticeContent() {
 
               {/* Verb Area (Monster) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
-                <motion.div
-                  key={`monster-q-${currentDrillIndex}`}
-                  initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
-                  animate={{ 
-                    y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                    opacity: monsterState === 'defeated' ? 0 : 1,
-                    scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                    filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
-                    x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                  }}
-                  transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                  className="relative z-10"
-                  style={{ transformOrigin: 'bottom' }}
-                >
-                  <Image 
-                    src={battleImages.monsterImg} 
-                    alt="Monster" 
-                    width={180}
-                    height={180}
-                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
-                  />
-                  {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <motion.div
-                        animate={{ 
-                          scale: [1, 1.1, 1],
-                          opacity: [0.4, 0.7, 0.4],
-                        }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-full h-full absolute flex items-center justify-center"
-                      >
-                        <svg viewBox="0 0 100 100" className="w-3/4 h-3/4 opacity-60">
-                           {/* Outer breath flame */}
-                           <path d="M20 30 L50 90 L80 30" stroke="orange" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                           {/* Core breath energy */}
-                           <path d="M25 35 L50 85 L75 35" stroke="yellow" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                           {/* Inner white heat */}
-                           <path d="M30 40 L50 80 L70 40" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
-                        </svg>
-                      </motion.div>
-                    </div>
-                  )}
-                  {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <motion.div
-                        animate={{ 
-                          opacity: [0.3, 0.6, 0.3],
-                        }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-full h-full absolute flex items-center justify-center"
-                      >
-                         <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg animate-pulse flex items-center justify-center">
-                            <div className="w-full h-full bg-blue-500/10 backdrop-blur-[1px]"></div>
-                         </div>
-                      </motion.div>
-                    </div>
-                  )}
+                <div className="relative z-10" style={{ transformOrigin: 'bottom' }}>
+                  {/* Monster Image Layer - Multiplied */}
+                   <motion.div
+                    key={`monster-img-q-${currentDrillIndex}`}
+                    initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
+                    animate={{ 
+                      y: monsterState === 'hit' ? [0, -20, 0] : 0,
+                      opacity: monsterState === 'defeated' ? 0 : 1,
+                      scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
+                      filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'none',
+                      x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                    }}
+                    transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                    className=""
+                    style={{ transformOrigin: 'bottom' }}
+                  >
+                    <Image 
+                      src={battleImages.monsterImg} 
+                      alt="Monster" 
+                      width={180}
+                      height={180}
+                      className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply block"
+                    />
+                  </motion.div>
+
+                  {/* Effects Layer */}
+                  <motion.div
+                     key={`monster-fx-q-${currentDrillIndex}`}
+                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
+                     animate={{ 
+                       y: monsterState === 'hit' ? [0, -20, 0] : 0,
+                       opacity: monsterState === 'defeated' ? 0 : 1,
+                       scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
+                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                     }}
+                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                     className="absolute inset-0 pointer-events-none"
+                     style={{ transformOrigin: 'bottom' }}
+                  >
+                    {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.div
+                          animate={{ 
+                            scale: [1, 1.1, 1],
+                            opacity: [0.4, 0.7, 0.4],
+                          }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                          className="w-full h-full absolute flex items-center justify-center"
+                        >
+                          <svg viewBox="0 0 100 100" className="w-3/4 h-3/4 opacity-60">
+                             <path d="M20 30 L50 90 L80 30" stroke="orange" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                             <path d="M25 35 L50 85 L75 35" stroke="yellow" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                             <path d="M30 40 L50 80 L70 40" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
+                          </svg>
+                        </motion.div>
+                      </div>
+                    )}
+                    {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.div
+                          animate={{ 
+                            opacity: [0.3, 0.6, 0.3],
+                          }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          className="w-full h-full absolute flex items-center justify-center"
+                        >
+                           <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg animate-pulse flex items-center justify-center">
+                              <div className="w-full h-full bg-blue-500/10 backdrop-blur-[1px]"></div>
+                           </div>
+                        </motion.div>
+                      </div>
+                    )}
+                  </motion.div>
+
+                  {/* Victory Text Layer */}
                   {showVictoryEffect && (
                     <motion.div 
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="absolute inset-0 flex items-center justify-center z-20"
+                      key="victory-text-q"
+                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
+                      animate={{ 
+                        scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
+                        opacity: 1,
+                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                      }}
+                       transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                      className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
+                      style={{ transformOrigin: 'bottom' }}
                     >
-                      <div className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]">
-                        SMASH!
-                      </div>
+                         <motion.div 
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]"
+                         >
+                           SMASH!
+                         </motion.div>
                     </motion.div>
                   )}
-                </motion.div>
+                </div>
                 <div className="w-24 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
 
