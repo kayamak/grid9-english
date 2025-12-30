@@ -106,7 +106,7 @@ function PracticeContent() {
   // const [isAllCleared, setIsAllCleared] = useState(false);
   const [questStatus, setQuestStatus] = useState<'playing' | 'result' | 'failed' | 'all-cleared'>('playing');
   const [questResults, setQuestResults] = useState<('correct' | 'wrong' | null)[]>(new Array(10).fill(null));
-  const [heroAction, setHeroAction] = useState<'idle' | 'run-away'>('idle');
+  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated'>('idle');
 
   const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
     verbType: 'do',
@@ -200,6 +200,7 @@ function PracticeContent() {
         }
         return next;
       });
+      setHeroAction('defeated');
     }
     return () => clearInterval(timer);
   }, [isQuestMode, isTimerActive, timeLeft, questStatus, currentDrillIndex]);
@@ -405,9 +406,7 @@ function PracticeContent() {
       setCurrentDrillIndex((prev) => (prev + 1) % drills.length);
     }
 
-    if (isEscape === true) {
-      setHeroAction('idle');
-    }
+    setHeroAction('idle');
   };
 
   const handleLevelUp = () => {
@@ -486,7 +485,11 @@ function PracticeContent() {
                 <motion.div
                   key={`hero-${state.subject}-${currentDrillIndex}`}
                   initial={{ x: -20, opacity: 0 }}
-                  animate={heroAction === 'run-away' ? { x: -100, opacity: 0 } : { x: 0, opacity: 1 }}
+                  animate={
+                    heroAction === 'run-away' ? { x: -100, opacity: 0 } : 
+                    heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                    { x: 0, opacity: 1, rotate: 0, y: 0, filter: 'none' }
+                  }
                   transition={{ duration: 0.5 }}
                   className="z-10 flex flex-col items-center"
                 >
@@ -678,7 +681,11 @@ function PracticeContent() {
                 <motion.div
                   key={`hero-q-${state.subject}-${currentDrillIndex}`}
                   initial={{ x: -20, opacity: 0 }}
-                  animate={heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : { x: 0, opacity: heroOpacity }}
+                  animate={
+                    heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
+                    heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                    { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
+                  }
                   transition={{ duration: 0.5 }}
                   className="z-10 flex flex-col items-center"
                 >
