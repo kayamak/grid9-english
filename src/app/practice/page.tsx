@@ -319,7 +319,9 @@ function PracticeContent() {
 
     // 2. Verb Area (Monster)
     let monsterImg = '/assets/monsters/slime.png';
-    if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
+    if (state.verbType === 'be' && (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVC')) {
+      monsterImg = '/assets/monsters/bit_golem.png';
+    } else if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
       monsterImg = '/assets/monsters/void_dragon_v2.png';
     } else if (state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
       monsterImg = '/assets/monsters/dragon.png';
@@ -332,7 +334,7 @@ function PracticeContent() {
     }
 
     return { subjectImg, monsterImg, itemImg };
-  }, [state.subject, state.verb, state.object, state.fiveSentencePattern]);
+  }, [state.subject, state.verb, state.verbType, state.object, state.fiveSentencePattern]);
 
   const handleNextDrill = () => {
     if (isQuestMode) {
@@ -474,7 +476,7 @@ function PracticeContent() {
                     height={180}
                     className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
                   />
-                  {(state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') && monsterState !== 'defeated' && (
+                  {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <motion.div
                         animate={{ 
@@ -492,6 +494,21 @@ function PracticeContent() {
                            {/* Inner white heat */}
                            <path d="M30 40 L50 80 L70 40" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
                         </svg>
+                      </motion.div>
+                    </div>
+                  )}
+                  {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <motion.div
+                        animate={{ 
+                          opacity: [0.3, 0.6, 0.3],
+                        }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        className="w-full h-full absolute flex items-center justify-center"
+                      >
+                         <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg animate-pulse flex items-center justify-center">
+                            <div className="w-full h-full bg-blue-500/10 backdrop-blur-[1px]"></div>
+                         </div>
                       </motion.div>
                     </div>
                   )}
@@ -635,7 +652,7 @@ function PracticeContent() {
                     height={180}
                     className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
                   />
-                  {(state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') && monsterState !== 'defeated' && (
+                  {battleImages.monsterImg === '/assets/monsters/void_dragon_v2.png' && monsterState !== 'defeated' && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <motion.div
                         animate={{ 
@@ -653,6 +670,21 @@ function PracticeContent() {
                            {/* Inner white heat */}
                            <path d="M30 40 L50 80 L70 40" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.8" />
                         </svg>
+                      </motion.div>
+                    </div>
+                  )}
+                  {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <motion.div
+                        animate={{ 
+                          opacity: [0.3, 0.6, 0.3],
+                        }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        className="w-full h-full absolute flex items-center justify-center"
+                      >
+                         <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg animate-pulse flex items-center justify-center">
+                            <div className="w-full h-full bg-blue-500/10 backdrop-blur-[1px]"></div>
+                         </div>
                       </motion.div>
                     </div>
                   )}
