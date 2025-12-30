@@ -319,6 +319,7 @@ function PracticeContent() {
 
     // 2. Verb Area (Monster)
     let monsterImg = '/assets/monsters/slime.png';
+    let monsterScale = 1.0; 
     if (state.verbType === 'be' && (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVC')) {
       monsterImg = '/assets/monsters/bit_golem.png';
     } else if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
@@ -335,7 +336,7 @@ function PracticeContent() {
       itemImg = '/assets/monsters/crescent_beast.png';
     }
 
-    return { subjectImg, monsterImg, itemImg };
+    return { subjectImg, monsterImg, itemImg, monsterScale };
   }, [state.subject, state.verb, state.verbType, state.object, state.fiveSentencePattern]);
 
   const handleNextDrill = () => {
@@ -459,11 +460,11 @@ function PracticeContent() {
               <div className="flex-1 flex flex-col items-center relative h-full justify-end">
                 <motion.div
                   key={`monster-${currentDrillIndex}`}
-                  initial={{ y: 20, opacity: 0, scale: 0.8 }}
+                  initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                   animate={{ 
                     y: monsterState === 'hit' ? [0, -20, 0] : 0,
                     opacity: monsterState === 'defeated' ? 0 : 1,
-                    scale: monsterState === 'hit' ? 1.1 : 1,
+                    scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
                     filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
                     x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                   }}
@@ -633,11 +634,11 @@ function PracticeContent() {
               <div className="flex-1 flex flex-col items-center relative h-full justify-end">
                 <motion.div
                   key={`monster-q-${currentDrillIndex}`}
-                  initial={{ y: 20, opacity: 0, scale: 0.8 }}
+                  initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                   animate={{ 
                     y: monsterState === 'hit' ? [0, -20, 0] : 0,
                     opacity: monsterState === 'defeated' ? 0 : 1,
-                    scale: monsterState === 'hit' ? 1.1 : 1,
+                    scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
                     filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
                     x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                   }}
