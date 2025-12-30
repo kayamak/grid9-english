@@ -38,6 +38,7 @@ function PracticeContent() {
   const initialMode = searchParams.get('mode') === 'drill' || isQuestMode;
   const selectedPattern = searchParams.get('pattern') || undefined;
   const initialDrillIndex = parseInt(searchParams.get('drill') || '1') - 1;
+  const isAdmin = searchParams.get('role') === 'ADMIN';
 
   const [currentLevel, setCurrentLevel] = useState(() => {
     if (typeof document === 'undefined') return 1;
@@ -100,6 +101,7 @@ function PracticeContent() {
   const [drills, setDrills] = useState<Drill[]>([]);
   const [isDrillMode] = useState(initialMode);
   const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
+  const [activeTab, setActiveTab] = useState<VerbType | 'admin'>(state.verbType);
 
   // Fetch noun words from Repository
   useEffect(() => {
@@ -170,6 +172,7 @@ function PracticeContent() {
 
   const handleVerbTypeChange = useCallback((verbType: VerbType) => {
     // When switching types, reset verb and pattern to defaults
+    setActiveTab(verbType);
     setState((prev) => {
       if (verbType === 'be') {
         return SentencePattern.create({
@@ -190,6 +193,14 @@ function PracticeContent() {
       }
     });
   }, []);
+
+  const handleTabChange = useCallback((tab: VerbType | 'admin') => {
+    if (tab === 'admin') {
+      setActiveTab('admin');
+    } else {
+      handleVerbTypeChange(tab);
+    }
+  }, [handleVerbTypeChange]);
 
   const handleVerbChange = useCallback((verb: Verb) => {
     setState((prev) => SentencePattern.create({ ...prev.toObject(), verb }));
@@ -750,24 +761,80 @@ function PracticeContent() {
             {/* 1. Tabs Area */}
             <div className="w-full max-w-2xl px-4 md:px-8 flex justify-start">
                <VerbTypeSelector
-                 selectedVerb={state.verbType}
-                 onChange={handleVerbTypeChange}
+                 activeTab={activeTab}
+                 onChange={handleTabChange}
+                 isAdmin={isAdmin}
                />
             </div>
 
             {/* 2. DQ Window Container */}
             <section className="dq-window-fancy w-full max-w-3xl p-4 md:p-8 flex flex-col items-center min-h-[500px]">
                 
-                <div className="w-full max-w-xl">
-                    <NineKeyPanel
-                        sentenceType={state.sentenceType}
-                        subject={state.subject}
-                        tense={state.tense}
-                        onSentenceTypeChange={handleSentenceTypeChange}
-                        onSubjectChange={handleSubjectChange}
-                        onTenseChange={handleTenseChange}
-                    />
-                </div>
+                {activeTab === 'admin' ? (
+                  <div className="w-full max-w-xl flex flex-col gap-8 py-8 animate-in fade-in duration-500">
+                    <h3 className="text-2xl text-yellow-400 border-b-2 border-yellow-400 pb-2 mb-4">デバッグ管理</h3>
+                    
+                    <div className="flex flex-col gap-6">
+                      <div className="flex items-center justify-between bg-black/40 p-6 border-2 border-white/10 rounded-lg">
+                        <div className="flex flex-col">
+                          <span className="text-white/60 text-sm">現在のレベル</span>
+                          <span className="text-4xl font-normal text-white">Lv {currentLevel}</span>
+                        </div>
+                        <div className="flex gap-4">
+                          <button 
+                            onClick={() => setCurrentLevel(prev => Math.max(1, prev - 1))}
+                            className="dq-button !py-2 !px-6 text-2xl"
+                          >
+                            -
+                          </button>
+                          <button 
+                            onClick={() => setCurrentLevel(prev => Math.min(10, prev + 1))}
+                            className="dq-button !py-2 !px-6 text-2xl"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between bg-black/40 p-6 border-2 border-white/10 rounded-lg">
+                        <div className="flex flex-col">
+                          <span className="text-white/60 text-sm">現在の正解数</span>
+                          <span className="text-4xl font-normal text-white">{correctCountInLevel} / 10</span>
+                        </div>
+                        <div className="flex gap-4">
+                          <button 
+                            onClick={() => setCorrectCountInLevel(prev => Math.max(0, prev - 1))}
+                            className="dq-button !py-2 !px-6 text-2xl"
+                          >
+                            -
+                          </button>
+                          <button 
+                            onClick={() => setCorrectCountInLevel(prev => Math.min(10, prev + 1))}
+                            className="dq-button !py-2 !px-6 text-2xl"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mt-8 text-center text-white/40 text-sm">
+                        <p>※レベルは自動的にクッキーに保存されます。</p>
+                        <p>※正解数を変更するとクエストモードの判定に影響します。</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                  <div className="w-full max-w-xl">
+                      <NineKeyPanel
+                          sentenceType={state.sentenceType}
+                          subject={state.subject}
+                          tense={state.tense}
+                          onSentenceTypeChange={handleSentenceTypeChange}
+                          onSubjectChange={handleSubjectChange}
+                          onTenseChange={handleTenseChange}
+                      />
+                  </div>
 
                 {/* Verb and Sentence Pattern Selector Dropdowns */}
                 {(state.verbType === 'do' || state.verbType === 'be') && (
@@ -868,7 +935,8 @@ function PracticeContent() {
                        </div>
                     )}
                 </div>
-
+                </>
+                )}
             </section>
         </div>
         
