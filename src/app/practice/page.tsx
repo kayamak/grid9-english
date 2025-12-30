@@ -471,7 +471,7 @@ export function PracticeContent() {
         {isDrillMode && !isQuestMode && currentDrill && (
           <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Drill Mode */}
-            <div className="dq-battle-bg relative w-full max-w-2xl h-[212px] md:h-[306px] mb-4 flex justify-around items-end px-4 gap-2">
+            <div className="dq-battle-bg relative w-full max-w-4xl h-[212px] md:h-[306px] mb-4 flex justify-around items-end px-4 gap-2">
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <div className="z-10 flex flex-col items-center">
@@ -613,7 +613,7 @@ export function PracticeContent() {
               </div>
             </div>
 
-            <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-4 relative">
+            <div className="dq-window w-full max-w-4xl flex flex-col items-center gap-4 relative">
               {showVictoryEffect && (
                 <div className="absolute inset-x-0 -top-12 flex justify-center z-50">
                    <div className="dq-window bg-black border-yellow-400 py-1 px-6 animate-bounce">
@@ -659,7 +659,7 @@ export function PracticeContent() {
         {isQuestMode && currentDrill && questStatus === 'playing' && (
           <div className="mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Quest Mode */}
-            <div className="dq-battle-bg relative w-full max-w-2xl h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2">
+            <div className="dq-battle-bg relative w-full max-w-4xl h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2">
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <div className="z-10 flex flex-col items-center">
@@ -801,7 +801,7 @@ export function PracticeContent() {
               </div>
             </div>
 
-            <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-6 overflow-hidden relative">
+            <div className="dq-window w-full max-w-4xl flex flex-col items-center gap-6 overflow-hidden relative">
               {/* Timer Bar */}
               <div className="absolute top-0 left-0 h-2 bg-yellow-400 transition-all duration-1000" style={{ width: `${(timeLeft / (currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : 30 - currentLevel * 2))) * 100}%` }}></div>
               
@@ -1050,7 +1050,7 @@ export function PracticeContent() {
         <div className="flex flex-col items-center">
             
             {/* 1. Tabs Area */}
-            <div className="w-full max-w-2xl px-4 md:px-8 flex justify-start">
+            <div className="w-full max-w-4xl px-4 md:px-8 flex justify-start">
                <VerbTypeSelector
                  activeTab={activeTab}
                  onChange={handleTabChange}
@@ -1059,7 +1059,7 @@ export function PracticeContent() {
             </div>
 
             {/* 2. DQ Window Container */}
-            <section className="dq-window-fancy w-full max-w-3xl p-4 md:p-8 flex flex-col items-center min-h-[500px]">
+            <section className="dq-window-fancy w-full max-w-4xl p-4 md:p-8 flex flex-col items-center min-h-[500px]">
                 
                 {activeTab === 'admin' ? (
                   <div className="w-full max-w-xl flex flex-col gap-8 py-8 animate-in fade-in duration-500">
