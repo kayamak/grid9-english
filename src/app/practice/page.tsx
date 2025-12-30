@@ -458,20 +458,19 @@ export function PracticeContent() {
 
 
       <div className="w-full max-w-4xl relative">
-        <header className="mb-8 md:mb-12 flex justify-between items-center dq-window-fancy">
-          <Link href="/" className="dq-button !py-1 !px-4 text-sm">
-            &larr; もどる
-          </Link>
-          <h1 className="text-2xl md:text-3xl font-normal text-white">
-            {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
-          </h1>
-          <div className="w-20"></div> {/* Spacer */}
-        </header>
 
         {isDrillMode && !isQuestMode && currentDrill && (
           <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Drill Mode */}
             <div className="dq-battle-bg relative w-full max-w-4xl h-[212px] md:h-[306px] mb-4 flex justify-around items-end px-4 gap-2">
+              <div className="absolute top-2 left-2 z-20">
+                  <Link href="/" className="dq-button !py-1 !px-3 text-xs bg-black/40 hover:bg-black/60 border-white/40">
+                    &larr; もどる
+                  </Link>
+              </div>
+              <div className="absolute top-2 right-2 z-20 text-white font-bold drop-shadow-md pointer-events-none bg-black/30 px-2 py-1 rounded">
+                ぶんしょうトレーニング
+              </div>
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <div className="z-10 flex flex-col items-center">
@@ -660,6 +659,14 @@ export function PracticeContent() {
           <div className="mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Quest Mode */}
             <div className="dq-battle-bg relative w-full max-w-4xl h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2">
+              <div className="absolute top-2 left-2 z-20">
+                  <Link href="/" className="dq-button !py-1 !px-3 text-xs bg-black/40 hover:bg-black/60 border-white/40">
+                    &larr; もどる
+                  </Link>
+              </div>
+              <div className="absolute top-2 right-2 z-20 text-white font-bold drop-shadow-md pointer-events-none bg-black/30 px-2 py-1 rounded">
+                ドリルクエスト
+              </div>
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <div className="z-10 flex flex-col items-center">
@@ -909,6 +916,13 @@ export function PracticeContent() {
                >
                  Lv {currentLevel + 1} に　すすむ
                </button>
+               <div className="w-full mt-2">
+                 <Link href="/" className="block w-full">
+                    <button className="dq-button w-full py-2 text-sm bg-black/50 border-white/30 text-white/60">
+                      ホームへもどる
+                    </button>
+                 </Link>
+               </div>
             </div>
           </div>
         )}
