@@ -451,19 +451,7 @@ function PracticeContent() {
         <div className="fixed inset-0 bg-white z-[1000] opacity-80 pointer-events-none" />
       )}
 
-      {/* Victory Particles / Text Effect */}
-      {showVictoryEffect && (
-        <div className="fixed inset-0 z-[900] pointer-events-none flex items-center justify-center">
-          <motion.div 
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: [1, 1.2, 1], opacity: [0, 1, 0] }}
-            transition={{ duration: 0.8 }}
-            className="text-6xl md:text-8xl text-yellow-400 font-bold italic drop-shadow-[0_0_15px_rgba(255,215,0,0.8)]"
-          >
-            SMASH!
-          </motion.div>
-        </div>
-      )}
+
 
       <div className="w-full max-w-4xl relative">
         <header className="mb-8 md:mb-12 flex justify-between items-center dq-window-fancy">
@@ -525,10 +513,11 @@ function PracticeContent() {
                     key={`monster-img-${currentDrillIndex}-${battleImages.monsterImg}`}
                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                     animate={{ 
-                      y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                      opacity: monsterState === 'defeated' ? 0 : 1,
+                      y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
+                      rotate: monsterState === 'defeated' ? 90 : 0,
+                      opacity: monsterState === 'defeated' ? 0.6 : 1,
                       scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                      filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'none',
+                      filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : (monsterState === 'defeated' ? 'grayscale(100%)' : 'none'),
                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                     }}
                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
@@ -552,8 +541,9 @@ function PracticeContent() {
                      key={`monster-fx-${currentDrillIndex}-${battleImages.monsterImg}`}
                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                      animate={{ 
-                       y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                       opacity: monsterState === 'defeated' ? 0 : 1,
+                       y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
+                       rotate: monsterState === 'defeated' ? 90 : 0,
+                       opacity: monsterState === 'defeated' ? 0 : 1, // Hide FX on defeat
                        scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                      }}
@@ -580,29 +570,7 @@ function PracticeContent() {
                     )}
                   </motion.div>
 
-                  {/* Victory Text Layer - floating on top */}
-                  {showVictoryEffect && (
-                    <motion.div 
-                      key="victory-text"
-                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
-                      animate={{ 
-                        scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                        opacity: 1,
-                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                      }}
-                       transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                      className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
-                      style={{ transformOrigin: 'bottom' }}
-                    >
-                         <motion.div 
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]"
-                         >
-                           SMASH!
-                         </motion.div>
-                    </motion.div>
-                  )}
+
                 </div>
                 <div className="w-24 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
@@ -721,10 +689,11 @@ function PracticeContent() {
                     key={`monster-img-q-${currentDrillIndex}-${battleImages.monsterImg}`}
                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                     animate={{ 
-                      y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                      opacity: monsterState === 'defeated' ? 0 : monsterOpacity,
+                      y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
+                      rotate: monsterState === 'defeated' ? 90 : 0,
+                      opacity: monsterState === 'defeated' ? 0.6 : monsterOpacity,
                       scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                      filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'none',
+                      filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : (monsterState === 'defeated' ? 'grayscale(100%)' : 'none'),
                       x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                     }}
                     transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
@@ -748,8 +717,9 @@ function PracticeContent() {
                      key={`monster-fx-q-${currentDrillIndex}-${battleImages.monsterImg}`}
                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                      animate={{ 
-                       y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                       opacity: monsterState === 'defeated' ? 0 : monsterOpacity,
+                       y: monsterState === 'hit' ? [0, -20, 0] : (monsterState === 'defeated' ? 20 : 0),
+                       rotate: monsterState === 'defeated' ? 90 : 0,
+                       opacity: monsterState === 'defeated' ? 0 : monsterOpacity, // Hide FX on defeat
                        scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
                      }}
@@ -776,29 +746,7 @@ function PracticeContent() {
                     )}
                   </motion.div>
 
-                  {/* Victory Text Layer */}
-                  {showVictoryEffect && (
-                    <motion.div 
-                      key="victory-text-q"
-                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
-                      animate={{ 
-                        scale: monsterState === 'hit' ? 1.1 * battleImages.monsterScale : 1 * battleImages.monsterScale,
-                        opacity: 1,
-                        x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                      }}
-                       transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                      className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
-                      style={{ transformOrigin: 'bottom' }}
-                    >
-                         <motion.div 
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]"
-                         >
-                           SMASH!
-                         </motion.div>
-                    </motion.div>
-                  )}
+
                 </div>
                 <div className="w-24 h-3 bg-black/30 blur-md rounded-[100%] absolute bottom-4"></div>
               </div>
@@ -858,9 +806,6 @@ function PracticeContent() {
                 </h2>
                 {(isCorrect || timeLeft === 0) && (
                    <div className="mt-4 flex flex-col items-center z-10 gap-2">
-                     <p className="text-xl text-yellow-400 animate-in fade-in slide-in-from-top-4 duration-500">
-                       {currentDrill.english}
-                     </p>
                      {isCorrect && (
                        <p className="text-sm text-green-400 font-bold animate-bounce mt-2 bg-black/60 px-4 py-1 border border-green-400">
                          モンスターを　たおした！
@@ -889,12 +834,19 @@ function PracticeContent() {
                     <span className="text-xs text-white/60">{correctCountInLevel} / 10 せいかい</span>
                  </div>
 
-                 {(isCorrect || timeLeft === 0) && (
+                 {(isCorrect || timeLeft === 0) ? (
                    <button 
                       onClick={() => handleNextDrill()}
                       className="dq-button"
                    >
                      {currentDrillIndex + 1 === drills.length ? 'けっかへ' : 'つぎへ'}
+                   </button>
+                 ) : (
+                   <button 
+                      onClick={() => handleNextDrill(true)}
+                      className="dq-button text-xs py-1"
+                   >
+                     にげる
                    </button>
                  )}
               </div>
