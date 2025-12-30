@@ -612,7 +612,7 @@ export function PracticeContent() {
               </div>
             </div>
 
-            <div className="dq-window w-full max-w-4xl flex flex-col items-center gap-4 relative">
+            <div className="dq-window w-full max-w-4xl flex flex-col items-center gap-2 relative">
               {showVictoryEffect && (
                 <div className="absolute inset-x-0 -top-12 flex justify-center z-50">
                    <div className="dq-window bg-black border-yellow-400 py-1 px-6 animate-bounce">
@@ -634,7 +634,7 @@ export function PracticeContent() {
                 )}
               </div>
 
-              <div className="flex flex-col items-center border-t-2 border-white/20 pt-4 w-full">
+              <div className="flex flex-col items-center border-t-2 border-white/20 pt-1 w-full">
                 <h2 className="text-2xl md:text-3xl text-center px-4 text-white">
                   {currentDrill.english}
                 </h2>
@@ -644,12 +644,21 @@ export function PracticeContent() {
               </div>
 
               <div className="flex gap-4 mt-2">
-                <button 
-                   onClick={() => handleNextDrill(true)}
-                   className="dq-button text-sm"
-                >
-                  にげる (Skip)
-                </button>
+                {isCorrect ? (
+                  <button 
+                     onClick={() => handleNextDrill()}
+                     className="dq-button animate-bounce"
+                  >
+                    つぎの　しれんへ
+                  </button>
+                ) : (
+                  <button 
+                     onClick={() => handleNextDrill(true)}
+                     className="dq-button text-sm"
+                  >
+                    にげる (Skip)
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -808,7 +817,7 @@ export function PracticeContent() {
               </div>
             </div>
 
-            <div className="dq-window w-full max-w-4xl flex flex-col items-center gap-6 overflow-hidden relative">
+            <div className="dq-window w-full max-w-4xl flex flex-col items-center gap-2 overflow-hidden relative">
               {/* Timer Bar */}
               <div className="absolute top-0 left-0 h-2 bg-yellow-400 transition-all duration-1000" style={{ width: `${(timeLeft / (currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : 30 - currentLevel * 2))) * 100}%` }}></div>
               
@@ -831,7 +840,7 @@ export function PracticeContent() {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center py-6 bg-black/40 w-full border-y-2 border-white/20 relative">
+              <div className="flex flex-col items-center py-2 bg-black/40 w-full border-y-2 border-white/20 relative">
                 {showVictoryEffect && (
                   <div className="absolute inset-0 bg-yellow-400/20 animate-pulse z-0"></div>
                 )}
@@ -872,7 +881,7 @@ export function PracticeContent() {
                  {(isCorrect || timeLeft === 0) ? (
                    <button 
                       onClick={() => handleNextDrill()}
-                      className="dq-button"
+                      className="dq-button animate-bounce"
                    >
                      {currentDrillIndex + 1 === drills.length ? 'けっかへ' : 'つぎへ'}
                    </button>
@@ -1218,27 +1227,7 @@ export function PracticeContent() {
                         </p>
                     </div>
 
-                    {isCorrect && !isQuestMode && (
-                      <div className="mt-8 flex justify-center animate-bounce">
-                        <button 
-                          onClick={() => handleNextDrill()}
-                          className="dq-button text-xl px-12 py-4 shadow-xl"
-                        >
-                          つぎの　しれんへ
-                        </button>
-                      </div>
-                    )}
 
-                    {isQuestMode && (isCorrect || timeLeft === 0) && questStatus === 'playing' && (
-                       <div className="mt-8 flex justify-center animate-bounce">
-                         <button 
-                           onClick={() => handleNextDrill()}
-                           className={`dq-button text-xl px-12 py-4 shadow-xl ${isCorrect ? 'border-yellow-400' : 'border-white'}`}
-                         >
-                           {currentDrillIndex + 1 === drills.length ? 'クエストしゅうりょう' : 'つぎへ'}
-                         </button>
-                       </div>
-                    )}
                 </div>
                 </>
                 )}
