@@ -464,7 +464,7 @@ function PracticeContent() {
                 <div className="relative" style={{ transformOrigin: 'bottom' }}>
                   {/* Monster Image Layer - Multiplied */}
                   <motion.div
-                    key={`monster-img-${currentDrillIndex}`}
+                    key={`monster-img-${currentDrillIndex}-${battleImages.monsterImg}`}
                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                     animate={{ 
                       y: monsterState === 'hit' ? [0, -20, 0] : 0,
@@ -482,13 +482,16 @@ function PracticeContent() {
                       alt="Monster" 
                       width={180}
                       height={180}
-                      className={`w-28 h-28 md:w-44 md:h-44 object-contain pixelated block ${battleImages.monsterImg.includes('bit_golem.png') ? '' : 'mix-blend-multiply'}`}
+                      className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated block"
+                      style={{ 
+                        mixBlendMode: battleImages.monsterImg.includes('bit_golem.png') ? 'normal' : 'multiply' 
+                      }}
                     />
                   </motion.div>
 
                   {/* Effects Layer - Normal Blend (Overlay on top of multiplied image) */}
                   <motion.div
-                     key={`monster-fx-${currentDrillIndex}`}
+                     key={`monster-fx-${currentDrillIndex}-${battleImages.monsterImg}`}
                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                      animate={{ 
                        y: monsterState === 'hit' ? [0, -20, 0] : 0,
@@ -521,14 +524,13 @@ function PracticeContent() {
                     {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <motion.div
-                          animate={{ 
-                            opacity: [0.3, 0.6, 0.3],
-                          }}
-                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: [0, 0.5, 0] }}
+                          transition={{ duration: 2.0, times: [0, 0.2, 1], ease: "easeOut" }}
                           className="w-full h-full absolute flex items-center justify-center"
                         >
-                           <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg animate-pulse flex items-center justify-center">
-                              <div className="w-full h-full bg-blue-500/10 backdrop-blur-[1px]"></div>
+                           <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg flex items-center justify-center">
+                              <div className="w-full h-full bg-blue-500/10"></div>
                            </div>
                         </motion.div>
                       </div>
@@ -668,7 +670,7 @@ function PracticeContent() {
                 <div className="relative" style={{ transformOrigin: 'bottom' }}>
                   {/* Monster Image Layer - Multiplied */}
                    <motion.div
-                    key={`monster-img-q-${currentDrillIndex}`}
+                    key={`monster-img-q-${currentDrillIndex}-${battleImages.monsterImg}`}
                     initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                     animate={{ 
                       y: monsterState === 'hit' ? [0, -20, 0] : 0,
@@ -686,13 +688,16 @@ function PracticeContent() {
                       alt="Monster" 
                       width={180}
                       height={180}
-                      className={`w-28 h-28 md:w-44 md:h-44 object-contain pixelated block ${battleImages.monsterImg.includes('bit_golem.png') ? '' : 'mix-blend-multiply'}`}
+                      className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated block"
+                      style={{ 
+                        mixBlendMode: battleImages.monsterImg.includes('bit_golem.png') ? 'normal' : 'multiply' 
+                      }}
                     />
                   </motion.div>
 
                   {/* Effects Layer */}
                   <motion.div
-                     key={`monster-fx-q-${currentDrillIndex}`}
+                     key={`monster-fx-q-${currentDrillIndex}-${battleImages.monsterImg}`}
                      initial={{ y: 20, opacity: 0, scale: 0.8 * battleImages.monsterScale }}
                      animate={{ 
                        y: monsterState === 'hit' ? [0, -20, 0] : 0,
@@ -725,14 +730,13 @@ function PracticeContent() {
                     {battleImages.monsterImg === '/assets/monsters/bit_golem.png' && monsterState !== 'defeated' && (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <motion.div
-                          animate={{ 
-                            opacity: [0.3, 0.6, 0.3],
-                          }}
-                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: [0, 0.5, 0] }}
+                          transition={{ duration: 2.0, times: [0, 0.2, 1], ease: "easeOut" }}
                           className="w-full h-full absolute flex items-center justify-center"
                         >
-                           <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg animate-pulse flex items-center justify-center">
-                              <div className="w-full h-full bg-blue-500/10 backdrop-blur-[1px]"></div>
+                           <div className="w-3/4 h-3/4 border-2 border-blue-400/30 rounded-lg flex items-center justify-center">
+                              <div className="w-full h-full bg-blue-500/10"></div>
                            </div>
                         </motion.div>
                       </div>
