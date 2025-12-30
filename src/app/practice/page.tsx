@@ -308,7 +308,31 @@ function PracticeContent() {
     setHasMarkedCorrect(false);
     setMonsterState('idle');
     setShowVictoryEffect(false);
-  }, [currentDrillIndex]);
+  }, [currentDrillIndex, state.subject, state.verb, state.object]);
+
+  // Image mappings for the 3 battle areas
+  const battleImages = useMemo(() => {
+    // 1. Subject Area
+    let subjectImg = '/assets/heroes/hero.png';
+    if (state.subject === 'second' || state.subject === 'second_p') subjectImg = '/assets/heroes/mage.png';
+    else if (state.subject === 'third_s') subjectImg = '/assets/heroes/warrior.png';
+
+    // 2. Verb Area (Monster)
+    let monsterImg = '/assets/monsters/slime.png';
+    if (state.fiveSentencePattern === 'SVO' || state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
+      monsterImg = '/assets/monsters/dragon.png';
+    }
+
+    // 3. Object Area (Item)
+    let itemImg = null;
+    if (state.fiveSentencePattern === 'SVO') {
+      if (state.object === 'herb') itemImg = '/assets/items/herb.png';
+      else if (state.object === 'something' || state.object === 'potion') itemImg = '/assets/items/herb.png'; // Placeholder for potion
+      else itemImg = '/assets/monsters/slime.png'; // Default item placeholder
+    }
+
+    return { subjectImg, monsterImg, itemImg };
+  }, [state.subject, state.verb, state.object, state.fiveSentencePattern]);
 
   const handleNextDrill = () => {
     if (isQuestMode) {
@@ -394,40 +418,88 @@ function PracticeContent() {
         {isDrillMode && !isQuestMode && currentDrill && (
           <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Drill Mode */}
-            <div className="relative w-full max-w-lg h-40 md:h-56 mb-4 flex justify-center items-end">
-              <motion.div
-                key={currentDrillIndex}
-                initial={{ y: 20, opacity: 0, scale: 0.8 }}
-                animate={{ 
-                  y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                  opacity: monsterState === 'defeated' ? 0 : 1,
-                  scale: monsterState === 'hit' ? 1.1 : 1,
-                  filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
-                  x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                }}
-                transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                className="relative z-10"
-              >
-                <Image 
-                  src={currentDrillIndex % 2 === 0 ? "/assets/monsters/slime.png" : "/assets/monsters/dragon.png"} 
-                  alt="Monster" 
-                  width={200}
-                  height={200}
-                  className="w-32 h-32 md:w-48 md:h-48 object-contain pixelated"
-                />
-              {showVictoryEffect && (
-                <motion.div 
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="absolute inset-0 flex items-center justify-center z-20"
+            <div className="relative w-full max-w-2xl h-48 md:h-64 mb-4 flex justify-around items-end px-4 gap-2">
+              {/* Subject Area (Hero) */}
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end">
+                <motion.div
+                  key={`hero-${state.subject}`}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  className="z-10"
                 >
-                  <div className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-2xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]">
-                    VICTORY!!
-                  </div>
+                  <Image 
+                    src={battleImages.subjectImg} 
+                    alt="Hero" 
+                    width={150}
+                    height={150}
+                    className={`w-24 h-24 md:w-36 md:h-36 object-contain pixelated mix-blend-multiply ${
+                      state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                    }`}
+                  />
                 </motion.div>
-              )}
-           </motion.div>
-              <div className="absolute bottom-0 w-32 h-4 bg-black/40 blur-md rounded-[100%]"></div>
+                <div className="w-20 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">Subject</div>
+              </div>
+
+              {/* Verb Area (Monster) */}
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end">
+                <motion.div
+                  key={`monster-${currentDrillIndex}`}
+                  initial={{ y: 20, opacity: 0, scale: 0.8 }}
+                  animate={{ 
+                    y: monsterState === 'hit' ? [0, -20, 0] : 0,
+                    opacity: monsterState === 'defeated' ? 0 : 1,
+                    scale: monsterState === 'hit' ? 1.1 : 1,
+                    filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
+                    x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                  }}
+                  transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                  className="relative z-10"
+                >
+                  <Image 
+                    src={battleImages.monsterImg} 
+                    alt="Monster" 
+                    width={180}
+                    height={180}
+                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
+                  />
+                  {showVictoryEffect && (
+                    <motion.div 
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="absolute inset-0 flex items-center justify-center z-20"
+                    >
+                      <div className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]">
+                        SMASH!
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+                <div className="w-24 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">Verb</div>
+              </div>
+
+              {/* Object Area (Item) */}
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px]">
+                {battleImages.itemImg && (
+                  <motion.div
+                    key={`item-${state.object}`}
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    className="z-10"
+                  >
+                    <Image 
+                      src={battleImages.itemImg} 
+                      alt="Item" 
+                      width={120}
+                      height={120}
+                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
+                    />
+                  </motion.div>
+                )}
+                <div className="w-16 h-2 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+                <div className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">Object</div>
+              </div>
             </div>
 
             <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-4 relative">
@@ -475,43 +547,86 @@ function PracticeContent() {
 
         {isQuestMode && currentDrill && questStatus === 'playing' && (
           <div className="mb-8 w-full flex flex-col items-center">
-            {/* Monster Battle Area */}
-            <div className="relative w-full max-w-lg h-40 md:h-56 mb-4 flex justify-center items-end">
-              <motion.div
-                key={currentDrillIndex}
-                initial={{ y: 20, opacity: 0, scale: 0.8 }}
-                animate={{ 
-                  y: monsterState === 'hit' ? [0, -20, 0] : 0,
-                  opacity: monsterState === 'defeated' ? 0 : 1,
-                  scale: monsterState === 'hit' ? 1.1 : 1,
-                  filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
-                  x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
-                }}
-                transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
-                className="relative z-10"
-              >
-                <Image 
-                  src={currentLevel % 2 === 1 ? "/assets/monsters/slime.png" : "/assets/monsters/dragon.png"} 
-                  alt="Monster" 
-                  width={200}
-                  height={200}
-                  className="w-32 h-32 md:w-48 md:h-48 object-contain pixelated"
-                />
-              {showVictoryEffect && (
-                <motion.div 
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="absolute inset-0 flex items-center justify-center z-20"
+            {/* Monster Battle Area for Quest Mode */}
+            <div className="relative w-full max-w-2xl h-48 md:h-64 mb-4 flex justify-around items-end px-4 gap-2">
+              {/* Subject Area (Hero) */}
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end">
+                <motion.div
+                  key={`hero-q-${state.subject}`}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  className="z-10"
                 >
-                  <div className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-2xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]">
-                    VICTORY!!
-                  </div>
+                  <Image 
+                    src={battleImages.subjectImg} 
+                    alt="Hero" 
+                    width={150}
+                    height={150}
+                    className={`w-24 h-24 md:w-36 md:h-36 object-contain pixelated mix-blend-multiply ${
+                      state.subject === 'first_s' || state.subject === 'first_p' || state.subject === 'second' || state.subject === 'second_p' ? 'scale-x-[-1]' : ''
+                    }`}
+                  />
                 </motion.div>
-              )}
-           </motion.div>
-              
-              {/* Ground shadow */}
-              <div className="absolute bottom-0 w-32 h-4 bg-black/40 blur-md rounded-[100%]"></div>
+                <div className="w-20 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+              </div>
+
+              {/* Verb Area (Monster) */}
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end">
+                <motion.div
+                  key={`monster-q-${currentDrillIndex}`}
+                  initial={{ y: 20, opacity: 0, scale: 0.8 }}
+                  animate={{ 
+                    y: monsterState === 'hit' ? [0, -20, 0] : 0,
+                    opacity: monsterState === 'defeated' ? 0 : 1,
+                    scale: monsterState === 'hit' ? 1.1 : 1,
+                    filter: monsterState === 'hit' ? 'brightness(2) contrast(2)' : 'brightness(1) contrast(1)',
+                    x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 0
+                  }}
+                  transition={{ duration: monsterState === 'hit' ? 0.2 : 0.5 }}
+                  className="relative z-10"
+                >
+                  <Image 
+                    src={battleImages.monsterImg} 
+                    alt="Monster" 
+                    width={180}
+                    height={180}
+                    className="w-28 h-28 md:w-44 md:h-44 object-contain pixelated mix-blend-multiply"
+                  />
+                  {showVictoryEffect && (
+                    <motion.div 
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="absolute inset-0 flex items-center justify-center z-20"
+                    >
+                      <div className="bg-white text-black px-4 py-1 rotate-[-5deg] font-bold text-xl border-2 border-black shadow-[4px_4px_0_rgba(0,0,0,1)]">
+                        SMASH!
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+                <div className="w-24 h-3 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+              </div>
+
+              {/* Object Area (Item) */}
+              <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px]">
+                {battleImages.itemImg && (
+                  <motion.div
+                    key={`item-q-${state.object}`}
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    className="z-10"
+                  >
+                    <Image 
+                      src={battleImages.itemImg} 
+                      alt="Item" 
+                      width={120}
+                      height={120}
+                      className="w-20 h-20 md:w-28 md:h-28 object-contain pixelated mix-blend-multiply"
+                    />
+                  </motion.div>
+                )}
+                <div className="w-16 h-2 bg-black/40 blur-md rounded-[100%] absolute bottom-0"></div>
+              </div>
             </div>
 
             <div className="dq-window w-full max-w-2xl flex flex-col items-center gap-6 overflow-hidden relative">
