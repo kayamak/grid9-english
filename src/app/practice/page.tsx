@@ -65,7 +65,7 @@ function DragonVEffect() {
 }
 
 
-function PracticeContent() {
+export function PracticeContent() {
   const searchParams = useSearchParams();
   const isQuestMode = searchParams.get('mode') === 'quest';
   const initialMode = searchParams.get('mode') === 'drill' || isQuestMode;
