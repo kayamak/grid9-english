@@ -437,7 +437,7 @@ function PracticeContent() {
         {isDrillMode && !isQuestMode && currentDrill && (
           <div className="mb-6 md:mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Drill Mode */}
-            <div className="dq-battle-bg relative w-full max-w-2xl h-[212px] md:h-[276px] mb-4 flex justify-around items-end px-4 gap-2">
+            <div className="dq-battle-bg relative w-full max-w-2xl h-[212px] md:h-[306px] mb-4 flex justify-around items-end px-4 gap-2">
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <motion.div
@@ -643,7 +643,7 @@ function PracticeContent() {
         {isQuestMode && currentDrill && questStatus === 'playing' && (
           <div className="mb-8 w-full flex flex-col items-center">
             {/* Monster Battle Area for Quest Mode */}
-            <div className="dq-battle-bg relative w-full max-w-2xl h-[212px] md:h-[276px] mb-4 flex justify-around items-end px-4 gap-2">
+            <div className="dq-battle-bg relative w-full max-w-2xl h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2">
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <motion.div
