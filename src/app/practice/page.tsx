@@ -106,6 +106,7 @@ function PracticeContent() {
   // const [isAllCleared, setIsAllCleared] = useState(false);
   const [questStatus, setQuestStatus] = useState<'playing' | 'result' | 'failed' | 'all-cleared'>('playing');
   const [questResults, setQuestResults] = useState<('correct' | 'wrong' | null)[]>(new Array(10).fill(null));
+  const [heroAction, setHeroAction] = useState<'idle' | 'run-away'>('idle');
 
   const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
     verbType: 'do',
@@ -375,7 +376,12 @@ function PracticeContent() {
     return { subjectImg, monsterImg, itemImg, monsterScale };
   }, [state.subject, state.verb, state.verbType, state.object, state.fiveSentencePattern]);
 
-  const handleNextDrill = () => {
+  const handleNextDrill = async (isEscape?: boolean) => {
+    if (isEscape === true) {
+      setHeroAction('run-away');
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
     if (isQuestMode) {
       if (currentDrillIndex + 1 >= drills.length) {
         // Evaluate level result
@@ -397,6 +403,10 @@ function PracticeContent() {
       }
     } else {
       setCurrentDrillIndex((prev) => (prev + 1) % drills.length);
+    }
+
+    if (isEscape === true) {
+      setHeroAction('idle');
     }
   };
 
@@ -474,9 +484,10 @@ function PracticeContent() {
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <motion.div
-                  key={`hero-${state.subject}`}
+                  key={`hero-${state.subject}-${currentDrillIndex}`}
                   initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
+                  animate={heroAction === 'run-away' ? { x: -100, opacity: 0 } : { x: 0, opacity: 1 }}
+                  transition={{ duration: 0.5 }}
                   className="z-10 flex flex-col items-center"
                 >
                   {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
@@ -648,7 +659,7 @@ function PracticeContent() {
 
               <div className="flex gap-4 mt-2">
                 <button 
-                   onClick={handleNextDrill}
+                   onClick={() => handleNextDrill(true)}
                    className="dq-button text-sm"
                 >
                   にげる (Skip)
@@ -665,9 +676,10 @@ function PracticeContent() {
               {/* Subject Area (Hero) */}
               <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
                 <motion.div
-                  key={`hero-q-${state.subject}`}
+                  key={`hero-q-${state.subject}-${currentDrillIndex}`}
                   initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: heroOpacity }}
+                  animate={heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : { x: 0, opacity: heroOpacity }}
+                  transition={{ duration: 0.5 }}
                   className="z-10 flex flex-col items-center"
                 >
                   {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
@@ -872,7 +884,7 @@ function PracticeContent() {
 
                  {(isCorrect || timeLeft === 0) && (
                    <button 
-                      onClick={handleNextDrill}
+                      onClick={() => handleNextDrill()}
                       className="dq-button"
                    >
                      {currentDrillIndex + 1 === drills.length ? 'けっかへ' : 'つぎへ'}
@@ -1208,7 +1220,7 @@ function PracticeContent() {
                     {isCorrect && !isQuestMode && (
                       <div className="mt-8 flex justify-center animate-bounce">
                         <button 
-                          onClick={handleNextDrill}
+                          onClick={() => handleNextDrill()}
                           className="dq-button text-xl px-12 py-4 shadow-xl"
                         >
                           つぎの　しれんへ
@@ -1219,7 +1231,7 @@ function PracticeContent() {
                     {isQuestMode && (isCorrect || timeLeft === 0) && questStatus === 'playing' && (
                        <div className="mt-8 flex justify-center animate-bounce">
                          <button 
-                           onClick={handleNextDrill}
+                           onClick={() => handleNextDrill()}
                            className={`dq-button text-xl px-12 py-4 shadow-xl ${isCorrect ? 'border-yellow-400' : 'border-white'}`}
                          >
                            {currentDrillIndex + 1 === drills.length ? 'クエストしゅうりょう' : 'つぎへ'}
