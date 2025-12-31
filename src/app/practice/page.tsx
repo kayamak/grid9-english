@@ -1,405 +1,58 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
-import { GeneratePatternUseCase } from '@/features/practice/actions/GeneratePatternUseCase';
-import { getSentenceDrills, getDrillQuestQuestions } from '@/features/practice/actions/drills';
 import { Trophy, XCircle, PartyPopper, Beer } from 'lucide-react';
 import { motion } from 'framer-motion';
-import {
-  SentencePattern,
-  SentenceType,
-  Subject,
-  Tense,
-  VerbType,
-  Verb,
-  FiveSentencePattern,
-  Object as ObjectType,
-  NumberForm,
-  BeComplement,
-  Word,
-  WordProps,
-} from '@/domain/practice/types';
-import { getNounWords, getVerbWords, getAdjectiveWords, getAdverbWords } from '@/features/practice/actions/words';
-import { useSearchParams } from 'next/navigation';
-
 import { PracticeBattleArea } from '@/features/practice/components/PracticeBattleArea';
-
 import { PracticeAnswerArea } from '@/features/practice/components/PracticeAnswerArea';
+import { usePractice } from '@/features/practice/hooks/usePractice';
 
 export function PracticeContent() {
-  const searchParams = useSearchParams();
-  const isQuestMode = searchParams.get('mode') === 'quest';
-  // Default to true so that Drill mode is active by default (if not quest mode)
-  const initialMode = true;
-  const selectedPattern = searchParams.get('pattern') || undefined;
-  const initialDrillIndex = parseInt(searchParams.get('drill') || '1') - 1;
-  const isAdmin = searchParams.get('role') === 'ADMIN';
+  const {
+    isQuestMode,
+    isAdmin,
+    currentLevel,
+    setCurrentLevel,
+    questSession,
+    heroAction,
+    monsterState,
+    showVictoryEffect,
+    isScreenShaking,
+    isScreenFlashing,
+    state,
+    words,
+    isLoadingWords,
+    drills,
+    currentDrillIndex,
+    timeLeft,
+    generatedText,
+    isCorrect,
+    currentDrill,
+    handleNextDrill,
+    handleRetryLevel,
+    handleLevelUp,
+    setCorrectCountInLevel,
+    handleSentenceTypeChange,
+    handleSubjectChange,
+    handleTenseChange,
+    handleFiveSentencePatternChange,
+    handleVerbChange,
+    handleObjectChange,
+    handleNumberFormChange,
+    handleBeComplementChange,
+    handleTabChange,
+    battleImages,
+    heroOpacity,
+    monsterOpacity,
+    activeTab,
+    sessionId,
+  } = usePractice();
 
-  const [currentLevel, setCurrentLevel] = useState(() => {
-    if (typeof document === 'undefined') return 1;
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; playerLevel=`);
-    if (parts.length === 2) {
-      const val = parts.pop()?.split('').shift();
-      return val ? parseInt(val) : 1;
-    }
-    return 1;
-  });
-  const [correctCountInLevel, setCorrectCountInLevel] = useState(0);
+  const questStatus = questSession?.status || 'playing';
+  const questResults = questSession?.results || [];
+  const correctCountInLevel = questSession?.correctCount || 0;
 
-  // Cookie helper
-  const setCookie = useCallback((name: string, value: string, days = 365) => {
-    if (typeof document === 'undefined') return;
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    const expires = `; expires=${date.toUTCString()}`;
-    document.cookie = `${name}=${value}${expires}; path=/`;
-  }, []);
-
-  // Sync level to cookie whenever it changes
-  useEffect(() => {
-    setCookie('playerLevel', currentLevel.toString());
-  }, [currentLevel, setCookie]);
-
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [isTimerActive, setIsTimerActive] = useState(false);
-  const [questStatus, setQuestStatus] = useState<'playing' | 'result' | 'failed' | 'all-cleared'>('playing');
-  const [questResults, setQuestResults] = useState<('correct' | 'wrong' | null)[]>(new Array(10).fill(null));
-  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated' | 'attack'>('idle');
-
-  const triggerAttackAnim = useCallback(() => {
-    setHeroAction('attack');
-    setTimeout(() => {
-      setMonsterState('damaged');
-      setTimeout(() => setMonsterState('idle'), 300);
-    }, 150);
-    setTimeout(() => {
-      setHeroAction((prev) => (prev === 'attack' ? 'idle' : prev));
-    }, 300);
-  }, []);
-
-  const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
-    verbType: 'do',
-    verb: 'do',
-    sentenceType: 'positive',
-    subject: 'first_s',
-    tense: 'present',
-    fiveSentencePattern: 'SV',
-    object: 'something',
-    numberForm: 'none',
-    beComplement: 'here',
-  }));
-
-  const [nounWords, setNounWords] = useState<Word[]>([]);
-  const [verbWords, setVerbWords] = useState<Word[]>([]);
-  const [adjectiveWords, setAdjectiveWords] = useState<Word[]>([]);
-  const [adverbWords, setAdverbWords] = useState<Word[]>([]);
-  const [isLoadingNouns, setIsLoadingNouns] = useState(true);
-  interface Drill {
-    id: string;
-    english: string;
-    japanese: string;
-    sentencePattern: string;
-    sortOrder: number;
-  }
-  const [drills, setDrills] = useState<Drill[]>([]);
-  const [isDrillMode] = useState(initialMode);
-  const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
-  const [activeTab, setActiveTab] = useState<VerbType | 'admin'>(state.verbType);
-
-  // Fetch noun words from Repository
-  useEffect(() => {
-    const fetchWords = async () => {
-      try {
-        const [nounsData, verbsData, adjectivesData, adverbsData] = await Promise.all([
-          getNounWords(),
-          getVerbWords(),
-          getAdjectiveWords(),
-          getAdverbWords(),
-        ]);
-
-        setNounWords(nounsData.map((w: WordProps) => Word.reconstruct(w)));
-        setVerbWords(verbsData.map((w: WordProps) => Word.reconstruct(w)));
-        setAdjectiveWords(adjectivesData.map((w: WordProps) => Word.reconstruct(w)));
-        setAdverbWords(adverbsData.map((w: WordProps) => Word.reconstruct(w)));
-      } catch (error) {
-        console.error('Error fetching words:', error);
-      } finally {
-        setIsLoadingNouns(false);
-      }
-    };
-
-    fetchWords();
-
-    const fetchDrills = async () => {
-      if (isQuestMode) {
-        const data = await getDrillQuestQuestions(currentLevel);
-        setDrills(data);
-        setCurrentDrillIndex(0);
-        setCorrectCountInLevel(0);
-        const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
-        setTimeLeft(timeLimit);
-        setIsTimerActive(true);
-        setQuestStatus('playing');
-        setQuestResults(new Array(10).fill(null));
-      } else {
-        const data = await getSentenceDrills(selectedPattern);
-        setDrills(data);
-      }
-    };
-    fetchDrills();
-  }, [selectedPattern, isQuestMode, currentLevel]);
-
-  // Timer logic for Quest Mode
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isQuestMode && isTimerActive && timeLeft > 0 && questStatus === 'playing') {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && questStatus === 'playing') {
-      setIsTimerActive(false);
-      setQuestResults(prev => {
-        const next = [...prev];
-        if (!next[currentDrillIndex]) {
-          next[currentDrillIndex] = 'wrong';
-        }
-        return next;
-      });
-      setHeroAction('defeated');
-    }
-    return () => clearInterval(timer);
-  }, [isQuestMode, isTimerActive, timeLeft, questStatus, currentDrillIndex]);
-
-  const handleVerbTypeChange = useCallback((verbType: VerbType) => {
-    triggerAttackAnim();
-    setActiveTab(verbType);
-    setState((prev) => {
-      if (verbType === 'be') {
-        return SentencePattern.create({
-          ...prev.toObject(),
-          verbType,
-          verb: 'be',
-          fiveSentencePattern: 'SV',
-          beComplement: 'here',
-          numberForm: 'a'
-        });
-      } else {
-        return SentencePattern.create({
-          ...prev.toObject(),
-          verbType,
-          verb: 'do',
-          fiveSentencePattern: 'SV'
-        });
-      }
-    });
-  }, [triggerAttackAnim]);
-
-  const handleTabChange = useCallback((tab: VerbType | 'admin') => {
-    if (tab === 'admin') {
-      setActiveTab('admin');
-    } else {
-      handleVerbTypeChange(tab);
-    }
-  }, [handleVerbTypeChange]);
-
-  const handleVerbChange = useCallback((verb: Verb) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), verb }));
-  }, [triggerAttackAnim]);
-
-  const handleSentenceTypeChange = useCallback((sentenceType: SentenceType) => {
-    triggerAttackAnim();
-    setState((prev) => prev.toggleSentenceType(sentenceType));
-  }, [triggerAttackAnim]);
-
-  const handleSubjectChange = useCallback((subject: Subject) => {
-    setState((prev) => {
-      if (subject === prev.subject) {
-        return prev.rotateSubject();
-      } else {
-        return SentencePattern.create({ ...prev.toObject(), subject });
-      }
-    });
-  }, []);
-
-  const handleTenseChange = useCallback((tense: Tense) => {
-    triggerAttackAnim();
-    setState((prev) => prev.changeTense(tense));
-  }, [triggerAttackAnim]);
-
-  const handleFiveSentencePatternChange = useCallback((fiveSentencePattern: FiveSentencePattern) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({
-       ...prev.toObject(),
-       fiveSentencePattern,
-       verb: 'do'
-    }));
-  }, [triggerAttackAnim]);
-
-  const handleObjectChange = useCallback((object: ObjectType) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), object }));
-  }, [triggerAttackAnim]);
-
-  const handleNumberFormChange = useCallback((numberForm: NumberForm) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), numberForm }));
-  }, [triggerAttackAnim]);
-
-  const handleBeComplementChange = useCallback((beComplement: BeComplement) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), beComplement }));
-  }, [triggerAttackAnim]);
-
-  const [sessionId, setSessionId] = useState('');
-  const [showVictoryEffect, setShowVictoryEffect] = useState(false);
-  const [isScreenShaking, setIsScreenShaking] = useState(false);
-  const [isScreenFlashing, setIsScreenFlashing] = useState(false);
-  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated' | 'damaged'>('idle');
-
-  useEffect(() => {
-    setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
-  }, []);
-
-  const generatedText = useMemo(() => new GeneratePatternUseCase().execute(state, nounWords, verbWords), [state, nounWords, verbWords]);
-
-  const currentDrill = drills[currentDrillIndex];
-  const isCorrect = useMemo(() => isDrillMode && currentDrill && generatedText.toLowerCase().replace(/[.,?!]/g, '') === currentDrill.english.toLowerCase().replace(/[.,?!]/g, ''), [isDrillMode, currentDrill, generatedText]);
-
-  const [hasMarkedCorrect, setHasMarkedCorrect] = useState(false);
-
-  const triggerVictoryEffect = useCallback(() => {
-    setIsScreenFlashing(true);
-    setTimeout(() => setIsScreenFlashing(false), 150);
-
-    setIsScreenShaking(true);
-    setTimeout(() => setIsScreenShaking(false), 500);
-
-    setMonsterState('hit');
-    setTimeout(() => {
-      setMonsterState('defeated');
-    }, 300);
-
-    setShowVictoryEffect(true);
-  }, []);
-
-  useEffect(() => {
-    if (isCorrect && !hasMarkedCorrect && isQuestMode && questStatus === 'playing') {
-      setCorrectCountInLevel(prev => prev + 1);
-      setQuestResults(prev => {
-        const next = [...prev];
-        next[currentDrillIndex] = 'correct';
-        return next;
-      });
-      setHasMarkedCorrect(true);
-      setIsTimerActive(false);
-      triggerVictoryEffect();
-    }
-  }, [isCorrect, hasMarkedCorrect, isQuestMode, questStatus, currentDrillIndex, triggerVictoryEffect]);
-
-  useEffect(() => {
-    if (isCorrect && !isQuestMode && !hasMarkedCorrect) {
-      setHasMarkedCorrect(true);
-      triggerVictoryEffect();
-    }
-  }, [isCorrect, isDrillMode, isQuestMode, hasMarkedCorrect, triggerVictoryEffect]);
-
-  useEffect(() => {
-    setHasMarkedCorrect(false);
-    setMonsterState('idle');
-    setShowVictoryEffect(false);
-  }, [currentDrillIndex, state.subject, state.verb, state.object]);
-
-  const battleImages = useMemo(() => {
-    let subjectImg = '/assets/heroes/hero.png';
-    if (state.subject === 'second' || state.subject === 'second_p') subjectImg = '/assets/heroes/mage.png';
-    else if (state.subject === 'third_s' || state.subject === 'third_p') subjectImg = '/assets/heroes/warrior.png';
-
-    let monsterImg = '/assets/monsters/slime.png';
-    let monsterScale = 1.0; 
-    if (state.verbType === 'be' && (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVC')) {
-      monsterImg = '/assets/monsters/bit_golem.png';
-      monsterScale = 1.0;
-    } else if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
-      monsterImg = '/assets/monsters/void_dragon_v2.png';
-      monsterScale = 1.7;
-    } else if (state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
-      monsterImg = '/assets/monsters/dragon.png';
-      monsterScale = 1.7;
-    }
-
-    let itemImg = null;
-    if (state.fiveSentencePattern === 'SVO') {
-      itemImg = '/assets/monsters/o_slime.png';
-    } else if (state.verbType === 'be' && state.fiveSentencePattern === 'SVC') {
-      itemImg = '/assets/monsters/crescent_beast.png';
-    }
-
-    return { subjectImg, monsterImg, itemImg, monsterScale };
-  }, [state.subject, state.verb, state.verbType, state.fiveSentencePattern]);
-
-  const handleNextDrill = async (isEscape?: boolean) => {
-    if (isEscape === true) {
-      setHeroAction('run-away');
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-
-    if (isQuestMode) {
-      if (currentDrillIndex + 1 >= drills.length) {
-        if (correctCountInLevel >= 8) {
-          if (currentLevel === 10) {
-            setQuestStatus('all-cleared');
-          } else {
-            setQuestStatus('result');
-          }
-        } else {
-          setQuestStatus('failed');
-        }
-        setIsTimerActive(false);
-      } else {
-        setCurrentDrillIndex((prev) => prev + 1);
-        const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
-        setTimeLeft(timeLimit);
-        setIsTimerActive(true);
-      }
-    } else {
-      setCurrentDrillIndex((prev) => (prev + 1) % drills.length);
-    }
-
-    setHeroAction('idle');
-  };
-
-  const handleLevelUp = () => {
-    setCurrentLevel(prev => prev + 1);
-  };
-
-  const handleRetryLevel = () => {
-    const fetchAgain = async () => {
-      const data = await getDrillQuestQuestions(currentLevel);
-      setDrills(data);
-      setCurrentDrillIndex(0);
-      setCorrectCountInLevel(0);
-      const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : Math.max(5, 30 - (currentLevel * 2)));
-      setTimeLeft(timeLimit);
-      setIsTimerActive(true);
-      setQuestStatus('playing');
-      setQuestResults(new Array(10).fill(null));
-    };
-    fetchAgain();
-  };
-
-  const { heroOpacity, monsterOpacity } = useMemo(() => {
-    const correct = questResults.filter(r => r === 'correct').length;
-    const wrong = questResults.filter(r => r === 'wrong').length;
-    let h = 1;
-    let m = 1;
-    if (correct < wrong) h = 0.5;
-    else if (correct > wrong) m = 0.5;
-    return { heroOpacity: h, monsterOpacity: m };
-  }, [questResults]);
-  
   return (
     <main className={`min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white transition-all duration-75 ${isScreenShaking ? 'translate-x-2 -translate-y-1 rotate-1' : ''}`}>
       {isScreenFlashing && (
@@ -408,7 +61,7 @@ export function PracticeContent() {
 
       <div className="w-full max-w-4xl relative flex flex-col gap-4">
 
-        {((isDrillMode && !isQuestMode && currentDrill) || 
+        {((!isQuestMode && currentDrill) || 
           (isQuestMode && currentDrill && questStatus === 'playing')) && (
             <>
             <PracticeBattleArea 
@@ -611,7 +264,7 @@ export function PracticeContent() {
             currentLevel={currentLevel}
             setCurrentLevel={setCurrentLevel}
             correctCountInLevel={correctCountInLevel}
-            setCorrectCountInLevel={setCorrectCountInLevel}
+            setCorrectCountInLevel={setCorrectCountInLevel as any}
             state={state}
             handleSentenceTypeChange={handleSentenceTypeChange}
             handleSubjectChange={handleSubjectChange}
@@ -621,11 +274,11 @@ export function PracticeContent() {
             handleObjectChange={handleObjectChange}
             handleNumberFormChange={handleNumberFormChange}
             handleBeComplementChange={handleBeComplementChange}
-            nounWords={nounWords}
-            verbWords={verbWords}
-            adjectiveWords={adjectiveWords}
-            adverbWords={adverbWords}
-            isLoadingNouns={isLoadingNouns}
+            nounWords={words.nouns}
+            verbWords={words.verbs}
+            adjectiveWords={words.adjectives}
+            adverbWords={words.adverbs}
+            isLoadingNouns={isLoadingWords}
             generatedText={generatedText}
             isCorrect={isCorrect}
             isQuestMode={isQuestMode}
