@@ -111,10 +111,17 @@ export function PracticeBattleArea({
 
             {/* Top UI Overlay */}
             <div className="absolute top-0 left-0 right-0 p-2 md:p-4 z-30 flex flex-col gap-2 pointer-events-none">
-                <div className="flex justify-between items-start">
+                <div className="relative w-full flex justify-between items-center">
+                     {/* Center Title */}
+                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
+                        <div className="text-white text-[10px] md:text-xs font-bold drop-shadow-md bg-black/30 px-2 py-1 rounded">
+                             {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
+                        </div>
+                     </div>
+
                      {/* Top Left: Back & Level */}
-                     <div className="flex flex-col gap-2 pointer-events-auto">
-                        <Link href="/" className="dq-button !py-1 !px-2 md:!px-3 text-[10px] md:text-xs bg-black/40 hover:bg-black/60 border-white/40 self-start">
+                     <div className="flex items-center gap-2 pointer-events-auto">
+                        <Link href="/" className="dq-button !py-1 !px-2 md:!px-3 text-[10px] md:text-xs bg-black/40 hover:bg-black/60 border-white/40">
                            &larr; もどる
                         </Link>
                         <div className="flex items-center gap-2 text-white bg-black/40 px-2 py-1 rounded border border-white/20">
@@ -124,10 +131,7 @@ export function PracticeBattleArea({
                      </div>
 
                      {/* Top Right: Mode Label & Timer & Progress Dots */}
-                     <div className="flex flex-col items-end gap-1">
-                        <div className="text-white text-[10px] md:text-xs font-bold drop-shadow-md bg-black/30 px-2 py-1 rounded">
-                             {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
-                        </div>
+                     <div className="flex items-center gap-2">
                         {isQuestMode && (
                            <div className="flex items-center gap-3">
                                 {/* Progress Dots */}
