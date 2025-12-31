@@ -7,7 +7,7 @@ config();
 
 import path from 'path';
 
-const url_raw = process.env.LOCAL_DATABASE_URL!;
+const url_raw = process.env.DATABASE_URL!;
 let url = url_raw;
 
 if (url.startsWith('file:')) {

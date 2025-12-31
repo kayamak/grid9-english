@@ -38,14 +38,33 @@
 
 ### データベース操作
 
+#### 🏠 ローカル環境 (SQLite)
+
+標準の `DATABASE_URL` (`file:./dev.db`) を使用します。
+
 ```bash
 # Prismaクライアント生成
 npx prisma generate
+
+# マイグレーション実行
+npx prisma migrate dev
 
 # シード実行
 npx tsx prisma/seed.ts
 
 # データ確認
+npx prisma studio
+```
+
+#### ☁️ ステージング環境 (Turso)
+
+ステージング環境への操作を行う場合は、`DATABASE_URL` を `TURSO_DATABASE_URL` で上書きします。
+
+```bash
+# シード実行 (Staging DB)
+DATABASE_URL=$TURSO_DATABASE_URL TURSO_AUTH_TOKEN=$TURSO_AUTH_TOKEN npx tsx prisma/seed.ts
+
+# Turso CLI でのデータ確認
 turso db shell grid9-english-db "SELECT * FROM AdjectiveWord;"
 ```
 

@@ -25,7 +25,7 @@
 ```env
 # ローカルDB設定
 # SQLite の場合、相対パスは「schema.prisma ファイルがあるディレクトリ」からの相対パスとなります。
-LOCAL_DATABASE_URL="file:./dev.db"
+DATABASE_URL="file:./dev.db"
 ```
 > **パスの解決について**: 
 > `schema.prisma` は `prisma/` フォルダにあるため、本来の設定は `prisma/dev.db` を指します。
@@ -63,7 +63,7 @@ TURSO_AUTH_TOKEN="your-auth-token"
 - **Turso CLI で接続**: `turso db shell grid9-english-db`
 - **Staging へのシード実行**:
   ```bash
-  LOCAL_DATABASE_URL=$TURSO_DATABASE_URL TURSO_AUTH_TOKEN=$TURSO_AUTH_TOKEN npx tsx prisma/seed.ts
+  DATABASE_URL=$TURSO_DATABASE_URL TURSO_AUTH_TOKEN=$TURSO_AUTH_TOKEN npx tsx prisma/seed.ts
   ```
 
 ### Turso でのテーブル管理
