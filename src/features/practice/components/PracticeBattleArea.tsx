@@ -41,6 +41,7 @@ function DragonVEffect() {
 
 interface PracticeBattleAreaProps {
     isQuestMode: boolean;
+    isFreeMode?: boolean;
     state: SentencePattern;
     currentDrillIndex: number;
     heroAction: 'idle' | 'run-away' | 'defeated' | 'attack';
@@ -63,6 +64,7 @@ interface PracticeBattleAreaProps {
 
 export function PracticeBattleArea({
     isQuestMode,
+    isFreeMode,
     state,
     currentDrillIndex,
     heroAction,
@@ -115,7 +117,7 @@ export function PracticeBattleArea({
                      {/* Center Title */}
                      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
                         <div className="text-white text-[10px] md:text-xs font-bold drop-shadow-md bg-black/30 px-2 py-1 rounded">
-                             {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
+                             {isQuestMode ? 'ドリルクエスト' : (isFreeMode ? 'じゆうトレーニング' : 'ぶんしょうトレーニング')}
                         </div>
                      </div>
 
