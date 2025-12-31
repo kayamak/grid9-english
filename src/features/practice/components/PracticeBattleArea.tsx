@@ -129,27 +129,28 @@ export function PracticeBattleArea({
                              {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
                         </div>
                         {isQuestMode && (
-                           <div className={`flex items-center gap-1 ${timeLeft <= 5 ? 'animate-pulse text-red-500' : 'text-white'}`}>
-                               <Timer className="w-3 h-3 md:w-4 md:h-4" />
-                               <span className="text-sm md:text-lg font-bold tabular-nums">{timeLeft}</span>
+                           <div className="flex items-center gap-3">
+                                {/* Progress Dots */}
+                                <div className="flex gap-1">
+                                    {questResults.map((result, i) => (
+                                        <div 
+                                        key={i} 
+                                        className={`w-2 h-2 md:w-3 md:h-3 border border-white/50 ${
+                                            result === 'correct' 
+                                            ? 'bg-green-500' 
+                                            : result === 'wrong' 
+                                                ? 'bg-red-500' 
+                                                : (i === currentDrillIndex ? 'bg-yellow-400 animate-pulse' : 'bg-transparent')
+                                        }`}
+                                        />
+                                    ))}
+                                </div>
+                                {/* Timer */}
+                                <div className={`flex items-center gap-1 ${timeLeft <= 5 ? 'animate-pulse text-red-500' : 'text-white'}`}>
+                                    <Timer className="w-3 h-3 md:w-4 md:h-4" />
+                                    <span className="text-sm md:text-lg font-bold tabular-nums">{timeLeft}</span>
+                                </div>
                            </div>
-                        )}
-                        {/* Progress Dots */}
-                        {isQuestMode && (
-                            <div className="flex gap-1 mt-1">
-                                {questResults.map((result, i) => (
-                                    <div 
-                                    key={i} 
-                                    className={`w-2 h-2 md:w-3 md:h-3 border border-white/50 ${
-                                        result === 'correct' 
-                                        ? 'bg-green-500' 
-                                        : result === 'wrong' 
-                                            ? 'bg-red-500' 
-                                            : (i === currentDrillIndex ? 'bg-yellow-400 animate-pulse' : 'bg-transparent')
-                                    }`}
-                                    />
-                                ))}
-                            </div>
                         )}
                      </div>
                 </div>
