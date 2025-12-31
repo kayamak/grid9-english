@@ -115,6 +115,7 @@ export function MainMenu() {
   const [opIndex, setOpIndex] = useState(0);
   const router = useRouter();
   const [currentLevel, setCurrentLevel] = useState(1);
+  const [showClearLevelMenu, setShowClearLevelMenu] = useState(false);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -203,15 +204,24 @@ export function MainMenu() {
             
             <nav className="flex flex-col gap-1">
               {!selectedCategory ? (
-                Object.keys(MENU_DATA).map((cat) => (
+                <>
+                  {Object.keys(MENU_DATA).map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => handleCategoryClick(cat)}
+                      className="dq-menu-item text-xl w-full text-left"
+                    >
+                      {cat}
+                    </button>
+                  ))}
                   <button
-                    key={cat}
-                    onClick={() => handleCategoryClick(cat)}
-                    className="dq-menu-item text-xl w-full text-left"
+                    onClick={() => setShowClearLevelMenu(true)}
+                    onMouseEnter={() => setDescMessage("レベルを　しょきか　したり　できるぞ。")}
+                    className="dq-menu-item text-xl w-full text-left mt-2 border-t border-white/20 pt-2"
                   >
-                    {cat}
+                    にげる
                   </button>
-                ))
+                </>
               ) : (
                 MENU_DATA[selectedCategory].items.map((item) => (
                   <button
@@ -255,6 +265,34 @@ export function MainMenu() {
           {bottomMessage}
         </p>
       </div>
+
+      {/* Level Clear Menu Modal */}
+      {showClearLevelMenu && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+           <div className="dq-window p-8 flex flex-col items-center gap-6 min-w-[300px] animate-in zoom-in duration-200">
+              <h2 className="text-2xl text-white font-bold mb-2">メニュー</h2>
+              
+              <button 
+                onClick={() => {
+                   document.cookie = "playerLevel=1; path=/; max-age=31536000";
+                   setCurrentLevel(1);
+                   setShowClearLevelMenu(false);
+                   setBottomMessage("レベルを　しょきか　しました。");
+                }}
+                className="dq-button w-full py-3 text-lg border-red-500 text-red-400 hover:text-red-300 hover:bg-red-900/20"
+              >
+                 レベルクリア
+              </button>
+
+              <button 
+                onClick={() => setShowClearLevelMenu(false)}
+                className="dq-button w-full py-2 bg-gray-800 text-white/50 border-gray-600"
+              >
+                 とじる
+              </button>
+           </div>
+        </div>
+      )}
     </div>
   );
 }
