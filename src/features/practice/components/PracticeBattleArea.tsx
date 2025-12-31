@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Timer } from 'lucide-react';
 import { SentencePattern } from '@/domain/practice/types';
+import { getAssetPath } from '@/lib/assets';
+
 
 function DragonVEffect() {
   const [visible, setVisible] = useState(true);
@@ -96,7 +98,10 @@ export function PracticeBattleArea({
     }, []);
 
     return (
-        <div className="dq-battle-bg relative w-full h-[333px] md:h-[474px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl group">
+        <div 
+            className="dq-battle-bg relative w-full h-[333px] md:h-[474px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl group"
+            style={{ backgroundImage: `url(${getAssetPath('/assets/backgrounds/battle_bg.jpeg')})` }}
+        >
             {/* Timer Bar */}
             {isQuestMode && (
                 <div className="absolute top-0 left-0 right-0 h-1 md:h-2 bg-gray-800 z-30">
@@ -216,7 +221,7 @@ export function PracticeBattleArea({
                     transition={{ duration: heroAction === 'attack' ? 0.3 : 0.5 }}
                     >
                     <Image 
-                        src={battleImages.subjectImg} 
+                        src={getAssetPath(battleImages.subjectImg)} 
                         alt="Hero Second" 
                         width={150}
                         height={150}
@@ -238,7 +243,7 @@ export function PracticeBattleArea({
                     transition={{ duration: heroAction === 'attack' ? 0.3 : 0.5 }}
                 >
                     <Image 
-                    src={battleImages.subjectImg} 
+                    src={getAssetPath(battleImages.subjectImg)} 
                     alt="Hero" 
                     width={150}
                     height={150}
@@ -276,7 +281,7 @@ export function PracticeBattleArea({
                     style={{ transformOrigin: 'bottom' }}
                 >
                     <Image 
-                    src={battleImages.monsterImg} 
+                    src={getAssetPath(battleImages.monsterImg)} 
                     alt="Monster" 
                     width={180}
                     height={180}
@@ -348,7 +353,7 @@ export function PracticeBattleArea({
                     className="z-10 flex flex-col items-center"
                 >
                     <Image 
-                    src={battleImages.itemImg} 
+                    src={getAssetPath(battleImages.itemImg)} 
                     alt="Item" 
                     width={120}
                     height={120}

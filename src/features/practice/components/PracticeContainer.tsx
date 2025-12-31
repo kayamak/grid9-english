@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Trophy, XCircle, PartyPopper, Beer } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -11,7 +11,7 @@ import { WordProps } from '@/domain/practice/types';
 
 export function PracticeContainer({ initialWords, allDrills }: { 
   initialWords: { nouns: WordProps[]; verbs: WordProps[]; adjectives: WordProps[]; adverbs: WordProps[] },
-  allDrills: any[]
+  allDrills: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }[]
 }) {
   const {
     isQuestMode,
@@ -161,36 +161,48 @@ export function PracticeContainer({ initialWords, allDrills }: {
         {isQuestMode && questStatus === 'all-cleared' && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 font-dot">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(20)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ 
-                    top: -20, 
-                    left: `${Math.random() * 100}%`,
-                    rotate: 0,
-                    scale: 0.5 + Math.random()
-                   }}
-                  animate={{ 
-                    top: '120%', 
-                    rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
-                  }}
-                  transition={{ 
-                    duration: 3 + Math.random() * 4, 
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: Math.random() * 5
-                  }}
-                  className="absolute"
-                >
-                  {i % 3 === 0 ? (
-                    <PartyPopper className="text-yellow-400 w-8 h-8 opacity-40 shadow-xl" />
-                  ) : i % 3 === 1 ? (
-                    <Beer className="text-yellow-200 w-10 h-10 opacity-30" />
-                  ) : (
-                    <div className="w-4 h-4 bg-white opacity-40" />
-                  )}
-                </motion.div>
-              ))}
+              {(() => {
+                // Generate decoration items once to satisfy hook purity
+                const decorations = Array.from({ length: 20 }).map((_, i) => ({
+                  id: i,
+                  left: `${(i * 137) % 100}%`, // Pseudo-random stable position
+                  scale: 0.5 + ((i * 7) % 10) / 10,
+                  rotateDir: i % 2 === 0 ? 1 : -1,
+                  duration: 3 + ((i * 11) % 4),
+                  delay: (i * 3) % 5
+                }));
+                
+                return decorations.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ 
+                      top: -20, 
+                      left: item.left,
+                      rotate: 0,
+                      scale: item.scale
+                     }}
+                    animate={{ 
+                      top: '120%', 
+                      rotate: 360 * item.rotateDir,
+                    }}
+                    transition={{ 
+                      duration: item.duration, 
+                      repeat: Infinity,
+                      ease: "linear",
+                      delay: item.delay
+                    }}
+                    className="absolute"
+                  >
+                    {item.id % 3 === 0 ? (
+                      <PartyPopper className="text-yellow-400 w-8 h-8 opacity-40 shadow-xl" />
+                    ) : item.id % 3 === 1 ? (
+                      <Beer className="text-yellow-200 w-10 h-10 opacity-30" />
+                    ) : (
+                      <div className="w-4 h-4 bg-white opacity-40" />
+                    )}
+                  </motion.div>
+                ));
+              })()}
             </div>
 
             <motion.div 
@@ -268,7 +280,7 @@ export function PracticeContainer({ initialWords, allDrills }: {
             currentLevel={currentLevel}
             setCurrentLevel={setCurrentLevel}
             correctCountInLevel={correctCountInLevel}
-            setCorrectCountInLevel={setCorrectCountInLevel as any}
+            setCorrectCountInLevel={setCorrectCountInLevel}
             state={state}
             handleSentenceTypeChange={handleSentenceTypeChange}
             handleSubjectChange={handleSubjectChange}

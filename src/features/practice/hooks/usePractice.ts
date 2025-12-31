@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { QuestSession, QuestStatus, AnswerResult } from '@/domain/practice/entities/QuestSession';
+import { QuestSession, AnswerResult } from '@/domain/practice/entities/QuestSession';
 import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
 import { SentencePattern, Word, VerbType, SentenceType, Subject, Tense, FiveSentencePattern, Verb, Object as ObjectType, NumberForm, BeComplement, WordProps } from '@/domain/practice/types';
 import { PatternGenerator } from '@/domain/practice/services/PatternGenerator';
 
+
 export function usePractice(
   initialWords?: { nouns: WordProps[]; verbs: WordProps[]; adjectives: WordProps[]; adverbs: WordProps[] },
-  allDrills: any[] = []
+  allDrills: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }[] = []
 ) {
   const searchParams = useSearchParams();
   const isQuestMode = searchParams.get('mode') === 'quest';
@@ -90,7 +91,7 @@ export function usePractice(
   }, [reconstructedWords]);
 
   const [isLoadingWords, setIsLoadingWords] = useState(!initialWords);
-  const [drills, setDrills] = useState<any[]>([]);
+  const [drills, setDrills] = useState<{ id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }[]>([]);
   const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
 
   // Timer States
@@ -131,7 +132,7 @@ export function usePractice(
         selectedDrills = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
       }
 
-      const drillEntities = selectedDrills.map((d: any) => SentenceDrill.reconstruct(d));
+      const drillEntities = selectedDrills.map((d: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }) => SentenceDrill.reconstruct(d));
       const session = QuestSession.start(currentLevel, drillEntities);
       setQuestSession(session);
       setDrills(selectedDrills);
@@ -197,7 +198,7 @@ export function usePractice(
         setHasMarkedCorrect(true);
       }
     }
-  }, [isCorrect, hasMarkedCorrect, isQuestMode, questSession?.status, triggerVictoryEffect]);
+  }, [isCorrect, hasMarkedCorrect, isQuestMode, questSession, triggerVictoryEffect]);
 
   useEffect(() => {
     setHasMarkedCorrect(false);
@@ -257,7 +258,7 @@ export function usePractice(
       ? filtered.slice(0, 10)
       : [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
 
-    const drillEntities = selectedDrills.map((d: any) => SentenceDrill.reconstruct(d));
+    const drillEntities = selectedDrills.map((d: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }) => SentenceDrill.reconstruct(d));
     const session = QuestSession.start(currentLevel, drillEntities);
     setQuestSession(session);
     setDrills(selectedDrills);
@@ -400,7 +401,7 @@ export function usePractice(
     if (correct < wrong) h = 0.5;
     else if (correct > wrong) m = 0.5;
     return { heroOpacity: h, monsterOpacity: m };
-  }, [questSession?.results]);
+  }, [questSession]);
 
   return {
     isQuestMode,

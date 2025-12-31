@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Verb, VerbType, FiveSentencePattern, Word } from '@/domain/practice/types';
 
 interface VerbSelectorProps {
@@ -19,7 +19,7 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
   disabled 
 }) => {
   const options = useMemo(() => {
-    let filtered = verbWords.filter(vw => {
+    const filtered = verbWords.filter(vw => {
       // If be, technically we don't show selector but let's be safe
       if (verbType === 'be') return vw.value === 'be';
       
@@ -27,7 +27,7 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
       if (vw.value === 'be') return false;
       
       if (fiveSentencePattern) {
-        return (vw as any).sentencePattern === fiveSentencePattern;
+        return vw.sentencePattern === fiveSentencePattern;
       }
       return true;
     });
@@ -38,15 +38,13 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
     })).sort((a, b) => a.value.localeCompare(b.value));
   }, [verbWords, verbType, fiveSentencePattern]);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Auto-select first option if current selection is not in filtered list
   useEffect(() => {
-    if (!loading && options.length > 0 && !options.some(opt => opt.value === selectedVerb)) {
+    if (options.length > 0 && !options.some(opt => opt.value === selectedVerb)) {
       onChange(options[0].value);
     }
-  }, [loading, options, selectedVerb, onChange]);
+  }, [options, selectedVerb, onChange]);
 
   return (
     <div className="flex items-center gap-3">
@@ -55,20 +53,14 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
         <select
           value={selectedVerb}
           onChange={(e) => onChange(e.target.value as Verb)}
-          disabled={disabled || loading}
+          disabled={disabled}
           className="dq-button !p-2 !pr-8 w-full appearance-none disabled:opacity-30"
         >
-          {loading ? (
-            <option>読み込み中...</option>
-          ) : error ? (
-            <option>{error}</option>
-          ) : (
-            options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))
-          )}
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
           <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

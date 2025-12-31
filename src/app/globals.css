@@ -124,7 +124,6 @@
   }
 
   .dq-battle-bg {
-    background-image: url('/assets/backgrounds/battle_bg.jpeg');
     background-size: cover;
     background-position: bottom center;
     image-rendering: pixelated;
