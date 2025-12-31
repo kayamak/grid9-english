@@ -50,7 +50,7 @@ interface PracticeBattleAreaProps {
     monsterOpacity: number;
     // Props moved from PracticeQuestionArea
     currentLevel: number;
-    currentDrill: { english: string; japanese: string };
+    currentDrill?: { english: string; japanese: string };
     timeLeft: number;
     questResults: ('correct' | 'wrong' | null)[];
     totalDrills: number;
@@ -126,7 +126,7 @@ export function PracticeBattleArea({
                         </Link>
                         <div className="flex items-center gap-2 text-white bg-black/40 px-2 py-1 rounded border border-white/20">
                              <span className="font-bold text-sm md:text-base">Lv{currentLevel}</span>
-                             <span className="text-[10px] md:text-xs opacity-70">{currentDrillIndex + 1}/{totalDrills}</span>
+                             {totalDrills > 0 && <span className="text-[10px] md:text-xs opacity-70">{currentDrillIndex + 1}/{totalDrills}</span>}
                         </div>
                      </div>
 
@@ -162,19 +162,27 @@ export function PracticeBattleArea({
                 {/* Center Question Text */}
                 <div className="absolute top-12 left-0 right-0 flex flex-col items-center justify-center p-2 pointer-events-none">
                      <div className="bg-black/60 border border-white/20 p-3 md:p-4 rounded-lg text-center backdrop-blur-sm shadow-lg max-w-[90%] md:max-w-xl">
-                        <h2 className={`text-xl md:text-3xl font-normal leading-tight ${displayEnglish ? 'text-white/90' : 'text-white'}`}>
-                            {currentDrill.japanese}
-                        </h2>
-                        {displayEnglish && (
-                            <h2 className="text-lg md:text-2xl font-normal text-yellow-200 mt-2 leading-tight">
-                                {currentDrill.english}
+                        {currentDrill ? (
+                            <>
+                                <h2 className={`text-xl md:text-3xl font-normal leading-tight ${displayEnglish ? 'text-white/90' : 'text-white'}`}>
+                                    {currentDrill.japanese}
+                                </h2>
+                                {displayEnglish && (
+                                    <h2 className="text-lg md:text-2xl font-normal text-yellow-200 mt-2 leading-tight">
+                                        {currentDrill.english}
+                                    </h2>
+                                )}
+                                {displayEnglish && !isCorrect && (
+                                    <p className="text-[10px] text-white/50 mt-1">えいご</p>
+                                )}
+                                {!displayEnglish && !isCorrect && (
+                                    <p className="text-[10px] text-white/50 mt-1">えいごに　なおせ！</p>
+                                )}
+                            </>
+                        ) : (
+                            <h2 className="text-xl md:text-3xl font-normal leading-tight text-white">
+                                じゆうに　ぶんしょうを　つくってみよう！
                             </h2>
-                        )}
-                        {displayEnglish && !isCorrect && (
-                            <p className="text-[10px] text-white/50 mt-1">えいご</p>
-                        )}
-                        {!displayEnglish && !isCorrect && (
-                            <p className="text-[10px] text-white/50 mt-1">えいごに　なおせ！</p>
                         )}
                      </div>
 
@@ -201,12 +209,14 @@ export function PracticeBattleArea({
                         {isQuestMode && currentDrillIndex + 1 === totalDrills ? 'けっかへ' : 'つぎへすすむ'}
                     </button>
                  ) : (
-                    <button 
-                        onClick={() => onNext(true)}
-                        className="dq-button text-xs py-1 px-4 bg-gray-800 border-gray-500 opacity-80 hover:opacity-100"
-                    >
-                        にげる
-                    </button>
+                    currentDrill && (
+                        <button 
+                            onClick={() => onNext(true)}
+                            className="dq-button text-xs py-1 px-4 bg-gray-800 border-gray-500 opacity-80 hover:opacity-100"
+                        >
+                            にげる
+                        </button>
+                    )
                  )}
             </div>
 

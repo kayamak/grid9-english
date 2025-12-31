@@ -65,7 +65,7 @@ export function PracticeContainer({ initialWords, allDrills }: {
 
       <div className="w-full max-w-4xl relative flex flex-col gap-4">
 
-        {((!isQuestMode && currentDrill) || 
+        {((!isQuestMode) || 
           (isQuestMode && currentDrill && questStatus === 'playing')) && (
             <>
             <PracticeBattleArea 

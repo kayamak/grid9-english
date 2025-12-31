@@ -140,13 +140,19 @@ export function usePractice(
       setTimeLeft(session.getTimeLimit());
       setIsTimerActive(true);
     } else {
-      selectedDrills = selectedPattern 
-        ? allDrills.filter(d => d.sentencePattern === selectedPattern)
-        : allDrills;
-      setDrills(selectedDrills);
-      setQuestSession(null);
+      if (searchParams.get('mode') === 'free') {
+        selectedDrills = [];
+        setDrills([]);
+        setQuestSession(null);
+      } else {
+        selectedDrills = selectedPattern 
+          ? allDrills.filter(d => d.sentencePattern === selectedPattern)
+          : allDrills;
+        setDrills(selectedDrills);
+        setQuestSession(null);
+      }
     }
-  }, [isQuestMode, currentLevel, selectedPattern, allDrills]);
+  }, [isQuestMode, currentLevel, selectedPattern, allDrills, searchParams]);
 
   // Timer Logic
   useEffect(() => {
