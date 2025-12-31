@@ -14,7 +14,7 @@ const getDatabaseUrl = () => {
     return `${process.env.TURSO_DATABASE_URL}?authToken=${process.env.TURSO_AUTH_TOKEN}`;
   }
   
-  const url = process.env.DATABASE_URL!;
+  const url = process.env.LOCAL_DATABASE_URL!;
   if (url.startsWith('file:')) {
     const dbPath = url.replace('file:', '');
     const absolutePath = path.isAbsolute(dbPath)

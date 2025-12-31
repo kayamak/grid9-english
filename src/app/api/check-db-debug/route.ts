@@ -17,7 +17,7 @@ export async function GET() {
       svoSample,
       env: {
           APP_ENV: process.env.APP_ENV,
-          DATABASE_URL_SET: !!process.env.DATABASE_URL,
+          LOCAL_DATABASE_URL_SET: !!process.env.LOCAL_DATABASE_URL,
           TURSO_DATABASE_URL_SET: !!process.env.TURSO_DATABASE_URL,
       }
     });
