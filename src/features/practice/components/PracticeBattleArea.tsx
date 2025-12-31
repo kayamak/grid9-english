@@ -40,7 +40,7 @@ interface PracticeBattleAreaProps {
     isQuestMode: boolean;
     state: SentencePattern;
     currentDrillIndex: number;
-    heroAction: 'idle' | 'run-away' | 'defeated';
+    heroAction: 'idle' | 'run-away' | 'defeated' | 'attack';
     monsterState: 'idle' | 'hit' | 'defeated';
     battleImages: { subjectImg: string; monsterImg: string; itemImg: string | null; monsterScale: number };
     heroOpacity: number;
@@ -77,9 +77,10 @@ export function PracticeBattleArea({
                     animate={
                         heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
                         heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                        heroAction === 'attack' ? { x: [0, 60, 0] } :
                         { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
                     }
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: heroAction === 'attack' ? 0.3 : 0.5 }}
                     >
                     <Image 
                         src={battleImages.subjectImg} 
@@ -98,9 +99,10 @@ export function PracticeBattleArea({
                     animate={
                     heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
                     heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
+                    heroAction === 'attack' ? { x: [0, 60, 0] } :
                     { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
                     }
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: heroAction === 'attack' ? 0.3 : 0.5 }}
                 >
                     <Image 
                     src={battleImages.subjectImg} 

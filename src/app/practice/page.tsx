@@ -66,7 +66,14 @@ export function PracticeContent() {
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [questStatus, setQuestStatus] = useState<'playing' | 'result' | 'failed' | 'all-cleared'>('playing');
   const [questResults, setQuestResults] = useState<('correct' | 'wrong' | null)[]>(new Array(10).fill(null));
-  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated'>('idle');
+  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated' | 'attack'>('idle');
+
+  const triggerAttackAnim = useCallback(() => {
+    setHeroAction('attack');
+    setTimeout(() => {
+      setHeroAction((prev) => (prev === 'attack' ? 'idle' : prev));
+    }, 300);
+  }, []);
 
   const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
     verbType: 'do',
@@ -162,6 +169,7 @@ export function PracticeContent() {
   }, [isQuestMode, isTimerActive, timeLeft, questStatus, currentDrillIndex]);
 
   const handleVerbTypeChange = useCallback((verbType: VerbType) => {
+    triggerAttackAnim();
     setActiveTab(verbType);
     setState((prev) => {
       if (verbType === 'be') {
@@ -182,7 +190,7 @@ export function PracticeContent() {
         });
       }
     });
-  }, []);
+  }, [triggerAttackAnim]);
 
   const handleTabChange = useCallback((tab: VerbType | 'admin') => {
     if (tab === 'admin') {
@@ -193,12 +201,14 @@ export function PracticeContent() {
   }, [handleVerbTypeChange]);
 
   const handleVerbChange = useCallback((verb: Verb) => {
+    triggerAttackAnim();
     setState((prev) => SentencePattern.create({ ...prev.toObject(), verb }));
-  }, []);
+  }, [triggerAttackAnim]);
 
   const handleSentenceTypeChange = useCallback((sentenceType: SentenceType) => {
+    triggerAttackAnim();
     setState((prev) => prev.toggleSentenceType(sentenceType));
-  }, []);
+  }, [triggerAttackAnim]);
 
   const handleSubjectChange = useCallback((subject: Subject) => {
     setState((prev) => {
@@ -211,28 +221,33 @@ export function PracticeContent() {
   }, []);
 
   const handleTenseChange = useCallback((tense: Tense) => {
+    triggerAttackAnim();
     setState((prev) => prev.changeTense(tense));
-  }, []);
+  }, [triggerAttackAnim]);
 
   const handleFiveSentencePatternChange = useCallback((fiveSentencePattern: FiveSentencePattern) => {
+    triggerAttackAnim();
     setState((prev) => SentencePattern.create({
        ...prev.toObject(),
        fiveSentencePattern,
        verb: 'do'
     }));
-  }, []);
+  }, [triggerAttackAnim]);
 
   const handleObjectChange = useCallback((object: ObjectType) => {
+    triggerAttackAnim();
     setState((prev) => SentencePattern.create({ ...prev.toObject(), object }));
-  }, []);
+  }, [triggerAttackAnim]);
 
   const handleNumberFormChange = useCallback((numberForm: NumberForm) => {
+    triggerAttackAnim();
     setState((prev) => SentencePattern.create({ ...prev.toObject(), numberForm }));
-  }, []);
+  }, [triggerAttackAnim]);
 
   const handleBeComplementChange = useCallback((beComplement: BeComplement) => {
+    triggerAttackAnim();
     setState((prev) => SentencePattern.create({ ...prev.toObject(), beComplement }));
-  }, []);
+  }, [triggerAttackAnim]);
 
   const [sessionId, setSessionId] = useState('');
   const [showVictoryEffect, setShowVictoryEffect] = useState(false);
