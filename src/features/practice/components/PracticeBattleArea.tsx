@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { Timer } from 'lucide-react';
 import { SentencePattern } from '@/domain/practice/types';
 
 function DragonVEffect() {
@@ -45,6 +46,17 @@ interface PracticeBattleAreaProps {
     battleImages: { subjectImg: string; monsterImg: string; itemImg: string | null; monsterScale: number };
     heroOpacity: number;
     monsterOpacity: number;
+    // Props moved from PracticeQuestionArea
+    currentLevel: number;
+    currentDrill: { english: string; japanese: string };
+    timeLeft: number;
+    questResults: ('correct' | 'wrong' | null)[];
+    totalDrills: number;
+    correctCountInLevel: number;
+    isCorrect: boolean;
+    onNext: (isEscape?: boolean) => void;
+    showVictoryEffect: boolean;
+    displayEnglish?: boolean;
 }
 
 export function PracticeBattleArea({
@@ -55,9 +67,20 @@ export function PracticeBattleArea({
     monsterState,
     battleImages,
     heroOpacity,
-    monsterOpacity
+    monsterOpacity,
+    currentLevel,
+    currentDrill,
+    timeLeft,
+    questResults,
+    totalDrills,
+    correctCountInLevel,
+    isCorrect,
+    onNext,
+    showVictoryEffect,
+    displayEnglish = false
 }: PracticeBattleAreaProps) {
     const [attackDistance, setAttackDistance] = useState(150);
+    const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : 30 - currentLevel * 2);
 
     useEffect(() => {
         const updateDistance = () => {
@@ -75,17 +98,112 @@ export function PracticeBattleArea({
     }, []);
 
     return (
-        <div className="dq-battle-bg relative w-full h-[333px] md:h-[474px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl">
-            <div className="absolute top-2 left-2 z-20">
-                <Link href="/" className="dq-button !py-1 !px-3 text-xs bg-black/40 hover:bg-black/60 border-white/40">
-                &larr; もどる
-                </Link>
+        <div className="dq-battle-bg relative w-full h-[333px] md:h-[474px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl group">
+            {/* Timer Bar */}
+            {isQuestMode && (
+                <div className="absolute top-0 left-0 right-0 h-1 md:h-2 bg-gray-800 z-30">
+                     <div className="h-full bg-yellow-400 transition-all duration-1000" style={{ width: `${Math.max(0, (timeLeft / timeLimit) * 100)}%` }}></div>
+                </div>
+            )}
+
+            {/* Top UI Overlay */}
+            <div className="absolute top-0 left-0 right-0 p-2 md:p-4 z-30 flex flex-col gap-2 pointer-events-none">
+                <div className="flex justify-between items-start">
+                     {/* Top Left: Back & Level */}
+                     <div className="flex flex-col gap-2 pointer-events-auto">
+                        <Link href="/" className="dq-button !py-1 !px-2 md:!px-3 text-[10px] md:text-xs bg-black/40 hover:bg-black/60 border-white/40 self-start">
+                           &larr; もどる
+                        </Link>
+                        <div className="flex items-center gap-2 text-white bg-black/40 px-2 py-1 rounded border border-white/20">
+                             <span className="font-bold text-sm md:text-base">Lv{currentLevel}</span>
+                             <span className="text-[10px] md:text-xs opacity-70">{currentDrillIndex + 1}/{totalDrills}</span>
+                        </div>
+                     </div>
+
+                     {/* Top Right: Mode Label & Timer & Progress Dots */}
+                     <div className="flex flex-col items-end gap-1">
+                        <div className="text-white text-[10px] md:text-xs font-bold drop-shadow-md bg-black/30 px-2 py-1 rounded">
+                             {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
+                        </div>
+                        {isQuestMode && (
+                           <div className={`flex items-center gap-1 ${timeLeft <= 5 ? 'animate-pulse text-red-500' : 'text-white'}`}>
+                               <Timer className="w-3 h-3 md:w-4 md:h-4" />
+                               <span className="text-sm md:text-lg font-bold tabular-nums">{timeLeft}</span>
+                           </div>
+                        )}
+                        {/* Progress Dots */}
+                        {isQuestMode && (
+                            <div className="flex gap-1 mt-1">
+                                {questResults.map((result, i) => (
+                                    <div 
+                                    key={i} 
+                                    className={`w-2 h-2 md:w-3 md:h-3 border border-white/50 ${
+                                        result === 'correct' 
+                                        ? 'bg-green-500' 
+                                        : result === 'wrong' 
+                                            ? 'bg-red-500' 
+                                            : (i === currentDrillIndex ? 'bg-yellow-400 animate-pulse' : 'bg-transparent')
+                                    }`}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                     </div>
+                </div>
+                
+                {/* Center Question Text */}
+                <div className="absolute top-12 left-0 right-0 flex flex-col items-center justify-center p-2 pointer-events-none">
+                     <div className="bg-black/60 border border-white/20 p-3 md:p-4 rounded-lg text-center backdrop-blur-sm shadow-lg max-w-[90%] md:max-w-xl">
+                        {displayEnglish && (
+                            <h2 className="text-lg md:text-2xl font-normal text-yellow-200 mb-1 leading-tight">
+                                {currentDrill.english}
+                            </h2>
+                        )}
+                        <h2 className={`text-xl md:text-3xl font-normal leading-tight ${displayEnglish ? 'text-white/90' : 'text-white'}`}>
+                            {currentDrill.japanese}
+                        </h2>
+                        {displayEnglish && !isCorrect && (
+                            <p className="text-[10px] text-white/50 mt-1">えいご</p>
+                        )}
+                        {!displayEnglish && !isCorrect && (
+                            <p className="text-[10px] text-white/50 mt-1">えいごに　なおせ！</p>
+                        )}
+                     </div>
+
+                     {/* Victory Message */}
+                     {(isCorrect || (isQuestMode && timeLeft === 0)) && (
+                        <div className="mt-2 text-center">
+                            {isCorrect && (
+                             <p className="text-xs md:text-sm text-green-400 font-bold animate-bounce bg-black/80 px-4 py-1 border border-green-400 inline-block rounded">
+                                 モンスターを　たおした！
+                             </p>
+                            )}
+                        </div>
+                     )}
+                </div>
             </div>
-            <div className="absolute top-2 right-2 z-20 text-white font-bold drop-shadow-md pointer-events-none bg-black/30 px-2 py-1 rounded">
-                {isQuestMode ? 'ドリルクエスト' : 'ぶんしょうトレーニング'}
+
+            {/* Next / Escape Buttons (Bottom Center or Right) */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+                 {(isCorrect || (isQuestMode && timeLeft === 0)) ? (
+                    <button 
+                        onClick={() => onNext()}
+                        className="dq-button animate-bounce text-lg px-8 py-3 shadow-[0_0_15px_rgba(255,255,0,0.5)] border-yellow-400"
+                    >
+                        {isQuestMode && currentDrillIndex + 1 === totalDrills ? 'けっかへ' : 'つぎへすすむ'}
+                    </button>
+                 ) : (
+                    <button 
+                        onClick={() => onNext(true)}
+                        className="dq-button text-xs py-1 px-4 bg-gray-800 border-gray-500 opacity-80 hover:opacity-100"
+                    >
+                        にげる
+                    </button>
+                 )}
             </div>
+
             {/* Subject Area (Hero) */}
-            <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
+            <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-12 md:pb-16">
                 <div className="z-10 flex flex-col items-center">
                 {(state.subject === 'first_p' || state.subject === 'second_p' || state.subject === 'third_p') && (
                     <motion.div
@@ -136,7 +254,7 @@ export function PracticeBattleArea({
             </div>
 
             {/* Verb Area (Monster) */}
-            <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-4">
+            <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-12 md:pb-16">
                 <div className="relative" style={{ transformOrigin: 'bottom' }}>
                 {/* Monster Image Layer - Multiplied */}
                 <motion.div
@@ -214,7 +332,7 @@ export function PracticeBattleArea({
             </div>
 
             {/* Object Area (Item) */}
-            <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-4">
+            <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-12 md:pb-16">
                 {battleImages.itemImg && (
                 <motion.div
                     key={`item-${state.object}`}

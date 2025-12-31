@@ -24,7 +24,7 @@ import { getNounWords, getVerbWords, getAdjectiveWords, getAdverbWords } from '@
 import { useSearchParams } from 'next/navigation';
 
 import { PracticeBattleArea } from '@/features/practice/components/PracticeBattleArea';
-import { PracticeQuestionArea } from '@/features/practice/components/PracticeQuestionArea';
+
 import { PracticeAnswerArea } from '@/features/practice/components/PracticeAnswerArea';
 
 export function PracticeContent() {
@@ -420,16 +420,12 @@ export function PracticeContent() {
                 battleImages={battleImages}
                 heroOpacity={heroOpacity}
                 monsterOpacity={monsterOpacity}
-            />
-            <PracticeQuestionArea
-                isQuestMode={isQuestMode}
                 currentLevel={currentLevel}
-                currentDrillIndex={currentDrillIndex}
-                totalDrills={drills.length}
+                currentDrill={currentDrill}
                 timeLeft={timeLeft}
                 questResults={questResults}
+                totalDrills={drills.length}
                 correctCountInLevel={correctCountInLevel}
-                currentDrill={currentDrill}
                 isCorrect={isCorrect}
                 onNext={handleNextDrill}
                 showVictoryEffect={showVictoryEffect}
