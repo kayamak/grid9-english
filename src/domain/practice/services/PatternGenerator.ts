@@ -153,13 +153,11 @@ export class PatternGenerator {
     let complement = this.getPatternComplement(pattern, subject, object, numberForm);
 
     // Handle verb-specific adverbs for SV patterns
-    if (pattern === 'SV') {
+    const patternStr = (pattern as string).toUpperCase();
+    if (patternStr === 'SV' || patternStr === 'DO_SV') {
       const foundVerb = verbWords.find(v => v.value.toLowerCase() === verbBase.toLowerCase());
-      if (foundVerb) {
-        const adv = foundVerb.adverb;
-        if (adv) {
-          complement = adv;
-        }
+      if (foundVerb && foundVerb.adverb) {
+        complement = foundVerb.adverb;
       }
     }
 

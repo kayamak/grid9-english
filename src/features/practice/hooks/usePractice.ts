@@ -70,12 +70,7 @@ export function usePractice(
   const [questSession, setQuestSession] = useState<QuestSession | null>(null);
   
   // Data States
-  const [words, setWords] = useState<{
-    nouns: Word[];
-    verbs: Word[];
-    adjectives: Word[];
-    adverbs: Word[];
-  }>(() => {
+  const reconstructedWords = useMemo(() => {
     if (initialWords) {
       return {
         nouns: initialWords.nouns.map(w => Word.reconstruct(w)),
@@ -85,7 +80,15 @@ export function usePractice(
       };
     }
     return { nouns: [], verbs: [], adjectives: [], adverbs: [] };
-  });
+  }, [initialWords]);
+
+  const [words, setWords] = useState(reconstructedWords);
+
+  // Sync words if reconstructedWords changes
+  useEffect(() => {
+    setWords(reconstructedWords);
+  }, [reconstructedWords]);
+
   const [isLoadingWords, setIsLoadingWords] = useState(!initialWords);
   const [drills, setDrills] = useState<any[]>([]);
   const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
@@ -97,9 +100,15 @@ export function usePractice(
   // Initialization
   // In SSG mode, initialWords are always provided.
   useEffect(() => {
-    if (initialWords) return;
-    // Fallback for non-SSG if needed, though we aim for SSG.
-    setIsLoadingWords(false);
+    if (initialWords) {
+        setWords({
+          nouns: initialWords.nouns.map(w => Word.reconstruct(w)),
+          verbs: initialWords.verbs.map(w => Word.reconstruct(w)),
+          adjectives: initialWords.adjectives.map(w => Word.reconstruct(w)),
+          adverbs: initialWords.adverbs.map(w => Word.reconstruct(w)),
+        });
+        setIsLoadingWords(false);
+    }
   }, [initialWords]);
 
   useEffect(() => {
@@ -153,15 +162,15 @@ export function usePractice(
 
   // Generated Text and Correctness
   const generatedText = useMemo(() => 
-    PatternGenerator.generate(state, words.nouns, words.verbs), 
-    [state, words.nouns, words.verbs]
+    PatternGenerator.generate(state, reconstructedWords.nouns, reconstructedWords.verbs), 
+    [state, reconstructedWords.nouns, reconstructedWords.verbs]
   );
 
   const currentDrill = drills[currentDrillIndex];
   const isCorrect = useMemo(() => {
     if (!currentDrill) return false;
     return QuestSession.checkAnswer(generatedText, currentDrill.english);
-  }, [currentDrill, generatedText]);
+  }, [generatedText, currentDrill]);
 
   const [hasMarkedCorrect, setHasMarkedCorrect] = useState(false);
 

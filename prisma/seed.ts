@@ -62,6 +62,7 @@ async function main() {
       update: {
         pastForm: verb.pastForm,
         thirdPersonForm: verb.thirdPersonForm,
+        adverb: verb.adverb,
       },
       create: {
         value: verb.value,
@@ -70,6 +71,7 @@ async function main() {
         sortOrder: verb.sortOrder,
         pastForm: verb.pastForm,
         thirdPersonForm: verb.thirdPersonForm,
+        adverb: verb.adverb,
       },
     });
   }
