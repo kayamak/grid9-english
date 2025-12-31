@@ -63,9 +63,9 @@ async function main() {
     for (const statement of statements) {
         try {
             await prisma.$executeRawUnsafe(statement);
-        } catch (e: any) {
+        } catch (e: unknown) {
             // Ignore "Table already exists" or "Index already exists" errors to make this script idempotent-ish for initialization
-            if (e.message && (e.message.includes('already exists'))) {
+            if (e instanceof Error && e.message.includes('already exists')) {
                 // Formatting statement for log to avoid clutter
                 const summary = statement.split('\n')[0].substring(0, 50);
                 console.log(`Skipping (already exists): ${summary}...`);

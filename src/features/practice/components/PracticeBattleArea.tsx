@@ -73,10 +73,8 @@ export function PracticeBattleArea({
     timeLeft,
     questResults,
     totalDrills,
-    correctCountInLevel,
     isCorrect,
     onNext,
-    showVictoryEffect,
     displayEnglish = false
 }: PracticeBattleAreaProps) {
     const [attackDistance, setAttackDistance] = useState(150);

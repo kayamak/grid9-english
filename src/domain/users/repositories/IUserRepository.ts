@@ -7,4 +7,5 @@ export interface IUserRepository {
   findMany(ids: string[]): Promise<User[]>;
   findAll(): Promise<User[]>;
   delete(user: User): Promise<void>;
+  count(): Promise<number>;
 }

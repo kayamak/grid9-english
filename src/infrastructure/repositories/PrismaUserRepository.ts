@@ -51,4 +51,8 @@ export class PrismaUserRepository implements IUserRepository {
       where: { id: user.id },
     });
   }
+
+  async count(): Promise<number> {
+    return prisma.user.count();
+  }
 }

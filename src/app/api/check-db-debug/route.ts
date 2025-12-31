@@ -1,27 +1,22 @@
-import { prisma } from "@/infrastructure/prisma/client";
 import { NextResponse } from "next/server";
+import { PrismaSentenceDrillRepository } from "@/infrastructure/repositories/PrismaSentenceDrillRepository";
+import { PrismaUserRepository } from "@/infrastructure/repositories/PrismaUserRepository";
+import { DatabaseDiagnosticsService } from "@/domain/shared/services/DatabaseDiagnosticsService";
 
 export async function GET() {
   try {
-    const patterns = await prisma.sentenceDrill.groupBy({
-      by: ['sentencePattern'],
-    });
-    const drillsCount = await prisma.sentenceDrill.count();
-    const svoSample = await prisma.sentenceDrill.findFirst({
-        where: { sentencePattern: 'DO_SVO' }
-    });
+    // Instantiate dependencies
+    const sentenceDrillRepository = new PrismaSentenceDrillRepository();
+    // We need user repo just to satisfy the service constructor, or we could make it optional
+    // Ideally we should inject dependencies. Here we instantiate them.
+    const userRepository = new PrismaUserRepository();
     
-    return NextResponse.json({
-      patterns: patterns.map(p => p.sentencePattern),
-      drillsCount,
-      svoSample,
-      env: {
-          APP_ENV: process.env.APP_ENV,
-          LOCAL_DATABASE_URL_SET: !!process.env.LOCAL_DATABASE_URL,
-          TURSO_DATABASE_URL_SET: !!process.env.TURSO_DATABASE_URL,
-      }
-    });
+    const service = new DatabaseDiagnosticsService(sentenceDrillRepository, userRepository);
+    const status = await service.checkCombinedStatus();
+    
+    return NextResponse.json(status);
   } catch (error: unknown) {
     return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }
+

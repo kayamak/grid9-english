@@ -135,6 +135,6 @@ describe('PracticeContent', () => {
     expect(await screen.findByText(/Lv\s*\d+/)).toBeDefined();
     
     // Shows Timer
-    expect(screen.getByText(/びょう/)).toBeDefined();
+    expect(screen.getByText('30')).toBeDefined();
   });
 });

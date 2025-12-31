@@ -1,27 +1,18 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/infrastructure/prisma/client';
+import { PrismaUserRepository } from '@/infrastructure/repositories/PrismaUserRepository';
+import { PrismaSentenceDrillRepository } from '@/infrastructure/repositories/PrismaSentenceDrillRepository';
+import { DatabaseDiagnosticsService } from '@/domain/shared/services/DatabaseDiagnosticsService';
 
 export async function GET() {
   try {
-    // Test database connection by querying users
-    const users = await prisma.user.findMany({
-      take: 5,
-    });
+    const userRepository = new PrismaUserRepository();
+    // Not used for this specific method but required for service
+    const sentenceDrillRepository = new PrismaSentenceDrillRepository();
+    
+    const service = new DatabaseDiagnosticsService(sentenceDrillRepository, userRepository);
+    const result = await service.testConnection();
 
-    // Test database write capability
-    const testUser = await prisma.user.findFirst({
-      where: { id: 'test-connection' },
-    });
-
-    return NextResponse.json({
-      success: true,
-      message: 'Turso database connection successful!',
-      data: {
-        userCount: users.length,
-        testUserExists: !!testUser,
-        users: users.map(u => ({ id: u.id, name: u.name, type: u.type })),
-      },
-    });
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Database connection error:', error);
     return NextResponse.json(

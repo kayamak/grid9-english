@@ -48,4 +48,27 @@ export class PrismaSentenceDrillRepository implements ISentenceDrillRepository {
     });
     return data.map((d: { sentencePattern: string }) => d.sentencePattern);
   }
+
+  async save(drill: SentenceDrill): Promise<void> {
+    await prisma.sentenceDrill.upsert({
+      where: { id: drill.id },
+      update: {
+        sentencePattern: drill.sentencePattern,
+        english: drill.english,
+        japanese: drill.japanese,
+        sortOrder: drill.sortOrder,
+      },
+      create: {
+        id: drill.id,
+        sentencePattern: drill.sentencePattern,
+        english: drill.english,
+        japanese: drill.japanese,
+        sortOrder: drill.sortOrder,
+      },
+    });
+  }
+
+  async count(): Promise<number> {
+    return prisma.sentenceDrill.count();
+  }
 }
