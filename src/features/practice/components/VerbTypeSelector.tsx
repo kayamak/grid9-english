@@ -18,7 +18,7 @@ export const VerbTypeSelector: React.FC<VerbTypeSelectorProps> = ({ activeTab, o
             : 'bg-[#000840] border-white/20 text-white/40 hover:text-white hover:border-white/40'
         }`}
       >
-        Do動詞
+        Doどうし
       </button>
       <button
         onClick={() => onChange('be')}
@@ -28,7 +28,7 @@ export const VerbTypeSelector: React.FC<VerbTypeSelectorProps> = ({ activeTab, o
             : 'bg-[#000840] border-white/20 text-white/40 hover:text-white hover:border-white/40'
         }`}
       >
-        Be動詞
+        Beどうし
       </button>
       {isAdmin && (
         <button

@@ -59,6 +59,8 @@ describe('MainMenu', () => {
     
     // Items should appear
     expect(screen.getByText('主語+動詞(DO)')).toBeDefined(); // Label for DO_SV
+    expect(screen.getByText('主語+動詞(DO)+目的語')).toBeDefined(); // Label for DO_SVO
+    expect(screen.getByText('主語+BE動詞+補語')).toBeDefined(); // Label for BE_SVC
   });
 
   it('switches to "どうぐ" category and shows its items when clicked', () => {
