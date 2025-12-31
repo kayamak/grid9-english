@@ -4,16 +4,18 @@
 sequenceDiagram
     actor User
     participant Page as PracticePage
+    participant Hook as usePractice (Hook)
     participant UseCase as GeneratePatternUseCase
     participant Service as PatternGenerator (Domain Service)
 
     User->>Page: Change Pattern Options (Verb, Tense, person, etc.)
-    Page->>Page: Update state (SentencePattern)
+    Page->>Hook: handleXXXChange()
+    Hook->>Hook: setState(newPattern)
     
-    note right of Page: Automatic re-render on state change
+    Note right of Hook: useMemo handles automatic generation
     
-    Page->>UseCase: execute(state, nounWords, verbWords)
-    UseCase->>Service: generate(pattern, nounWords, verbWords)
+    Hook->>UseCase: execute(state, nouns, verbs)
+    UseCase->>Service: generate(pattern, nouns, verbs)
     
     Service->>Service: Determine Verb Type (be / do)
     
@@ -32,7 +34,8 @@ sequenceDiagram
     
     Service->>Service: Final formatting (Capitalize + Punctuation)
     Service-->>UseCase: generatedText (string)
-    UseCase-->>Page: generatedText
+    UseCase-->>Hook: generatedText (string)
     
+    Hook-->>Page: Return generatedText state
     Page->>Page: Render text to UI
 ```

@@ -4,41 +4,53 @@
 sequenceDiagram
     actor User
     participant Page as PracticePage
+    participant Hook as usePractice (Hook)
+    participant Session as QuestSession (Domain)
     participant UC as GeneratePatternUseCase
-    participant Battle as PracticeBattleArea
-    participant Timer as Timer (useEffect)
 
     User->>Page: Change Dropdown Selection (Subject/Verb/etc.)
-    Page->>Page: Update state (SentencePattern)
+    Page->>Hook: handleXXXChange()
+    Hook->>Hook: Update state (SentencePattern)
     
-    Page->>UC: execute(state, words)
-    UC-->>Page: generatedText
+    Hook->>UC: execute(state, words)
+    UC-->>Hook: generatedText
 
-    Note over Page: Logic: isCorrect = (generatedText == currentDrill.english)
+    Note over Hook: Logic: isCorrect = QuestSession.checkAnswer(generatedText, currentDrill.english)
 
     alt isCorrect
-        Page->>Page: setHasMarkedCorrect(true)
-        Page->>Battle: triggerVictoryEffect()
-        Battle->>Battle: Screen Flash / Shake
-        Battle->>Battle: setMonsterState('hit' -> 'defeated')
+        Hook->>Hook: useEffect [isCorrect]
         
         opt isQuestMode
-            Page->>Page: setCorrectCountInLevel(prev + 1)
-            Page->>Page: setQuestResults(currentindex, 'correct')
-            Page->>Page: setIsTimerActive(false)
+            Hook->>Session: submitAnswer(true)
+            Session-->>Hook: new questSession(status: playing, results: [...correct])
+            Hook->>Hook: setIsTimerActive(false)
         end
+
+        Hook->>Hook: triggerVictoryEffect()
+        Hook-->>Page: Update UI states (showVictoryEffect, monsterState)
+        Page->>Page: Screen Flash / Shake / Victory Effect
     end
 
     Note over User, Page: User clicks "Next" or automatic transition
 
     User->>Page: handleNextDrill()
-    Page->>Page: setCurrentDrillIndex(prev + 1)
+    Page->>Hook: handleNextDrill()
     
-    opt isQuestMode
-        Page->>Page: Reset Timer
-        Page->>Page: Check if Quest Finished (10 questions)
-        alt Finish
-            Page->>Page: setQuestStatus('result' or 'failed')
+    alt isQuestMode
+        Hook->>Session: nextDrill()
+        Session-->>Hook: new questSession(currentIndex + 1, status: playing/result/failed)
+        
+        alt status == 'playing'
+            Hook->>Hook: setCurrentDrillIndex(session.currentIndex)
+            Hook->>Hook: setTimeLeft(session.getTimeLimit())
+            Hook->>Hook: setIsTimerActive(true)
+        else status == 'result' or 'failed'
+            Hook->>Hook: Show Level Result Screen
         end
+    else !isQuestMode
+        Hook->>Hook: setCurrentDrillIndex((prev + 1) % drills.length)
     end
+
+    Hook-->>Page: Return updated states
+    Page->>Page: Refresh UI
 ```

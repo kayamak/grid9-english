@@ -3,41 +3,45 @@
 ```mermaid
 sequenceDiagram
     participant Page as PracticePage
+    participant Hook as usePractice (Hook)
     participant Action as ServerActions (words.ts)
     participant Repo as PrismaWordRepository
     participant DB as Database (via Prisma)
 
-    Page->>Page: Component Mount (useEffect)
+    Page->>Hook: Component Mount
+    Hook->>Hook: useEffect (Fetch Data)
     
     par Fetch Nouns
-        Page->>Action: getNounWords()
+        Hook->>Action: getNounWords()
         Action->>Repo: getNounWords()
         Repo->>DB: prisma.nounWord.findMany()
         DB-->>Repo: noun records
         Repo-->>Action: Word[]
-        Action-->>Page: Word[] (as plain objects)
+        Action-->>Hook: Word[] (as plain objects)
     and Fetch Verbs
-        Page->>Action: getVerbWords()
+        Hook->>Action: getVerbWords()
         Action->>Repo: getVerbWords()
         Repo->>DB: prisma.verbWord.findMany()
         DB-->>Repo: verb records
         Repo-->>Action: Word[]
-        Action-->>Page: Word[] (as plain objects)
+        Action-->>Hook: Word[] (as plain objects)
     and Fetch Adjectives
-        Page->>Action: getAdjectiveWords()
+        Hook->>Action: getAdjectiveWords()
         Action->>Repo: getAdjectiveWords()
         Repo->>DB: prisma.adjectiveWord.findMany()
         DB-->>Repo: adjective records
         Repo-->>Action: Word[]
-        Action-->>Page: Word[] (as plain objects)
+        Action-->>Hook: Word[] (as plain objects)
     and Fetch Adverbs
-        Page->>Action: getAdverbWords()
+        Hook->>Action: getAdverbWords()
         Action->>Repo: getAdverbWords()
         Repo->>DB: prisma.adverbWord.findMany()
         DB-->>Repo: adverb records
         Repo-->>Action: Word[]
-        Action-->>Page: Word[] (as plain objects)
+        Action-->>Hook: Word[] (as plain objects)
     end
 
+    Hook->>Hook: setWords(...)
+    Hook-->>Page: Return words state
     Page->>Page: Refresh UI with loaded words
 ```
