@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { PracticeContent } from './page';
+import { PracticeContainer as PracticeContent } from '@/features/practice/components/PracticeContainer';
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 
@@ -36,10 +36,10 @@ vi.mock('@/infrastructure/repositories/ApiWordRepository', () => {
 
 vi.mock('@/features/practice/actions/drills', () => ({
   getSentenceDrills: vi.fn().mockResolvedValue([
-    { id: 'd1', english: 'I play.', japanese: 'わたしはあそぶ', sentencePattern: 'SV', sortOrder: 1 }
+    { id: 'd1', english: 'I play.', japanese: 'わたしはあそぶ', sentencePattern: 'DO_SV', sortOrder: 1 }
   ]),
   getDrillQuestQuestions: vi.fn().mockResolvedValue([
-    { id: 'q1', english: 'I play.', japanese: 'わたしはあそぶ', sentencePattern: 'SV', sortOrder: 1 }
+    { id: 'q1', english: 'I play.', japanese: 'わたしはあそぶ', sentencePattern: 'DO_SV', sortOrder: 1 }
   ]),
 }));
 
@@ -79,12 +79,23 @@ describe('PracticeContent', () => {
     }) as unknown as typeof fetch;
   });
 
+  const defaultInitialWords = {
+    nouns: [],
+    verbs: [],
+    adjectives: [],
+    adverbs: [],
+  };
+
+  const defaultAllDrills = [
+    { id: 'd1', english: 'I play.', japanese: 'わたしはあそぶ', sentencePattern: 'DO_SV', sortOrder: 1 }
+  ];
+
   afterEach(() => {
       vi.restoreAllMocks();
   });
 
   it('renders the title correctly', async () => {
-    render(<PracticeContent />);
+    render(<PracticeContent initialWords={defaultInitialWords} allDrills={defaultAllDrills} />);
     expect(await screen.findByText('ぶんしょうトレーニング')).toBeDefined();
   });
 
@@ -93,30 +104,27 @@ describe('PracticeContent', () => {
       if (key === 'mode') return 'quest';
       return null;
     });
-    render(<PracticeContent />);
+    render(<PracticeContent initialWords={defaultInitialWords} allDrills={defaultAllDrills} />);
     expect(await screen.findByText('ドリルクエスト')).toBeDefined();
   });
 
   it('renders NineKeyPanel in normal mode', async () => {
-    render(<PracticeContent />);
+    render(<PracticeContent initialWords={defaultInitialWords} allDrills={defaultAllDrills} />);
     expect(await screen.findByText('しゅるい')).toBeDefined(); 
   });
 
   it('updates generated sentence when state changes', async () => {
-    render(<PracticeContent />);
+    render(<PracticeContent initialWords={defaultInitialWords} allDrills={defaultAllDrills} />);
     
-    // We expect some sentence structure. "I ... ."
-    // If "I live." is generated, accept it but we prefer "I do".
-    // Check for "I " start.
-    expect(await screen.findByText(/I \w+/i)).toBeDefined();
+    // We expect "I do." initially
+    expect(await screen.findByText('I do.')).toBeDefined();
 
     // Find the subject '1' button and click it to rotate to plural 'we'
-    // '1' button might be '1' inside a button.
     const subjectBtn = screen.getByText('1');
     fireEvent.click(subjectBtn);
     
-    // Expect "We ..."
-    expect(await screen.findByText(/We \w+/i)).toBeDefined();
+    // Expect "We do."
+    expect(await screen.findByText('We do.')).toBeDefined();
   });
 
   it('renders Drill Quest elements when in quest mode', async () => {
@@ -128,7 +136,7 @@ describe('PracticeContent', () => {
       },
     });
     
-    render(<PracticeContent />);
+    render(<PracticeContent initialWords={defaultInitialWords} allDrills={defaultAllDrills} />);
 
     // Shows Level info - Lv1 might be split or together. Use strict regex or partial.
     // HTML: Lv1
