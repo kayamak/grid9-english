@@ -71,6 +71,10 @@ export function PracticeContent() {
   const triggerAttackAnim = useCallback(() => {
     setHeroAction('attack');
     setTimeout(() => {
+      setMonsterState('damaged');
+      setTimeout(() => setMonsterState('idle'), 300);
+    }, 150);
+    setTimeout(() => {
       setHeroAction((prev) => (prev === 'attack' ? 'idle' : prev));
     }, 300);
   }, []);
@@ -253,7 +257,7 @@ export function PracticeContent() {
   const [showVictoryEffect, setShowVictoryEffect] = useState(false);
   const [isScreenShaking, setIsScreenShaking] = useState(false);
   const [isScreenFlashing, setIsScreenFlashing] = useState(false);
-  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated'>('idle');
+  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated' | 'damaged'>('idle');
 
   useEffect(() => {
     setSessionId(Math.random().toString(36).substr(2, 9).toUpperCase());
