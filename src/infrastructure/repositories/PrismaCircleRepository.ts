@@ -34,7 +34,7 @@ export class PrismaCircleRepository implements ICircleRepository {
 
     if (!data) return null;
 
-    const memberIds = data.members.map(m => m.id);
+    const memberIds = data.members.map((m: { id: string }) => m.id);
     return Circle.reconstruct(data.id, data.name, data.ownerId, memberIds);
   }
 
@@ -48,7 +48,7 @@ export class PrismaCircleRepository implements ICircleRepository {
 
     if (!data) return null;
 
-    const memberIds = data.members.map(m => m.id);
+    const memberIds = data.members.map((m: { id: string }) => m.id);
     return Circle.reconstruct(data.id, data.name, data.ownerId, memberIds);
   }
 
@@ -56,7 +56,7 @@ export class PrismaCircleRepository implements ICircleRepository {
     const data = await prisma.circle.findMany({
       include: { members: true }
     });
-    return data.map(d => Circle.reconstruct(d.id, d.name, d.ownerId, d.members.map(m => m.id)));
+    return data.map(d => Circle.reconstruct(d.id, d.name, d.ownerId, d.members.map((m: { id: string }) => m.id)));
   }
 
   async delete(circle: Circle): Promise<void> {
