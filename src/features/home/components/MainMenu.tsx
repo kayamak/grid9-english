@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const MOTIVATIONAL_MESSAGES = [
@@ -114,6 +114,17 @@ export function MainMenu() {
   const [bottomMessage, setBottomMessage] = useState<string>("ぼうけんの　じゅんびは　いいかな？");
   const [opIndex, setOpIndex] = useState(0);
   const router = useRouter();
+  const [currentLevel, setCurrentLevel] = useState(1);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const match = document.cookie.match(/(^| )playerLevel=([^;]+)/);
+      if (match) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+         setCurrentLevel(parseInt(match[2]));
+      }
+    }
+  }, []);
 
   const updateMotivation = useCallback(() => {
     const randomMsg = MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)];
@@ -163,48 +174,60 @@ export function MainMenu() {
   return (
     <div className="flex flex-col gap-6 w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[320px]">
-        {/* Tier 1 & 2: Menu Area */}
-        <section className="dq-window md:col-span-1 h-fit flex flex-col">
-          <div className="flex items-center justify-between border-b border-white/20 pb-2 mb-4">
-            <h2 className="text-xl text-yellow-400">
-              {selectedCategory ? selectedCategory : "コマンド"}
-            </h2>
-            {selectedCategory && (
-              <button 
-                onClick={handleBack}
-                className="text-xs text-white/50 hover:text-white transition-colors cursor-pointer"
-              >
-                [もどる]
-              </button>
-            )}
-          </div>
-          
-          <nav className="flex flex-col gap-1">
-            {!selectedCategory ? (
-              Object.keys(MENU_DATA).map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => handleCategoryClick(cat)}
-                  className="dq-menu-item text-xl w-full text-left"
+        {/* Tier 1: Level & Menu Area */}
+        <div className="md:col-span-1 flex flex-col gap-4">
+          {/* Level Display */}
+          <section className="dq-window p-4 flex flex-col items-center justify-center border-yellow-400/50 bg-black/40">
+            <span className="text-sm text-white/60 mb-1">現在のレベル</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-xl text-yellow-400">Lv.</span>
+              <span className="text-5xl font-bold text-yellow-400 shadow-yellow-400/20 drop-shadow-lg">{currentLevel}</span>
+            </div>
+          </section>
+
+          {/* Menu Area */}
+          <section className="dq-window h-full flex flex-col flex-1">
+            <div className="flex items-center justify-between border-b border-white/20 pb-2 mb-4">
+              <h2 className="text-xl text-yellow-400">
+                {selectedCategory ? selectedCategory : "コマンド"}
+              </h2>
+              {selectedCategory && (
+                <button 
+                  onClick={handleBack}
+                  className="text-xs text-white/50 hover:text-white transition-colors cursor-pointer"
                 >
-                  {cat}
+                  [もどる]
                 </button>
-              ))
-            ) : (
-              MENU_DATA[selectedCategory].items.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => handleActionClick(item.href)}
-                  onMouseEnter={() => handleActionHover(item.label)}
-                  onMouseLeave={() => handleActionHover(null)}
-                  className="dq-menu-item text-xl w-full text-left"
-                >
-                  {item.label}
-                </button>
-              ))
-            )}
-          </nav>
-        </section>
+              )}
+            </div>
+            
+            <nav className="flex flex-col gap-1">
+              {!selectedCategory ? (
+                Object.keys(MENU_DATA).map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => handleCategoryClick(cat)}
+                    className="dq-menu-item text-xl w-full text-left"
+                  >
+                    {cat}
+                  </button>
+                ))
+              ) : (
+                MENU_DATA[selectedCategory].items.map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => handleActionClick(item.href)}
+                    onMouseEnter={() => handleActionHover(item.label)}
+                    onMouseLeave={() => handleActionHover(null)}
+                    className="dq-menu-item text-xl w-full text-left"
+                  >
+                    {item.label}
+                  </button>
+                ))
+              )}
+            </nav>
+          </section>
+        </div>
 
         {/* Description Area */}
         <section 
