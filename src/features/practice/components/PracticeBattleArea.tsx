@@ -75,7 +75,7 @@ export function PracticeBattleArea({
     }, []);
 
     return (
-        <div className="dq-battle-bg relative w-full h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl">
+        <div className="dq-battle-bg relative w-full h-[333px] md:h-[474px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl">
             <div className="absolute top-2 left-2 z-20">
                 <Link href="/" className="dq-button !py-1 !px-3 text-xs bg-black/40 hover:bg-black/60 border-white/40">
                 &larr; もどる
