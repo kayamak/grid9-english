@@ -102,7 +102,7 @@ export function PracticeBattleArea({
     return (
         <div 
             className="dq-battle-bg relative w-full h-[333px] md:h-[474px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl group"
-            style={{ backgroundImage: `url(${getAssetPath('/assets/backgrounds/battle_bg.jpeg')})` }}
+            style={{ backgroundImage: `url(${getAssetPath(isQuestMode ? '/assets/backgrounds/battle_bg.jpeg' : (isFreeMode ? '/assets/backgrounds/dungeon.jpeg' : '/assets/backgrounds/stadium_bg.jpeg'))})` }}
         >
             {/* Timer Bar */}
             {isQuestMode && (
