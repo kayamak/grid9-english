@@ -66,6 +66,7 @@ export function PracticeAnswerArea({
     handleNumberFormChange,
     handleBeComplementChange,
     nounWords,
+    verbWords,
     adjectiveWords,
     adverbWords,
     isLoadingNouns,
@@ -169,6 +170,7 @@ export function PracticeAnswerArea({
                           verbType={state.verbType}
                           selectedVerb={state.verb}
                           onChange={handleVerbChange}
+                          verbWords={verbWords}
                           fiveSentencePattern={state.fiveSentencePattern}
                           disabled={state.verbType === 'be'}
                         />

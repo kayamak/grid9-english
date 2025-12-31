@@ -1,4 +1,5 @@
-'use server'
+// Removed 'use server' for SSG build
+
 
 import { CircleService } from './CircleService';
 import { revalidatePath } from 'next/cache';

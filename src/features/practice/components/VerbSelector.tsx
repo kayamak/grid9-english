@@ -1,53 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { Verb, VerbType, FiveSentencePattern } from '@/domain/practice/types';
-import { getVerbWords } from '@/features/practice/actions/words';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Verb, VerbType, FiveSentencePattern, Word } from '@/domain/practice/types';
 
 interface VerbSelectorProps {
   verbType: VerbType;
   selectedVerb: Verb;
   onChange: (verb: Verb) => void;
+  verbWords: Word[];
   fiveSentencePattern?: FiveSentencePattern;
   disabled?: boolean;
 }
 
 export const VerbSelector: React.FC<VerbSelectorProps> = ({ 
-  verbType, 
-  selectedVerb, 
-  onChange, 
+  verbType,
+  selectedVerb,
+  onChange,
+  verbWords,
   fiveSentencePattern, 
   disabled 
 }) => {
-  const [options, setOptions] = useState<{ value: Verb; label: string }[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchVerbWords = async () => {
-      setLoading(true);
-      setError(null);
+  const options = useMemo(() => {
+    let filtered = verbWords.filter(vw => {
+      // If be, technically we don't show selector but let's be safe
+      if (verbType === 'be') return vw.value === 'be';
       
-      try {
-        const verbWords = await getVerbWords(verbType, fiveSentencePattern);
-        
-        const transformedOptions = verbWords
-          .map(vw => ({
-            value: vw.value as Verb,
-            label: vw.label,
-          }))
-          .sort((a, b) => a.value.localeCompare(b.value));
-        
-        setOptions(transformedOptions);
-      } catch (err) {
-        console.error('Error fetching verb words:', err);
-        setError('動詞データの読み込みに失敗しました');
-        setOptions([]);
-      } finally {
-        setLoading(false);
+      // For 'do' verbs, ignore 'be'
+      if (vw.value === 'be') return false;
+      
+      if (fiveSentencePattern) {
+        return (vw as any).sentencePattern === fiveSentencePattern;
       }
-    };
+      return true;
+    });
 
-    fetchVerbWords();
-  }, [verbType, fiveSentencePattern]); // Only re-fetch when criteria change
+    return filtered.map(vw => ({
+      value: vw.value as Verb,
+      label: vw.label,
+    })).sort((a, b) => a.value.localeCompare(b.value));
+  }, [verbWords, verbType, fiveSentencePattern]);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Auto-select first option if current selection is not in filtered list
   useEffect(() => {

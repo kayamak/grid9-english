@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = "force-static";
 import { PrismaUserRepository } from '@/infrastructure/repositories/PrismaUserRepository';
 import { PrismaSentenceDrillRepository } from '@/infrastructure/repositories/PrismaSentenceDrillRepository';
 import { DatabaseDiagnosticsService } from '@/domain/shared/services/DatabaseDiagnosticsService';

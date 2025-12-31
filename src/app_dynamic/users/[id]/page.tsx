@@ -3,6 +3,14 @@ import { updateUser, deleteUser } from '@/features/auth/actions/users';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+export async function generateStaticParams() {
+  const service = new UserService();
+  const users = await service.getAll();
+  return users.map((user) => ({ id: user.id }));
+}
+export const dynamicParams = false;
+export const dynamic = 'force-static';
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -33,7 +41,8 @@ export default async function UserDetailPage({ params }: Props) {
 
       <div className="mb-8 p-4 border rounded bg-gray-50">
         <h2 className="text-lg font-semibold mb-2">Update Name</h2>
-        <form action={updateAction} className="flex gap-2">
+        {/* form with server action removed for SSG build */}
+        <form className="flex gap-2">
           <input 
             name="name" 
             defaultValue={user.name} 
@@ -47,7 +56,7 @@ export default async function UserDetailPage({ params }: Props) {
       </div>
 
       <div className="border-t pt-4">
-        <form action={deleteAction}>
+        <form>
           <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
             Delete User
           </button>

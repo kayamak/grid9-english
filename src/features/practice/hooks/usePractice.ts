@@ -3,11 +3,12 @@ import { useSearchParams } from 'next/navigation';
 import { QuestSession, QuestStatus, AnswerResult } from '@/domain/practice/entities/QuestSession';
 import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
 import { SentencePattern, Word, VerbType, SentenceType, Subject, Tense, FiveSentencePattern, Verb, Object as ObjectType, NumberForm, BeComplement, WordProps } from '@/domain/practice/types';
-import { getNounWords, getVerbWords, getAdjectiveWords, getAdverbWords } from '@/features/practice/actions/words';
-import { getSentenceDrills, getDrillQuestQuestions } from '@/features/practice/actions/drills';
-import { GeneratePatternUseCase } from '@/features/practice/actions/GeneratePatternUseCase';
+import { PatternGenerator } from '@/domain/practice/services/PatternGenerator';
 
-export function usePractice() {
+export function usePractice(
+  initialWords?: { nouns: WordProps[]; verbs: WordProps[]; adjectives: WordProps[]; adverbs: WordProps[] },
+  allDrills: any[] = []
+) {
   const searchParams = useSearchParams();
   const isQuestMode = searchParams.get('mode') === 'quest';
   const selectedPattern = searchParams.get('pattern') || undefined;
@@ -74,8 +75,18 @@ export function usePractice() {
     verbs: Word[];
     adjectives: Word[];
     adverbs: Word[];
-  }>({ nouns: [], verbs: [], adjectives: [], adverbs: [] });
-  const [isLoadingWords, setIsLoadingWords] = useState(true);
+  }>(() => {
+    if (initialWords) {
+      return {
+        nouns: initialWords.nouns.map(w => Word.reconstruct(w)),
+        verbs: initialWords.verbs.map(w => Word.reconstruct(w)),
+        adjectives: initialWords.adjectives.map(w => Word.reconstruct(w)),
+        adverbs: initialWords.adverbs.map(w => Word.reconstruct(w)),
+      };
+    }
+    return { nouns: [], verbs: [], adjectives: [], adverbs: [] };
+  });
+  const [isLoadingWords, setIsLoadingWords] = useState(!initialWords);
   const [drills, setDrills] = useState<any[]>([]);
   const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
 
@@ -84,50 +95,48 @@ export function usePractice() {
   const [isTimerActive, setIsTimerActive] = useState(false);
 
   // Initialization
+  // In SSG mode, initialWords are always provided.
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [nounsData, verbsData, adjectivesData, adverbsData] = await Promise.all([
-          getNounWords(),
-          getVerbWords(),
-          getAdjectiveWords(),
-          getAdverbWords(),
-        ]);
+    if (initialWords) return;
+    // Fallback for non-SSG if needed, though we aim for SSG.
+    setIsLoadingWords(false);
+  }, [initialWords]);
 
-        setWords({
-          nouns: nounsData.map((w: WordProps) => Word.reconstruct(w)),
-          verbs: verbsData.map((w: WordProps) => Word.reconstruct(w)),
-          adjectives: adjectivesData.map((w: WordProps) => Word.reconstruct(w)),
-          adverbs: adverbsData.map((w: WordProps) => Word.reconstruct(w)),
-        });
-      } catch (error) {
-        console.error('Error fetching words:', error);
-      } finally {
-        setIsLoadingWords(false);
+  useEffect(() => {
+    let selectedDrills = [];
+    if (isQuestMode) {
+      let pattern = '';
+      let filtered = [];
+      if (currentLevel === 10) {
+        filtered = allDrills;
+      } else {
+        if ([1, 4, 7].includes(currentLevel)) pattern = 'DO_SV';
+        else if ([2, 5, 8].includes(currentLevel)) pattern = 'DO_SVO';
+        else if ([3, 6, 9].includes(currentLevel)) pattern = 'BE_SVC';
+        filtered = allDrills.filter(d => d.sentencePattern === pattern);
       }
-    };
-    fetchData();
-  }, []);
 
-  useEffect(() => {
-    const fetchDrills = async () => {
-        if (isQuestMode) {
-          const data = await getDrillQuestQuestions(currentLevel);
-          const drillEntities = data.map((d: any) => SentenceDrill.reconstruct(d));
-          const session = QuestSession.start(currentLevel, drillEntities);
-          setQuestSession(session);
-          setDrills(data);
-          setCurrentDrillIndex(0);
-          setTimeLeft(session.getTimeLimit());
-          setIsTimerActive(true);
-        } else {
-          const data = await getSentenceDrills(selectedPattern);
-          setDrills(data);
-          setQuestSession(null);
-        }
-    };
-    fetchDrills();
-  }, [isQuestMode, currentLevel, selectedPattern]);
+      if (currentLevel <= 3) {
+        selectedDrills = filtered.slice(0, 10);
+      } else {
+        selectedDrills = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
+      }
+
+      const drillEntities = selectedDrills.map((d: any) => SentenceDrill.reconstruct(d));
+      const session = QuestSession.start(currentLevel, drillEntities);
+      setQuestSession(session);
+      setDrills(selectedDrills);
+      setCurrentDrillIndex(0);
+      setTimeLeft(session.getTimeLimit());
+      setIsTimerActive(true);
+    } else {
+      selectedDrills = selectedPattern 
+        ? allDrills.filter(d => d.sentencePattern === selectedPattern)
+        : allDrills;
+      setDrills(selectedDrills);
+      setQuestSession(null);
+    }
+  }, [isQuestMode, currentLevel, selectedPattern, allDrills]);
 
   // Timer Logic
   useEffect(() => {
@@ -144,7 +153,7 @@ export function usePractice() {
 
   // Generated Text and Correctness
   const generatedText = useMemo(() => 
-    new GeneratePatternUseCase().execute(state, words.nouns, words.verbs), 
+    PatternGenerator.generate(state, words.nouns, words.verbs), 
     [state, words.nouns, words.verbs]
   );
 
@@ -220,12 +229,29 @@ export function usePractice() {
     setHeroAction('idle');
   };
 
-  const handleRetryLevel = async () => {
-    const data = await getDrillQuestQuestions(currentLevel);
-    const drillEntities = data.map((d: any) => SentenceDrill.reconstruct(d));
+  const handleRetryLevel = () => {
+    // Logic is handled by the useEffect watching currentLevel and allDrills
+    // Just resetting the current drill index if needed, but the effect will re-run if we force it.
+    // To force a retry with same level, we might need a reset trigger.
+    // For now, let's just re-randomize if level > 3
+    const filtered = currentLevel === 10 
+      ? allDrills 
+      : allDrills.filter(d => {
+          let p = '';
+          if ([1, 4, 7].includes(currentLevel)) p = 'DO_SV';
+          else if ([2, 5, 8].includes(currentLevel)) p = 'DO_SVO';
+          else if ([3, 6, 9].includes(currentLevel)) p = 'BE_SVC';
+          return d.sentencePattern === p;
+        });
+
+    const selectedDrills = currentLevel <= 3 
+      ? filtered.slice(0, 10)
+      : [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
+
+    const drillEntities = selectedDrills.map((d: any) => SentenceDrill.reconstruct(d));
     const session = QuestSession.start(currentLevel, drillEntities);
     setQuestSession(session);
-    setDrills(data);
+    setDrills(selectedDrills);
     setCurrentDrillIndex(0);
     setTimeLeft(session.getTimeLimit());
     setIsTimerActive(true);

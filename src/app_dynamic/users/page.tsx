@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 
 // Force dynamic because we fetch directly from DB/Service
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-static';
 
 export default async function UsersPage() {
   const service = new UserService();

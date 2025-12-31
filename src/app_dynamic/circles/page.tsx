@@ -3,7 +3,7 @@ import { UserService } from '@/features/auth/actions/UserService';
 import { createCircle } from '@/features/circles/actions/circles';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-static';
 
 export default async function CirclesPage() {
   const circleService = new CircleService();

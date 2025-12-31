@@ -1,4 +1,6 @@
-'use server'
+// Removed 'use server' for SSG
+
+
 
 import { PrismaWordRepository } from "@/infrastructure/repositories/PrismaWordRepository";
 

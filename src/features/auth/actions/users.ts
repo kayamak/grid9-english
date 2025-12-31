@@ -1,4 +1,5 @@
-'use server'
+// Removed 'use server' for SSG build
+
 
 import { UserService } from './UserService';
 import { revalidatePath } from 'next/cache';

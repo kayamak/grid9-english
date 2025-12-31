@@ -4,6 +4,14 @@ import { updateCircle, deleteCircle, joinCircle } from '@/features/circles/actio
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+export async function generateStaticParams() {
+  const circleService = new CircleService();
+  const circles = await circleService.getAll();
+  return circles.map((circle) => ({ id: circle.id }));
+}
+export const dynamicParams = false;
+export const dynamic = 'force-static';
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -71,7 +79,8 @@ export default async function CircleDetailPage({ params }: Props) {
              {candidates.length === 0 ? (
                <p className="text-gray-500">No candidates available.</p>
              ) : (
-               <form action={joinAction} className="flex gap-2">
+               <form className="flex gap-2">
+                 {/* form with server action removed for SSG build */}
                  <select name="userId" className="border p-2 rounded flex-1">
                    {candidates.map(u => (
                      <option key={u.id} value={u.id}>{u.name}</option>
@@ -88,7 +97,8 @@ export default async function CircleDetailPage({ params }: Props) {
         <div>
           <div className="mb-6 p-4 border rounded bg-gray-50">
             <h3 className="font-semibold mb-2">Update Name</h3>
-            <form action={updateAction} className="flex gap-2">
+            {/* form with server action removed for SSG build */}
+            <form className="flex gap-2">
               <input 
                 name="name" 
                 defaultValue={circle.name} 
@@ -102,7 +112,7 @@ export default async function CircleDetailPage({ params }: Props) {
           </div>
 
           <div className="border-t pt-4">
-            <form action={deleteAction}>
+            <form>
               <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                 Delete Circle
               </button>
