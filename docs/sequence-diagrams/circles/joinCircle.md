@@ -34,9 +34,13 @@ sequenceDiagram
     Service->>Domain: join(member, spec)
     
     Domain->>Spec: isSatisfiedBy(circle)
-    Spec->>UserRepo: countMembers(circle.id)
-    UserRepo->>DB: Count Members
-    DB-->>UserRepo: count
+    Spec->>Domain: countMembers()
+    Domain-->>Spec: membersCount
+    Spec->>UserRepo: findMany(memberIds)
+    UserRepo->>DB: Query Users (id IN members)
+    DB-->>UserRepo: users records
+    UserRepo-->>Spec: User[]
+    Spec->>Spec: Calculate max (30 or 50 based on premium users)
     Spec-->>Domain: boolean (isFull?)
 
     alt Circle is Full
@@ -44,7 +48,7 @@ sequenceDiagram
     else Circle has capacity
         Domain->>Domain: addMember(member)
         Service->>CircleRepo: save(circle)
-        CircleRepo->>DB: Update Circle Members
+        CircleRepo->>DB: Update Circle Members (Prisma connect/set)
         DB-->>CircleRepo: Success
         Service-->>Action: void
         Action->>Action: revalidatePath

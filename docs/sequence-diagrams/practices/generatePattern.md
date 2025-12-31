@@ -19,12 +19,18 @@ sequenceDiagram
     
     alt Verb Type is 'be'
         Service->>Service: generateBeVerb(...)
-        Service->>Service: formatBeComplement(...)
+        Service->>Service: Determine auxiliary / complement based on Tense/Type
+        Note right of Service: Handles (am, is, are, was, were, will be)
+        Service->>Service: formatBeComplement(...) (Noun/Adjective)
     else Verb Type is 'do'
         Service->>Service: generateDoVerb(...)
+        Service->>Service: Determine auxiliary / form based on Tense/Type
+        Note right of Service: Handles (do, does, did, will, doesn't, didn't, etc.)
         Service->>Service: getPastForm / getThirdPersonForm (...)
+        Service->>Service: getPatternComplement(...) (Objects)
     end
     
+    Service->>Service: Final formatting (Capitalize + Punctuation)
     Service-->>UseCase: generatedText (string)
     UseCase-->>Page: generatedText
     

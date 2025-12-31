@@ -3,40 +3,40 @@
 ```mermaid
 sequenceDiagram
     participant Page as PracticePage
-    participant Repo as ApiWordRepository
-    participant API as API Routes (/api/*)
+    participant Action as ServerActions (words.ts)
+    participant Repo as PrismaWordRepository
     participant DB as Database (via Prisma)
 
     Page->>Page: Component Mount (useEffect)
     
     par Fetch Nouns
-        Page->>Repo: getNounWords()
-        Repo->>API: GET /api/noun-words
-        API->>DB: prisma.nounWord.findMany()
-        DB-->>API: noun records
-        API-->>Repo: JSON Data
-        Repo-->>Page: Word[]
+        Page->>Action: getNounWords()
+        Action->>Repo: getNounWords()
+        Repo->>DB: prisma.nounWord.findMany()
+        DB-->>Repo: noun records
+        Repo-->>Action: Word[]
+        Action-->>Page: Word[] (as plain objects)
     and Fetch Verbs
-        Page->>Repo: getVerbWords()
-        Repo->>API: GET /api/verb-words
-        API->>DB: prisma.verbWord.findMany()
-        DB-->>API: verb records
-        API-->>Repo: JSON Data
-        Repo-->>Page: Word[]
+        Page->>Action: getVerbWords()
+        Action->>Repo: getVerbWords()
+        Repo->>DB: prisma.verbWord.findMany()
+        DB-->>Repo: verb records
+        Repo-->>Action: Word[]
+        Action-->>Page: Word[] (as plain objects)
     and Fetch Adjectives
-        Page->>Repo: getAdjectiveWords()
-        Repo->>API: GET /api/adjective-words
-        API->>DB: prisma.adjectiveWord.findMany()
-        DB-->>API: adjective records
-        API-->>Repo: JSON Data
-        Repo-->>Page: Word[]
+        Page->>Action: getAdjectiveWords()
+        Action->>Repo: getAdjectiveWords()
+        Repo->>DB: prisma.adjectiveWord.findMany()
+        DB-->>Repo: adjective records
+        Repo-->>Action: Word[]
+        Action-->>Page: Word[] (as plain objects)
     and Fetch Adverbs
-        Page->>Repo: getAdverbWords()
-        Repo->>API: GET /api/adverb-words
-        API->>DB: prisma.adverbWord.findMany()
-        DB-->>API: adverb records
-        API-->>Repo: JSON Data
-        Repo-->>Page: Word[]
+        Page->>Action: getAdverbWords()
+        Action->>Repo: getAdverbWords()
+        Repo->>DB: prisma.adverbWord.findMany()
+        DB-->>Repo: adverb records
+        Repo-->>Action: Word[]
+        Action-->>Page: Word[] (as plain objects)
     end
 
     Page->>Page: Refresh UI with loaded words
