@@ -5,7 +5,7 @@ const globalForPrisma = global as unknown as { prisma_: PrismaClient };
 
 import path from 'path';
 
-const url_raw = process.env.APP_ENV === 'staging' ? process.env.TURSO_DATABASE_URL : process.env.DATABASE_URL;
+const url_raw = process.env.APP_ENV === 'staging' ? process.env.TURSO_DATABASE_URL : (process.env.DATABASE_URL || 'file:./dev.db');
 
 let url = url_raw;
 if (url?.startsWith('file:')) {

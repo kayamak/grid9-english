@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "file:./dev.db"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,6 +33,10 @@ jobs:
         run: npm ci
       - name: Generate Prisma Client
         run: npx prisma generate
+      - name: Setup Database
+        run: |
+          npx prisma db push --accept-data-loss
+          npm run db:init:stg || npx tsx prisma/seed.ts
       - name: Build
         run: npm run build
       - name: Upload artifact
