@@ -57,6 +57,23 @@ export function PracticeBattleArea({
     heroOpacity,
     monsterOpacity
 }: PracticeBattleAreaProps) {
+    const [attackDistance, setAttackDistance] = useState(150);
+
+    useEffect(() => {
+        const updateDistance = () => {
+            const width = window.innerWidth;
+            if (width >= 768) {
+                setAttackDistance(300);
+            } else {
+                setAttackDistance(120);
+            }
+        };
+        
+        updateDistance();
+        window.addEventListener('resize', updateDistance);
+        return () => window.removeEventListener('resize', updateDistance);
+    }, []);
+
     return (
         <div className="dq-battle-bg relative w-full h-[222px] md:h-[316px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl">
             <div className="absolute top-2 left-2 z-20">
@@ -77,7 +94,7 @@ export function PracticeBattleArea({
                     animate={
                         heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
                         heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
-                        heroAction === 'attack' ? { x: [0, 60, 0] } :
+                        heroAction === 'attack' ? { x: [0, attackDistance, 0] } :
                         { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
                     }
                     transition={{ duration: heroAction === 'attack' ? 0.3 : 0.5 }}
@@ -99,7 +116,7 @@ export function PracticeBattleArea({
                     animate={
                     heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
                     heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
-                    heroAction === 'attack' ? { x: [0, 60, 0] } :
+                    heroAction === 'attack' ? { x: [0, attackDistance, 0] } :
                     { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
                     }
                     transition={{ duration: heroAction === 'attack' ? 0.3 : 0.5 }}
