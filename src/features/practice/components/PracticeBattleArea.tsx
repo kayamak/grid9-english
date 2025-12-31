@@ -154,14 +154,14 @@ export function PracticeBattleArea({
                 {/* Center Question Text */}
                 <div className="absolute top-12 left-0 right-0 flex flex-col items-center justify-center p-2 pointer-events-none">
                      <div className="bg-black/60 border border-white/20 p-3 md:p-4 rounded-lg text-center backdrop-blur-sm shadow-lg max-w-[90%] md:max-w-xl">
-                        {displayEnglish && (
-                            <h2 className="text-lg md:text-2xl font-normal text-yellow-200 mb-1 leading-tight">
-                                {currentDrill.english}
-                            </h2>
-                        )}
                         <h2 className={`text-xl md:text-3xl font-normal leading-tight ${displayEnglish ? 'text-white/90' : 'text-white'}`}>
                             {currentDrill.japanese}
                         </h2>
+                        {displayEnglish && (
+                            <h2 className="text-lg md:text-2xl font-normal text-yellow-200 mt-2 leading-tight">
+                                {currentDrill.english}
+                            </h2>
+                        )}
                         {displayEnglish && !isCorrect && (
                             <p className="text-[10px] text-white/50 mt-1">えいご</p>
                         )}

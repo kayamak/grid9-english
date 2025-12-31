@@ -429,7 +429,7 @@ export function PracticeContent() {
                 isCorrect={isCorrect}
                 onNext={handleNextDrill}
                 showVictoryEffect={showVictoryEffect}
-                displayEnglish={!isQuestMode}
+                displayEnglish={!isQuestMode || (isQuestMode && timeLeft === 0)}
             />
             </>
         )}

@@ -143,6 +143,7 @@ export function PracticeAnswerArea({
                   </div>
                 ) : (
                   <>
+                <div className={isQuestMode && timeLeft === 0 ? 'pointer-events-none grayscale' : ''}>
                   <div className="w-full max-w-xl">
                       <NineKeyPanel
                           sentenceType={state.sentenceType}
@@ -219,6 +220,7 @@ export function PracticeAnswerArea({
                     )}
                   </div>
                 )}
+                </div>
 
                 <div className="mt-8 w-full max-w-lg relative">
                     {/* DQ style result box */}
