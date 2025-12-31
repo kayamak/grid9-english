@@ -63,15 +63,20 @@ TURSO_AUTH_TOKEN="your-auth-token"
 - **Turso CLI で接続**: `turso db shell grid9-english-db`
 - **Staging へのシード実行**:
   ```bash
+  # DB初期化 (初回のみ、またはスキーマ変更時)
+  npm run db:init:stg
+
+  # データ投入
   DATABASE_URL=$TURSO_DATABASE_URL TURSO_AUTH_TOKEN=$TURSO_AUTH_TOKEN npx tsx prisma/seed.ts
   ```
 
 ### Turso でのテーブル管理
-Turso 環境では `prisma db push` は使用せず、手動またはスキーマから SQL を生成して反映させます。
-- **テーブル作成例**:
+Turso 環境では `prisma db push` は使用できない場合があるため、以下のスクリプトを利用します。
+- **テーブル作成・更新**:
   ```bash
-  turso db shell grid9-english-db "CREATE TABLE IF NOT EXISTS DoVerbWord (...);"
+  npm run db:init:stg
   ```
+  ※ このコマンドは現在、`prisma migrate diff --from-empty` を使用してテーブル作成SQLを生成・実行します。既存のテーブルがある場合はエラーを無視して続行します。
 - **データ確認**:
   ```bash
   turso db shell grid9-english-db "SELECT * FROM DoVerbWord;"
