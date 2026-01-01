@@ -233,7 +233,7 @@ export function usePractice(
     if (state.subject === 'second' || state.subject === 'second_p') {
       soundFile = 'magic_attack.wav';
     } else if (state.subject === 'third_s' || state.subject === 'third_p') {
-      soundFile = 'warrior.wav';
+      soundFile = 'warrior_attack.wav';
     }
     const audio = new Audio(getAssetPath(`/assets/sounds/${soundFile}`));
     audio.play().catch(() => {});
