@@ -229,7 +229,13 @@ export function usePractice(
 
   // Sequence Animations
   const triggerAttackAnim = useCallback(() => {
-    const audio = new Audio(getAssetPath('/assets/sounds/attack.wav'));
+    let soundFile = 'hero_attack.wav';
+    if (state.subject === 'second' || state.subject === 'second_p') {
+      soundFile = 'magic_attack.wav';
+    } else if (state.subject === 'third_s' || state.subject === 'third_p') {
+      soundFile = 'warrior.wav';
+    }
+    const audio = new Audio(getAssetPath(`/assets/sounds/${soundFile}`));
     audio.play().catch(() => {});
 
     setHeroAction('attack');
@@ -240,7 +246,7 @@ export function usePractice(
     setTimeout(() => {
       setHeroAction((prev) => (prev === 'attack' ? 'idle' : prev));
     }, 300);
-  }, []);
+  }, [state.subject]);
 
   // Handlers
   const handleNextDrill = async (isEscape?: boolean) => {
