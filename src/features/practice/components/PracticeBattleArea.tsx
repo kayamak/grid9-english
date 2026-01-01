@@ -44,8 +44,8 @@ interface PracticeBattleAreaProps {
     isFreeMode?: boolean;
     state: SentencePattern;
     currentDrillIndex: number;
-    heroAction: 'idle' | 'run-away' | 'defeated' | 'attack';
-    monsterState: 'idle' | 'hit' | 'defeated' | 'damaged';
+    heroAction: 'idle' | 'run-away' | 'defeated' | 'attack' | 'damaged';
+    monsterState: 'idle' | 'hit' | 'defeated' | 'damaged' | 'attack';
     battleImages: { subjectImg: string; monsterImg: string; itemImg: string | null; monsterScale: number };
     heroOpacity: number;
     monsterOpacity: number;
@@ -233,9 +233,10 @@ export function PracticeBattleArea({
                         heroAction === 'run-away' ? { x: -100, opacity: heroOpacity } : 
                         heroAction === 'defeated' ? { rotate: -90, y: 20, opacity: 0.6, filter: 'grayscale(100%)' } :
                         heroAction === 'attack' ? { x: [0, attackDistance, 0] } :
+                        heroAction === 'damaged' ? { x: [0, -5, 5, -5, 5, 0], filter: ['brightness(1)', 'brightness(2) sepia(1) hue-rotate(-50deg)', 'brightness(1)'] } :
                         { x: 0, opacity: heroOpacity, rotate: 0, y: 0, filter: 'none' }
                     }
-                    transition={{ duration: heroAction === 'attack' ? 0.3 : 0.5 }}
+                    transition={{ duration: heroAction === 'attack' ? 0.3 : (heroAction === 'damaged' ? 0.5 : 0.5) }}
                     >
                     <Image 
                         src={getAssetPath(battleImages.subjectImg)} 
@@ -291,9 +292,10 @@ export function PracticeBattleArea({
                             monsterState === 'damaged' ? ['brightness(1)', 'brightness(1.5) sepia(0.5) hue-rotate(-50deg)', 'brightness(1)'] :
                             (monsterState === 'defeated' ? 'grayscale(100%)' : 'none'),
                     x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 
-                       monsterState === 'damaged' ? [0, 5, -5, 5, 0] : 0
+                       monsterState === 'damaged' ? [0, 5, -5, 5, 0] : 
+                       monsterState === 'attack' ? [0, -attackDistance, 0] : 0
                     }}
-                    transition={{ duration: monsterState === 'hit' ? 0.2 : (monsterState === 'damaged' ? 0.3 : 0.5) }}
+                    transition={{ duration: monsterState === 'hit' ? 0.2 : (monsterState === 'damaged' ? 0.3 : (monsterState === 'attack' ? 0.3 : 0.5)) }}
                     className="z-10" 
                     style={{ transformOrigin: 'bottom' }}
                 >
@@ -321,9 +323,10 @@ export function PracticeBattleArea({
                            monsterState === 'damaged' ? [1 * battleImages.monsterScale, 0.95 * battleImages.monsterScale, 1 * battleImages.monsterScale] :
                            1 * battleImages.monsterScale,
                     x: monsterState === 'hit' ? [0, 10, -10, 10, 0] : 
-                       monsterState === 'damaged' ? [0, 5, -5, 5, 0] : 0
+                       monsterState === 'damaged' ? [0, 5, -5, 5, 0] : 
+                       monsterState === 'attack' ? [0, -attackDistance, 0] : 0
                     }}
-                    transition={{ duration: monsterState === 'hit' ? 0.2 : (monsterState === 'damaged' ? 0.3 : 0.5) }}
+                    transition={{ duration: monsterState === 'hit' ? 0.2 : (monsterState === 'damaged' ? 0.3 : (monsterState === 'attack' ? 0.3 : 0.5)) }}
                     className="absolute inset-0 pointer-events-none z-10"
                     style={{ transformOrigin: 'bottom' }}
                 >
@@ -358,7 +361,8 @@ export function PracticeBattleArea({
                     key={`item-${state.object}`}
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ 
-                        x: monsterState === 'damaged' ? [0, 5, -5, 5, 0] : 0,
+                        x: monsterState === 'damaged' ? [0, 5, -5, 5, 0] : 
+                           monsterState === 'attack' ? [0, -attackDistance, 0] : 0,
                         opacity: monsterState === 'defeated' ? 0.6 : 1,
                         y: monsterState === 'defeated' ? 20 : 0,
                         rotate: monsterState === 'defeated' ? 90 : 0,
@@ -366,7 +370,7 @@ export function PracticeBattleArea({
                         filter: monsterState === 'damaged' ? ['brightness(1)', 'brightness(1.5) sepia(0.5) hue-rotate(-50deg)', 'brightness(1)'] : 
                                 (monsterState === 'defeated' ? 'grayscale(100%)' : 'none')
                     }}
-                    transition={{ duration: monsterState === 'damaged' ? 0.3 : 0.5 }}
+                    transition={{ duration: monsterState === 'damaged' ? 0.3 : (monsterState === 'attack' ? 0.3 : 0.5) }}
                     className="z-10 flex flex-col items-center"
                 >
                     <Image 

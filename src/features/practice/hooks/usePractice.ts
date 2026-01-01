@@ -43,8 +43,8 @@ export function usePractice(
   }, [currentLevel, setCookie]);
 
   // UI States
-  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated' | 'attack'>('idle');
-  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated' | 'damaged'>('idle');
+  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated' | 'attack' | 'damaged'>('idle');
+  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated' | 'damaged' | 'attack'>('idle');
   const [showVictoryEffect, setShowVictoryEffect] = useState(false);
   const [isScreenShaking, setIsScreenShaking] = useState(false);
   const [isScreenFlashing, setIsScreenFlashing] = useState(false);
@@ -161,10 +161,17 @@ export function usePractice(
     let timer: ReturnType<typeof setInterval>;
     if (isQuestMode && isTimerActive && timeLeft > 0 && questSession?.status === 'playing') {
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-    } else if (timeLeft === 0 && questSession?.status === 'playing') {
+    } else if (timeLeft === 0 && questSession?.status === 'playing' && isTimerActive) {
       setIsTimerActive(false);
-      setQuestSession(prev => prev ? prev.submitAnswer(false) : null);
-      setHeroAction('defeated');
+      setMonsterState('attack');
+      setTimeout(() => {
+        setMonsterState('idle');
+        setHeroAction('damaged');
+        setTimeout(() => {
+          setQuestSession((prev) => (prev ? prev.submitAnswer(false) : null));
+          setHeroAction('defeated');
+        }, 500);
+      }, 300);
     }
     return () => clearInterval(timer);
   }, [isQuestMode, isTimerActive, timeLeft, questSession?.status]);
