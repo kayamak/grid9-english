@@ -32,18 +32,16 @@ vi.mock('lucide-react', () => ({
 }));
 
 describe('PracticeBattleArea', () => {
-  const defaultState: SentencePattern = {
-    sentenceType: 'affirmative',
-    tense: 'present',
-    fiveSentencePattern: 'SV',
-    subject: 'first_s',
+  const defaultState = SentencePattern.create({
+    verbType: 'do',
     verb: 'open',
-    object: null,
-    complement: null,
-    adverb: null,
-    adjective: null,
+    sentenceType: 'positive',
+    subject: 'first_s',
+    tense: 'present',
+    fiveSentencePattern: 'SVO',
+    object: 'door',
     numberForm: 'a',
-  };
+  });
 
   const defaultProps = {
     isQuestMode: false,
@@ -124,7 +122,7 @@ describe('PracticeBattleArea', () => {
       render(<PracticeBattleArea {...defaultProps} isFreeMode={true} currentDrill={undefined} />);
       
       // Use regex to be resilient against whitespace differences
-      expect(screen.getByText(/じゆうに.*ぶんしょうを.*つくってみよう/)).toBeDefined();
+      expect(screen.getByText(/じゆうに.*えいぶんを.*つくるべし/)).toBeDefined();
     });
   });
 
