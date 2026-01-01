@@ -79,10 +79,11 @@ export function PracticeAnswerArea({
         <div className="flex flex-col items-center w-full">
             {/* 1. Tabs Area */}
             <div className="w-full px-4 md:px-8 flex justify-start">
-               <VerbTypeSelector
+                <VerbTypeSelector
                  activeTab={activeTab}
                  onChange={onChangeTab}
                  isAdmin={isAdmin}
+                 disabled={isQuestMode && timeLeft === 0}
                />
             </div>
 
