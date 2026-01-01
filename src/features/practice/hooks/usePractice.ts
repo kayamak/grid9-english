@@ -163,6 +163,12 @@ export function usePractice(
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     } else if (timeLeft === 0 && questSession?.status === 'playing' && isTimerActive) {
       setIsTimerActive(false);
+      const audio = new Audio(getAssetPath('/assets/sounds/monster_attack.wav'));
+      audio.playbackRate = 0.5;
+      (audio as any).preservesPitch = false;
+      (audio as any).mozPreservesPitch = false;
+      (audio as any).webkitPreservesPitch = false;
+      audio.play().catch(() => {});
       setMonsterState('attack');
       setTimeout(() => {
         setMonsterState('idle');
