@@ -41,14 +41,9 @@ src/
 │   ├── layout.tsx        # 全体レイアウト
 │   ├── page.tsx          # トップページ
 │   ├── (auth)/           # 認証・ユーザー管理関連ページ
-│   ├── circles/          # サークル閲覧・管理ページ
 │   └── practice/         # 練習モードページ (Main entry point)
 │
 ├── features/             # Application & Presentation logic (Feature-based)
-│   ├── circles/
-│   │   ├── actions/      # Server Actions (createCircle.ts)
-│   │   ├── components/   # UI components
-│   │   └── schemas/      # Zod validation schema
 │   └── practice/
 │       ├── actions/      # Server Actions & UseCase classes
 │       ├── components/   # UI components (AnswerArea, BattleArea, etc.)
@@ -59,9 +54,6 @@ src/
 │   ├── shared/
 │   │   ├── entities/     # (Word.ts等)
 │   │   └── repositories/
-│   ├── circles/
-│   │   ├── entities/     # Circle.ts
-│   │   └── repositories/ # ICircleRepository.ts
 │   └── practice/
 │       ├── entities/     # SentenceDrill.ts, QuestSession.ts
 │       ├── vo/           # SentencePattern.ts

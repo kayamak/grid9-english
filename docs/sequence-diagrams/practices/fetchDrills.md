@@ -2,36 +2,33 @@
 
 ```mermaid
 sequenceDiagram
-    participant Page as PracticePage
+    participant Parent as ServerComponent (Page)
+    participant Action as ServerActions (drills.ts)
+    participant Page as PracticeContainer (Client)
     participant Hook as usePractice (Hook)
     participant Session as QuestSession (Domain)
-    participant Action as ServerActions (drills.ts)
-    participant Repo as PrismaSentenceDrillRepository
-    participant DB as Database (via Prisma)
 
-    Page->>Hook: Component Mount / Pattern Change
-    Hook->>Hook: useEffect (Fetch Drills)
+    Note over Parent: Server Side Rendering / Fetching
+    
+    Parent->>Action: getDrillQuestQuestions() / getAllDrills()
+    Action-->>Parent: Drill[]
+
+    Parent->>Page: Render <PracticeContainer allDrills={...} />
+    Page->>Hook: usePractice(..., allDrills)
+    
+    Hook->>Hook: useEffect [isQuestMode, currentLevel, allDrills]
 
     alt isQuestMode
-        Hook->>Action: getDrillQuestQuestions(currentLevel)
-        Action->>Repo: findByPattern(pattern) / findAll()
-        Repo->>DB: Query Sentence Drills
-        DB-->>Repo: drill records
-        Repo-->>Action: SentenceDrill[]
-        Action->>Action: Slice or Shuffle (based on level)
-        Action-->>Hook: Drill[] (plain objects)
-        
-        Hook->>Session: start(level, drills)
+        Hook->>Hook: Filter drills by Level/Pattern
+        Hook->>Hook: Slice or Shuffle (randomize if level > 3)
+        Hook->>Session: start(currentLevel, selectedDrills)
         Session-->>Hook: questSession instance
-    else isSentenceTraining
-        Hook->>Action: getSentenceDrills(selectedPattern)
-        Action->>Repo: findByPattern(pattern) / findAll()
-        Repo->>DB: Query Sentence Drills
-        DB-->>Repo: drill records
-        Repo-->>Action: SentenceDrill[]
-        Action-->>Hook: Drill[] (plain objects)
+        Hook->>Hook: setDrills(selectedDrills)
+    else isSentenceTraining / Free
+        Hook->>Hook: Filter drills (if pattern selected)
+        Hook->>Hook: setDrills(filteredDrills)
     end
 
-    Hook-->>Page: Return drills/questSession state
-    Page->>Page: Refresh UI with loaded drills
+    Hook-->>Page: Return drills, questSession
+    Page->>Page: Render UI
 ```

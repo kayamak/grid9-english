@@ -2,46 +2,34 @@
 
 ```mermaid
 sequenceDiagram
-    participant Page as PracticePage
-    participant Hook as usePractice (Hook)
+    participant Parent as ServerComponent (Page)
     participant Action as ServerActions (words.ts)
-    participant Repo as PrismaWordRepository
-    participant DB as Database (via Prisma)
+    participant Page as PracticeContainer (Client)
+    participant Hook as usePractice (Hook)
 
-    Page->>Hook: Component Mount
-    Hook->>Hook: useEffect (Fetch Data)
+    Note over Parent: Server Side Rendering / Fetching
     
-    par Fetch Nouns
-        Hook->>Action: getNounWords()
-        Action->>Repo: getNounWords()
-        Repo->>DB: prisma.nounWord.findMany()
-        DB-->>Repo: noun records
-        Repo-->>Action: Word[]
-        Action-->>Hook: Word[] (as plain objects)
-    and Fetch Verbs
-        Hook->>Action: getVerbWords()
-        Action->>Repo: getVerbWords()
-        Repo->>DB: prisma.verbWord.findMany()
-        DB-->>Repo: verb records
-        Repo-->>Action: Word[]
-        Action-->>Hook: Word[] (as plain objects)
-    and Fetch Adjectives
-        Hook->>Action: getAdjectiveWords()
-        Action->>Repo: getAdjectiveWords()
-        Repo->>DB: prisma.adjectiveWord.findMany()
-        DB-->>Repo: adjective records
-        Repo-->>Action: Word[]
-        Action-->>Hook: Word[] (as plain objects)
-    and Fetch Adverbs
-        Hook->>Action: getAdverbWords()
-        Action->>Repo: getAdverbWords()
-        Repo->>DB: prisma.adverbWord.findMany()
-        DB-->>Repo: adverb records
-        Repo-->>Action: Word[]
-        Action-->>Hook: Word[] (as plain objects)
+    par Fetch Words Categories
+        Parent->>Action: getNounWords()
+        Action-->>Parent: Nouns[]
+    and
+        Parent->>Action: getVerbWords()
+        Action-->>Parent: Verbs[]
+    and
+        Parent->>Action: getAdjectiveWords()
+        Action-->>Parent: Adjs[]
+    and
+        Parent->>Action: getAdverbWords()
+        Action-->>Parent: Adverbs[]
     end
 
-    Hook->>Hook: setWords(...)
+    Parent->>Page: Render <PracticeContainer initialWords={...} />
+    
+    Page->>Hook: usePractice(initialWords, ...)
+    Hook->>Hook: useMemo / useEffect
+    Hook->>Hook: Reconstruct Word Objects (Word.reconstruct)
+    Hook->>Hook: setWords(reconstructed)
+    
     Hook-->>Page: Return words state
-    Page->>Page: Refresh UI with loaded words
+    Page->>Page: Render UI
 ```
