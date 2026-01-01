@@ -4,6 +4,7 @@ import { QuestSession, AnswerResult } from '@/domain/practice/entities/QuestSess
 import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
 import { SentencePattern, Word, VerbType, SentenceType, Subject, Tense, FiveSentencePattern, Verb, Object as ObjectType, NumberForm, BeComplement, WordProps } from '@/domain/practice/types';
 import { PatternGenerator } from '@/domain/practice/services/PatternGenerator';
+import { getAssetPath } from '@/lib/assets';
 
 
 export function usePractice(
@@ -215,6 +216,9 @@ export function usePractice(
 
   // Sequence Animations
   const triggerAttackAnim = useCallback(() => {
+    const audio = new Audio(getAssetPath('/assets/sounds/attack.wav'));
+    audio.play().catch(() => {});
+
     setHeroAction('attack');
     setTimeout(() => {
       setMonsterState('damaged');
