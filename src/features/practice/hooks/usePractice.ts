@@ -185,7 +185,10 @@ export function usePractice(
   // Background Music
   useEffect(() => {
     let bgmFile = 'free_training_bgm.mp3'; // Default: Sentence Training (ぶんしょうトレーニング)
-    if (isQuestMode) {
+    
+    if (heroAction === 'defeated') {
+      bgmFile = 'dead_bgm.mp3';
+    } else if (isQuestMode) {
       bgmFile = 'drill_quest_bgm.mp3'; // Drill Quest (ドリルクエスト)
     } else if (isFreeMode) {
       bgmFile = 'writing_training_bgm.mp3'; // Free Training (じゆうトレーニング)
@@ -206,7 +209,7 @@ export function usePractice(
       audio.pause();
       audio.currentTime = 0;
     };
-  }, [isQuestMode, isFreeMode]);
+  }, [isQuestMode, isFreeMode, heroAction]);
 
   // Generated Text and Correctness
   const generatedText = useMemo(() => 
@@ -321,6 +324,7 @@ export function usePractice(
     setCurrentDrillIndex(0);
     setTimeLeft(session.getTimeLimit());
     setIsTimerActive(true);
+    setHeroAction('idle');
   };
 
   const setCorrectCountInLevel = useCallback((update: number | ((prev: number) => number)) => {
