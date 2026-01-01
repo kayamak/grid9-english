@@ -65,10 +65,6 @@ export function PracticeQuestionArea({
                 <div className="absolute inset-0 bg-yellow-400/20 animate-pulse z-0"></div>
             )}
             
-            <p className="text-sm text-white/60 mb-2 z-10">
-                {displayEnglish ? 'えいご:' : 'えいごに　なおせ！'}
-            </p>
-            
             {displayEnglish && (
                  <h2 className="text-2xl md:text-3xl font-normal text-center px-4 md:px-8 z-10 text-yellow-200 mb-2">
                     {currentDrill.english}

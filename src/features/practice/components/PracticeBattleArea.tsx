@@ -174,16 +174,10 @@ export function PracticeBattleArea({
                                         {currentDrill.english}
                                     </h2>
                                 )}
-                                {displayEnglish && !isCorrect && (
-                                    <p className="text-[10px] text-white/50 mt-1">えいご</p>
-                                )}
-                                {!displayEnglish && !isCorrect && (
-                                    <p className="text-[10px] text-white/50 mt-1">えいごに　なおせ！</p>
-                                )}
                             </>
                         ) : (
                             <h2 className="text-xl md:text-3xl font-normal leading-tight text-white">
-                                じゆうに　ぶんしょうを　つくってみよう！
+                                じゆうに　えいぶんを　つくるべし！
                             </h2>
                         )}
                      </div>
