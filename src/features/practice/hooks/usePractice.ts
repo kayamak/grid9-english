@@ -182,6 +182,32 @@ export function usePractice(
     return () => clearInterval(timer);
   }, [isQuestMode, isTimerActive, timeLeft, questSession?.status]);
 
+  // Background Music
+  useEffect(() => {
+    let bgmFile = 'free_training_bgm.mp3'; // Default: Sentence Training (ぶんしょうトレーニング)
+    if (isQuestMode) {
+      bgmFile = 'drill_quest_bgm.mp3'; // Drill Quest (ドリルクエスト)
+    } else if (isFreeMode) {
+      bgmFile = 'writing_training_bgm.mp3'; // Free Training (じゆうトレーニング)
+    }
+
+    const audio = new Audio(getAssetPath(`/assets/sounds/${bgmFile}`));
+    audio.loop = true;
+    audio.volume = 0.2; // Set volume to 20% to avoid overpowering other sounds
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Auto-play might be blocked by browser policy
+      });
+    }
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, [isQuestMode, isFreeMode]);
+
   // Generated Text and Correctness
   const generatedText = useMemo(() => 
     PatternGenerator.generate(state, reconstructedWords.nouns, reconstructedWords.verbs), 
