@@ -26,10 +26,12 @@ const OPERATION_MESSAGES = [
   "さあ　コマンドを　えらんで　ぼうけんを　はじめよう！"
 ];
 
+
 type MenuItem = {
   label: string;
-  href: string;
+  href?: string;
   descriptions: string[];
+  items?: MenuItem[];
 };
 
 type CategoryData = {
@@ -105,11 +107,28 @@ const MENU_DATA: Record<string, CategoryData> = {
         ]
       }
     ]
+  },
+  "せつめい": {
+    descriptions: [
+      "ゲームの　あそびかたや　きほんてきな　ルールを　かくにんできるぞ。",
+      "まよったときは　ここを　みて　きほんを　おもいだそう。"
+    ],
+    items: [
+      {
+        label: "オンボーディング",
+        href: "/practice?mode=drill&pattern=DO_SV",
+        descriptions: [
+          "はじめての　ぼうけんしゃへの　しなんしょ。",
+          "まずは　ここから　はじめて　えいごの　せかいに　なれよう！"
+        ]
+      }
+    ]
   }
 };
 
 export function MainMenu() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSubMenu, setSelectedSubMenu] = useState<MenuItem | null>(null);
   const [descMessage, setDescMessage] = useState<string>("コマンドを　えらんでください。");
   const [bottomMessage, setBottomMessage] = useState<string>("ぼうけんの　じゅんびは　いいかな？");
   const [opIndex, setOpIndex] = useState(0);
@@ -144,14 +163,26 @@ export function MainMenu() {
     updateMotivation();
   };
 
-  const handleActionClick = (href: string) => {
-    updateMotivation();
-    router.push(href);
+  const handleItemClick = (item: MenuItem) => {
+    if (item.items) {
+      setSelectedSubMenu(item);
+      setDescMessage(item.descriptions[0]);
+    } else if (item.href) {
+      updateMotivation();
+      router.push(item.href);
+    }
   };
 
   const handleBack = () => {
-    setSelectedCategory(null);
-    setDescMessage("コマンドを　えらんでください。");
+    if (selectedSubMenu) {
+      setSelectedSubMenu(null);
+      if (selectedCategory) {
+        setDescMessage(MENU_DATA[selectedCategory].descriptions[0]);
+      }
+    } else {
+      setSelectedCategory(null);
+      setDescMessage("コマンドを　えらんでください。");
+    }
     updateMotivation();
   };
 
@@ -163,12 +194,16 @@ export function MainMenu() {
     setBottomMessage(updateOperation());
   };
 
-  const handleActionHover = (label: string | null) => {
-    if (label && selectedCategory) {
-      const item = MENU_DATA[selectedCategory].items.find(i => i.label === label);
-      if (item) setDescMessage(item.descriptions[0]);
-    } else if (selectedCategory) {
-      setDescMessage(MENU_DATA[selectedCategory].descriptions[0]);
+  const handleActionHover = (isHovering: boolean, item?: MenuItem) => {
+    if (isHovering && item) {
+      setDescMessage(item.descriptions[0]);
+    } else {
+       // revert to parent description
+       if (selectedSubMenu) {
+          setDescMessage(selectedSubMenu.descriptions[0]);
+       } else if (selectedCategory) {
+          setDescMessage(MENU_DATA[selectedCategory].descriptions[0]);
+       }
     }
   };
 
@@ -190,7 +225,7 @@ export function MainMenu() {
           <section className="dq-window h-full flex flex-col flex-1">
             <div className="flex items-center justify-between border-b border-white/20 pb-2 mb-4">
               <h2 className="text-xl text-yellow-400">
-                {selectedCategory ? selectedCategory : "コマンド"}
+                {selectedSubMenu ? selectedSubMenu.label : (selectedCategory ? selectedCategory : "コマンド")}
               </h2>
               {selectedCategory && (
                 <button 
@@ -223,12 +258,12 @@ export function MainMenu() {
                   </button>
                 </>
               ) : (
-                MENU_DATA[selectedCategory].items.map((item) => (
+                (selectedSubMenu ? selectedSubMenu.items! : MENU_DATA[selectedCategory].items).map((item) => (
                   <button
                     key={item.label}
-                    onClick={() => handleActionClick(item.href)}
-                    onMouseEnter={() => handleActionHover(item.label)}
-                    onMouseLeave={() => handleActionHover(null)}
+                    onClick={() => handleItemClick(item)}
+                    onMouseEnter={() => handleActionHover(true, item)}
+                    onMouseLeave={() => handleActionHover(false)}
                     className="dq-menu-item text-xl w-full text-left"
                   >
                     {item.label}
@@ -236,6 +271,7 @@ export function MainMenu() {
                 ))
               )}
             </nav>
+
           </section>
         </div>
 
