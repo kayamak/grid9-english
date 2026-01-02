@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Trophy, XCircle, PartyPopper, Beer } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { PracticeBattleArea } from './PracticeBattleArea';
 import { PracticeAnswerArea } from './PracticeAnswerArea';
 import { usePractice } from '../hooks/usePractice';
@@ -58,6 +59,18 @@ export function PracticeContainer({ initialWords, allDrills }: {
   const questStatus = questSession?.status || 'playing';
   const questResults = questSession?.results || [];
   const correctCountInLevel = questSession?.correctCount || 0;
+
+  // Onboarding Logic
+  const [onboardingStep, setOnboardingStep] = React.useState(1);
+  const router = useRouter();
+
+  const handleOnboardingNext = () => {
+    if (onboardingStep >= 7) {
+      router.push('/');
+    } else {
+      setOnboardingStep(prev => prev + 1);
+    }
+  };
 
   return (
     <main className={`min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white transition-all duration-75 ${isScreenShaking ? 'translate-x-2 -translate-y-1 rotate-1' : ''}`}>
@@ -303,6 +316,9 @@ export function PracticeContainer({ initialWords, allDrills }: {
             isCorrect={isCorrect}
             isQuestMode={isQuestMode}
             timeLeft={timeLeft}
+            isOnboardingMode={isOnboardingMode}
+            onboardingStep={onboardingStep}
+            onOnboardingNext={handleOnboardingNext}
         />
         
         <div className="mt-12 text-center opacity-30 text-xs font-mono">

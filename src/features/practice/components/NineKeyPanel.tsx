@@ -1,5 +1,6 @@
 import React from 'react';
 import { SentenceType, Subject, Tense } from '@/domain/practice/types';
+import { OnboardingBubble } from './OnboardingBubble';
 
 interface NineKeyPanelProps {
   sentenceType: SentenceType;
@@ -8,10 +9,13 @@ interface NineKeyPanelProps {
   onSentenceTypeChange: (type: SentenceType) => void;
   onSubjectChange: (subj: Subject) => void;
   onTenseChange: (tense: Tense) => void;
+  isOnboardingMode?: boolean;
+  onboardingStep?: number;
+  onOnboardingNext?: () => void;
 }
 
 const RowContainer = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <div className="flex items-center dq-window w-full max-w-xl py-2 px-4 shadow-lg">
+  <div className="flex items-center dq-window w-full max-w-xl py-2 px-4 shadow-lg relative">
       <div className="w-16 md:w-24 font-normal text-yellow-100 text-[10px] md:text-sm mr-2 md:mr-4 shrink-0 text-right pr-2 md:pr-4 border-r-2 border-white/10">
           {title}
       </div>
@@ -28,7 +32,12 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
   onSentenceTypeChange,
   onSubjectChange,
   onTenseChange,
+  isOnboardingMode,
+  onboardingStep,
+  onOnboardingNext
 }) => {
+  const showBubble = (step: number) => isOnboardingMode && onboardingStep === step;
+
   const getCellClass = (isActive: boolean) =>
     `relative group flex items-center justify-center aspect-square text-xl md:text-3xl font-normal cursor-pointer transition-all border-2 md:border-4 select-none w-14 h-14 md:w-20 md:h-20 shadow-md ${
       isActive
@@ -77,6 +86,13 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
             ?
             {renderTooltip('疑問文')}
           </div>
+          {showBubble(2) && onOnboardingNext && (
+             <OnboardingBubble
+                message="次は「しゅるい」の行です。&#10;X(否定)、O(肯定)、？(疑問)から&#10;正しいものを選んでください。"
+                onClick={onOnboardingNext}
+                position="top"
+             />
+          )}
       </RowContainer>
 
       {/* Row 2: Subject */}
@@ -102,6 +118,13 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
             {renderSubjectContent(subject === 'third_p' ? 'third_p' : 'third_s', '3 / 33')}
             {renderTooltip('三人称')}
           </div>
+          {showBubble(3) && onOnboardingNext && (
+            <OnboardingBubble
+                message="次は「しゅご」の行です。1(私)、2(あなた)、3(他)。&#10;同じ場所を押すと、単数と複数が切り替わります。"
+                onClick={onOnboardingNext}
+                position="top"
+             />
+          )}
       </RowContainer>
       
       {/* Row 3: Tense */}
@@ -127,6 +150,13 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
             &#8618;
             {renderTooltip('未来形')}
           </div>
+          {showBubble(4) && onOnboardingNext && (
+            <OnboardingBubble
+                message="最後は「じせい」の行です。&#10;左(過去)、O(現在)、右(未来)から&#10;いつの話かを選んでください。"
+                onClick={onOnboardingNext}
+                position="top"
+            />
+          )}
       </RowContainer>
     </div>
   );

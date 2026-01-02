@@ -1,5 +1,6 @@
 import React from 'react';
 import { NineKeyPanel } from './NineKeyPanel';
+import { OnboardingBubble } from './OnboardingBubble';
 import { VerbTypeSelector } from './VerbTypeSelector';
 import { FiveSentencePatternSelector } from './FiveSentencePatternSelector';
 import { VerbSelector } from './VerbSelector';
@@ -46,6 +47,9 @@ interface PracticeAnswerAreaProps {
     isCorrect: boolean;
     isQuestMode: boolean;
     timeLeft: number;
+    isOnboardingMode?: boolean;
+    onboardingStep?: number;
+    onOnboardingNext?: () => void;
 }
 
 export function PracticeAnswerArea({
@@ -73,18 +77,32 @@ export function PracticeAnswerArea({
     generatedText,
     isCorrect,
     isQuestMode,
-    timeLeft
+    timeLeft,
+    isOnboardingMode,
+    onboardingStep,
+    onOnboardingNext
 }: PracticeAnswerAreaProps) {
+    const showBubble = (step: number) => isOnboardingMode && onboardingStep === step;
+
     return (
         <div className="flex flex-col items-center w-full">
-            {/* 1. Tabs Area */}
             <div className="w-full px-4 md:px-8 flex justify-start">
+              <div className="relative">
                 <VerbTypeSelector
                  activeTab={activeTab}
                  onChange={onChangeTab}
                  isAdmin={isAdmin}
                  disabled={isQuestMode && timeLeft === 0}
                />
+               {showBubble(1) && onOnboardingNext && (
+                   <OnboardingBubble
+                       message="まずは動詞の種類を選びます。&#10;タブの「Doどうし」か「Beどうし」の&#10;どちらかを選択してください。"
+                       onClick={onOnboardingNext}
+                       position="top"
+                       className="mb-4"
+                   />
+               )}
+              </div>
             </div>
 
             {/* 2. DQ Window Container */}
@@ -154,6 +172,9 @@ export function PracticeAnswerArea({
                           onSentenceTypeChange={handleSentenceTypeChange}
                           onSubjectChange={handleSubjectChange}
                           onTenseChange={handleTenseChange}
+                          isOnboardingMode={isOnboardingMode}
+                          onboardingStep={onboardingStep}
+                          onOnboardingNext={onOnboardingNext}
                       />
                   </div>
 
@@ -161,12 +182,21 @@ export function PracticeAnswerArea({
                 {(state.verbType === 'do' || state.verbType === 'be') && (
                   <div className="mt-6 w-full max-w-xl flex flex-col gap-4 relative z-20">
                     <div className="flex flex-col md:flex-row gap-4">
-                      <FiveSentencePatternSelector
-                        selectedPattern={state.fiveSentencePattern || (state.verbType === 'do' ? 'SVO' : 'SV')}
-                        onChange={handleFiveSentencePatternChange}
-                        verbType={state.verbType}
-                      />
-                      <div className="flex-1">
+                      <div className="relative w-fit">
+                        <FiveSentencePatternSelector
+                            selectedPattern={state.fiveSentencePattern || (state.verbType === 'do' ? 'SVO' : 'SV')}
+                            onChange={handleFiveSentencePatternChange}
+                            verbType={state.verbType}
+                        />
+                         {showBubble(5) && onOnboardingNext && (
+                            <OnboardingBubble
+                                message="リストから「ぶんけい」を選びます。&#10;Sは主語、Vは動詞、&#10;Oは目的語、Cは補語を表します。"
+                                onClick={onOnboardingNext}
+                                position="top"
+                            />
+                        )}
+                      </div>
+                      <div className="flex-1 relative">
                         <VerbSelector
                           verbType={state.verbType}
                           selectedVerb={state.verb}
@@ -175,6 +205,13 @@ export function PracticeAnswerArea({
                           fiveSentencePattern={state.fiveSentencePattern}
                           disabled={state.verbType === 'be'}
                         />
+                        {showBubble(6) && onOnboardingNext && (
+                            <OnboardingBubble
+                                message="リストから「どうし」を選びます。&#10;問題文の動詞と同じものを&#10;探して選択してください。"
+                                onClick={onOnboardingNext}
+                                position="top"
+                            />
+                        )}
                       </div>
                     </div>
                     {state.verbType === 'do' && state.fiveSentencePattern === 'SVO' && (
@@ -235,6 +272,13 @@ export function PracticeAnswerArea({
                         {generatedText}
                         </p>
                     </div>
+                    {showBubble(7) && onOnboardingNext && (
+                        <OnboardingBubble
+                            message="「けっか」の枠を見てください。&#10;作成された英文が問題と同じなら、&#10;モンスターを攻撃します。"
+                            onClick={onOnboardingNext}
+                            position="top"
+                        />
+                    )}
                 </div>
                 </>
                 )}
