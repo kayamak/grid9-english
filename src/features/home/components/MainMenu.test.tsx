@@ -26,7 +26,7 @@ describe('MainMenu', () => {
     // Check if category buttons exist
     expect(screen.getByRole('button', { name: /たたかう/i })).toBeDefined();
     expect(screen.getByRole('button', { name: /れんしゅう/i })).toBeDefined();
-    expect(screen.getByRole('button', { name: /せつめい/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /おためし/i })).toBeDefined();
 
     // Items should not be visible yet
     expect(screen.queryByText('ドリルクエスト')).toBeNull();
@@ -63,15 +63,15 @@ describe('MainMenu', () => {
     expect(screen.getByText('しゅご ＋ Beどうし ＋ ほご')).toBeDefined(); // Label for BE_SVC
   });
 
-  it('switches to "せつめい" category and shows its items when clicked', () => {
+  it('switches to "おためし" category and shows its items when clicked', () => {
     render(<MainMenu />);
     
-    const doguBtn = screen.getByRole('button', { name: /せつめい/i });
+    const doguBtn = screen.getByRole('button', { name: /おためし/i });
     fireEvent.click(doguBtn);
     
     // Header should update
     const header = screen.getByRole('heading', { level: 2 });
-    expect(header.textContent).toBe('せつめい');
+    expect(header.textContent).toBe('おためし');
     
     // Items should appear
     expect(screen.getByText('じゆうトレーニング')).toBeDefined();

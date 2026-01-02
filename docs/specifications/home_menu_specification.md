@@ -10,7 +10,7 @@
 | れんしゅう | DO_SV | `/practice?mode=drill&pattern=DO_SV` |
 | | DO_SVO | `/practice?mode=drill&pattern=DO_SVO` |
 | | BE_SVC | `/practice?mode=drill&pattern=BE_SVC` |
-| せつめい | じゆうトレーニング | `/practice?mode=free` |
+| おためし | じゆうトレーニング | `/practice?mode=free` |
 | (その他) | にげる (レベルクリア) | (モーダル表示) |
 
 ## 2. インタラクション仕様
