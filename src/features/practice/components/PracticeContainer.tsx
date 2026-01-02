@@ -16,6 +16,7 @@ export function PracticeContainer({ initialWords, allDrills }: {
   const {
     isQuestMode,
     isFreeMode,
+    isOnboardingMode,
     isAdmin,
     currentLevel,
     setCurrentLevel,
@@ -72,6 +73,7 @@ export function PracticeContainer({ initialWords, allDrills }: {
             <PracticeBattleArea 
                 isQuestMode={isQuestMode}
                 isFreeMode={isFreeMode}
+                isOnboardingMode={isOnboardingMode}
                 state={state}
                 currentDrillIndex={currentDrillIndex}
                 heroAction={heroAction}

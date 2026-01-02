@@ -116,7 +116,7 @@ const MENU_DATA: Record<string, CategoryData> = {
     items: [
       {
         label: "オンボーディング",
-        href: "/practice?mode=drill&pattern=DO_SV",
+        href: "/practice?mode=drill&pattern=DO_SV&onboarding=true",
         descriptions: [
           "はじめての　ぼうけんしゃへの　しなんしょ。",
           "まずは　ここから　はじめて　えいごの　せかいに　なれよう！"

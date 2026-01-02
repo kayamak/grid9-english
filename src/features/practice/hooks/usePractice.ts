@@ -14,6 +14,7 @@ export function usePractice(
   const searchParams = useSearchParams();
   const isQuestMode = searchParams.get('mode') === 'quest';
   const isFreeMode = searchParams.get('mode') === 'free';
+  const isOnboardingMode = searchParams.get('onboarding') === 'true';
   const selectedPattern = searchParams.get('pattern') || undefined;
   const initialDrillIndex = parseInt(searchParams.get('drill') || '1') - 1;
   const isAdmin = searchParams.get('role') === 'ADMIN';
@@ -466,6 +467,7 @@ export function usePractice(
   return {
     isQuestMode,
     isFreeMode,
+    isOnboardingMode,
     isAdmin,
     currentLevel,
     setCurrentLevel,
