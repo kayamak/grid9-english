@@ -25,8 +25,8 @@ describe('MainMenu', () => {
     
     // Check if category buttons exist
     expect(screen.getByRole('button', { name: /たたかう/i })).toBeDefined();
-    expect(screen.getByRole('button', { name: /じゅもん/i })).toBeDefined();
-    expect(screen.getByRole('button', { name: /どうぐ/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /れんしゅう/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /せつめい/i })).toBeDefined();
 
     // Items should not be visible yet
     expect(screen.queryByText('ドリルクエスト')).toBeNull();
@@ -47,15 +47,15 @@ describe('MainMenu', () => {
     expect(screen.getByText('ドリルクエスト')).toBeDefined();
   });
 
-  it('switches to "じゅもん" category and shows its items when clicked', () => {
+  it('switches to "れんしゅう" category and shows its items when clicked', () => {
     render(<MainMenu />);
     
-    const jumonBtn = screen.getByRole('button', { name: /じゅもん/i });
+    const jumonBtn = screen.getByRole('button', { name: /れんしゅう/i });
     fireEvent.click(jumonBtn);
     
     // Header should update
     const header = screen.getByRole('heading', { level: 2 });
-    expect(header.textContent).toBe('じゅもん');
+    expect(header.textContent).toBe('れんしゅう');
     
     // Items should appear
     expect(screen.getByText('しゅご ＋ Doどうし')).toBeDefined(); // Label for DO_SV
@@ -63,15 +63,15 @@ describe('MainMenu', () => {
     expect(screen.getByText('しゅご ＋ Beどうし ＋ ほご')).toBeDefined(); // Label for BE_SVC
   });
 
-  it('switches to "どうぐ" category and shows its items when clicked', () => {
+  it('switches to "せつめい" category and shows its items when clicked', () => {
     render(<MainMenu />);
     
-    const doguBtn = screen.getByRole('button', { name: /どうぐ/i });
+    const doguBtn = screen.getByRole('button', { name: /せつめい/i });
     fireEvent.click(doguBtn);
     
     // Header should update
     const header = screen.getByRole('heading', { level: 2 });
-    expect(header.textContent).toBe('どうぐ');
+    expect(header.textContent).toBe('せつめい');
     
     // Items should appear
     expect(screen.getByText('じゆうトレーニング')).toBeDefined();

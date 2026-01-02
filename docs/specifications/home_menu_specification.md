@@ -7,10 +7,10 @@
 | 第1階層 (カテゴリー) | 第2階層 (アクション) | 遷移先 |
 | :--- | :--- | :--- |
 | たたかう | ドリルクエスト | `/practice?mode=quest` |
-| じゅもん | DO_SV | `/practice?mode=drill&pattern=DO_SV` |
+| れんしゅう | DO_SV | `/practice?mode=drill&pattern=DO_SV` |
 | | DO_SVO | `/practice?mode=drill&pattern=DO_SVO` |
 | | BE_SVC | `/practice?mode=drill&pattern=BE_SVC` |
-| どうぐ | じゆうトレーニング | `/practice?mode=free` |
+| せつめい | じゆうトレーニング | `/practice?mode=free` |
 | (その他) | にげる (レベルクリア) | (モーダル表示) |
 
 ## 2. インタラクション仕様
