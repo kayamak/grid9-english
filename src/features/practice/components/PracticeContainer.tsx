@@ -4,9 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { PracticeBattleArea } from './PracticeBattleArea';
 import { PracticeAnswerArea } from './PracticeAnswerArea';
-import { PracticeLevelUpArea } from './PracticeLevelUpArea';
-import { PracticeFailedArea } from './PracticeFailedArea';
-import { PracticeAllClearedArea } from './PracticeAllClearedArea';
+import { PracticeResultArea } from './PracticeResultArea';
 import { usePractice } from '../hooks/usePractice';
 import { WordProps } from '@/domain/practice/types';
 
@@ -108,24 +106,14 @@ export function PracticeContainer({ initialWords, allDrills }: {
             </>
         )}
 
-        {isQuestMode && questStatus === 'result' && (
-          <PracticeLevelUpArea
-            correctCountInLevel={correctCountInLevel}
-            currentLevel={currentLevel}
-            onLevelUp={handleLevelUp}
-          />
-        )}
-
-        {isQuestMode && questStatus === 'failed' && (
-          <PracticeFailedArea
-            correctCountInLevel={correctCountInLevel}
-            onRetry={handleRetryLevel}
-          />
-        )}
-        
-        {isQuestMode && questStatus === 'all-cleared' && (
-          <PracticeAllClearedArea />
-        )}
+        <PracticeResultArea
+          isQuestMode={isQuestMode}
+          questStatus={questStatus}
+          correctCountInLevel={correctCountInLevel}
+          currentLevel={currentLevel}
+          onLevelUp={handleLevelUp}
+          onRetry={handleRetryLevel}
+        />
 
         <PracticeAnswerArea
             activeTab={activeTab}
