@@ -77,34 +77,29 @@ export function PracticeContainer({ initialWords, allDrills }: {
       )}
 
       <div className="w-full max-w-4xl relative flex flex-col gap-4">
-
-        {((!isQuestMode) || 
-          (isQuestMode && currentDrill && questStatus === 'playing')) && (
-            <>
-            <PracticeBattleArea 
-                isQuestMode={isQuestMode}
-                isFreeMode={isFreeMode}
-                isOnboardingMode={isOnboardingMode}
-                state={state}
-                currentDrillIndex={currentDrillIndex}
-                heroAction={heroAction}
-                monsterState={monsterState}
-                battleImages={battleImages}
-                heroOpacity={heroOpacity}
-                monsterOpacity={monsterOpacity}
-                currentLevel={currentLevel}
-                currentDrill={currentDrill}
-                timeLeft={timeLeft}
-                questResults={questResults}
-                totalDrills={drills.length}
-                correctCountInLevel={correctCountInLevel}
-                isCorrect={isCorrect}
-                onNext={handleNextDrill}
-                showVictoryEffect={showVictoryEffect}
-                displayEnglish={!isQuestMode || (isQuestMode && timeLeft === 0)}
-            />
-            </>
-        )}
+        <PracticeBattleArea 
+          isQuestMode={isQuestMode}
+          isFreeMode={isFreeMode}
+          isOnboardingMode={isOnboardingMode}
+          state={state}
+          currentDrillIndex={currentDrillIndex}
+          heroAction={heroAction}
+          monsterState={monsterState}
+          battleImages={battleImages}
+          heroOpacity={heroOpacity}
+          monsterOpacity={monsterOpacity}
+          currentLevel={currentLevel}
+          currentDrill={currentDrill}
+          timeLeft={timeLeft}
+          questResults={questResults}
+          totalDrills={drills.length}
+          correctCountInLevel={correctCountInLevel}
+          isCorrect={isCorrect}
+          onNext={handleNextDrill}
+          showVictoryEffect={showVictoryEffect}
+          displayEnglish={!isQuestMode || (isQuestMode && timeLeft === 0)}
+          questStatus={questStatus}
+        />
 
         <PracticeResultArea
           isQuestMode={isQuestMode}

@@ -65,6 +65,7 @@ describe('PracticeBattleArea', () => {
     isCorrect: false,
     onNext: vi.fn(),
     showVictoryEffect: false,
+    currentDrill: { english: 'Test English', japanese: 'テスト日本語' },
   };
 
   beforeEach(() => {

@@ -61,6 +61,7 @@ interface PracticeBattleAreaProps {
     onNext: (isEscape?: boolean) => void;
     showVictoryEffect: boolean;
     displayEnglish?: boolean;
+    questStatus?: string;
 }
 
 export function PracticeBattleArea({
@@ -81,7 +82,8 @@ export function PracticeBattleArea({
     totalDrills,
     isCorrect,
     onNext,
-    displayEnglish = false
+    displayEnglish = false,
+    questStatus = 'playing'
 }: PracticeBattleAreaProps) {
     const [attackDistance, setAttackDistance] = useState(150);
     const timeLimit = currentLevel === 10 ? 10 : (currentLevel < 4 ? 30 : 30 - currentLevel * 2);
@@ -100,6 +102,10 @@ export function PracticeBattleArea({
         window.addEventListener('resize', updateDistance);
         return () => window.removeEventListener('resize', updateDistance);
     }, []);
+
+    if (isQuestMode && (!currentDrill || questStatus !== 'playing')) {
+        return null;
+    }
 
     return (
         <div 
