@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { PracticeBattleArea } from './PracticeBattleArea';
-import { PracticeAnswerArea } from './PracticeAnswerArea';
-import { PracticeResultArea } from './PracticeResultArea';
+import { PracticeBattleArea } from './practice_areas/PracticeBattleArea';
+import { PracticeAnswerArea } from './practice_areas/PracticeAnswerArea';
+import { PracticeResultArea } from './practice_areas/PracticeResultArea';
 import { usePractice } from '../hooks/usePractice';
 import { WordProps } from '@/domain/practice/types';
 
@@ -77,7 +77,7 @@ export function PracticeContainer({ initialWords, allDrills }: {
       )}
 
       <div className="w-full max-w-4xl relative flex flex-col gap-4">
-        <PracticeBattleArea 
+        <PracticeBattleArea
           isQuestMode={isQuestMode}
           isFreeMode={isFreeMode}
           isOnboardingMode={isOnboardingMode}

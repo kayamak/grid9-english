@@ -31,7 +31,7 @@ vi.mock('lucide-react', () => ({
   Timer: () => <div data-testid="timer-icon" />,
 }));
 
-describe('PracticeBattleArea', () => {
+describe('BattleArea', () => {
   const defaultState = SentencePattern.create({
     verbType: 'do',
     verb: 'open',

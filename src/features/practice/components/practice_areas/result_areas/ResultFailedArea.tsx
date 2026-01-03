@@ -4,15 +4,15 @@ import React from 'react';
 import Link from 'next/link';
 import { XCircle } from 'lucide-react';
 
-interface PracticeFailedAreaProps {
+interface ResultFailedAreaProps {
   correctCountInLevel: number;
   onRetry: () => void;
 }
 
-export function PracticeFailedArea({
+export function ResultFailedArea({
   correctCountInLevel,
   onRetry
-}: PracticeFailedAreaProps) {
+}: ResultFailedAreaProps) {
   return (
     <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
       <div className="dq-window p-10 border-red-500 flex flex-col items-center gap-6 text-center max-w-md w-full">

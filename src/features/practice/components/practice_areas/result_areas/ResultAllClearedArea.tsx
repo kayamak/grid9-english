@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Trophy, PartyPopper, Beer } from 'lucide-react';
 
-export function PracticeAllClearedArea() {
+export function ResultAllClearedArea() {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 font-dot">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -4,17 +4,17 @@ import React from 'react';
 import Link from 'next/link';
 import { Trophy } from 'lucide-react';
 
-interface PracticeLevelUpAreaProps {
+interface ResultLevelUpAreaProps {  
   correctCountInLevel: number;
   currentLevel: number;
   onLevelUp: () => void;
 }
 
-export function PracticeLevelUpArea({
+export function ResultLevelUpArea({
   correctCountInLevel,
   currentLevel,
   onLevelUp
-}: PracticeLevelUpAreaProps) {
+}: ResultLevelUpAreaProps) {
   return (
     <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
       <div className="dq-window p-10 flex flex-col items-center gap-6 text-center max-w-md w-full">

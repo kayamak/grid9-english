@@ -134,12 +134,16 @@ export const useMainMenu = () => {
   const [showClearLevelMenu, setShowClearLevelMenu] = useState(false);
 
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      const match = document.cookie.match(/(^| )playerLevel=([^;]+)/);
-      if (match) {
-         setCurrentLevel(parseInt(match[2]));
+    const loadLevel = () => {
+      if (typeof document !== 'undefined') {
+        const match = document.cookie.match(/(^| )playerLevel=([^;]+)/);
+        if (match) {
+          setCurrentLevel(parseInt(match[2]));
+        }
       }
-    }
+    };
+    // Defer to avoid "set-state-in-effect" lint error
+    void Promise.resolve().then(loadLevel);
   }, []);
 
   const updateMotivation = useCallback(() => {

@@ -1,9 +1,9 @@
 "use client";
 
 import React from 'react';
-import { PracticeLevelUpArea } from './PracticeLevelUpArea';
-import { PracticeFailedArea } from './PracticeFailedArea';
-import { PracticeAllClearedArea } from './PracticeAllClearedArea';
+import { ResultLevelUpArea } from './result_areas/ResultLevelUpArea';
+import { ResultFailedArea } from './result_areas/ResultFailedArea';
+import { ResultAllClearedArea } from './result_areas/ResultAllClearedArea';
 
 interface PracticeResultAreaProps {
   isQuestMode: boolean;
@@ -27,7 +27,7 @@ export function PracticeResultArea({
   return (
     <>
       {questStatus === 'result' && (
-        <PracticeLevelUpArea
+        <ResultLevelUpArea
           correctCountInLevel={correctCountInLevel}
           currentLevel={currentLevel}
           onLevelUp={onLevelUp}
@@ -35,14 +35,14 @@ export function PracticeResultArea({
       )}
 
       {questStatus === 'failed' && (
-        <PracticeFailedArea
+        <ResultFailedArea
           correctCountInLevel={correctCountInLevel}
           onRetry={onRetry}
         />
       )}
 
       {questStatus === 'all-cleared' && (
-        <PracticeAllClearedArea />
+        <ResultAllClearedArea />
       )}
     </>
   );

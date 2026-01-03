@@ -1,12 +1,12 @@
 import React from 'react';
-import { NineKeyPanel } from './NineKeyPanel';
-import { OnboardingBubble } from './OnboardingBubble';
-import { VerbTypeSelector } from './VerbTypeSelector';
-import { FiveSentencePatternSelector } from './FiveSentencePatternSelector';
-import { VerbSelector } from './VerbSelector';
-import { ObjectSelector } from './ObjectSelector';
-import { NounDeterminerSelector } from './NounDeterminerSelector';
-import { ComplementSelector } from './ComplementSelector';
+import { NineKeyPanel } from './answer_areas/NineKeyPanel';
+import { OnboardingBubble } from './answer_areas/OnboardingBubble';
+import { VerbTypeSelector } from './answer_areas/VerbTypeSelector';
+import { FiveSentencePatternSelector } from './answer_areas/FiveSentencePatternSelector';
+import { VerbSelector } from './answer_areas/VerbSelector';
+import { ObjectSelector } from './answer_areas/ObjectSelector';
+import { NounDeterminerSelector } from './answer_areas/NounDeterminerSelector';
+import { ComplementSelector } from './answer_areas/ComplementSelector';
 import {
   SentencePattern,
   SentenceType,
