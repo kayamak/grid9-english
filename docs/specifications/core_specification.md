@@ -42,15 +42,6 @@ src/
 │   ├── page.tsx          # トップページ
 │   └── practice/page.tsx # 各種モードページ
 │
-├── features/             # アプリケーション & プレゼンテーションロジック (機能単位)
-│   ├── home/
-│   │   └── components/   # UIコンポーネント (MainMenuなど)
-│   └── practice/
-│       ├── actions/      # Server Actions & ユースケースクラス
-│       ├── components/   # UIコンポーネント (AnswerArea, BattleAreaなど)
-│       ├── hooks/        # 複雑なUIロジック (usePractice.ts)
-│       └── schemas/      # バリデーションスキーマ
-│
 ├── domain/               # ドメイン層 (純粋なロジック, サブドメインごとに構成)
 │   ├── shared/
 │   │   ├── entities/     # エンティティ (Word.ts等)
@@ -62,6 +53,15 @@ src/
 │       ├── services/     # ドメインサービス (PatternGenerator.ts, SentenceDrillSeedService.ts)
 │       └── spec/         # 仕様パターン (SentencePatternSpecification.ts)
 │
+├── features/             # アプリケーション & プレゼンテーションロジック (機能単位)
+│   ├── home/
+│   │   └── components/   # UIコンポーネント (MainMenuなど)
+│   └── practice/
+│       ├── actions/      # Server Actions & ユースケースクラス
+│       ├── components/   # UIコンポーネント (AnswerArea, BattleAreaなど)
+│       ├── hooks/        # 複雑なUIロジック (usePractice.ts)
+│       └── schemas/      # バリデーションスキーマ
+│
 ├── infrastructure/       # インフラストラクチャ層 (技術的詳細)
 │   ├── prisma/           # Prismaクライアント & スキーマロジック
 │   └── repositories/     # リポジトリの実装
@@ -69,8 +69,7 @@ src/
 ├── components/           # プレゼンテーション層 (共通コンポーネント)
 │   └── ui/               # shadcn/ui コンポーネント
 │
-├── lib/                  # 共通ユーティリティ & 設定
-└── types/                # プロジェクト全体の型定義
+└── lib/                  # 共通ユーティリティ & 設定
 ```
 
 ---

@@ -6,6 +6,9 @@ import { config } from 'dotenv';
 config();
 
 import path from 'path';
+import { PrismaSentenceDrillRepository } from '@/infrastructure/repositories/PrismaSentenceDrillRepository';
+import { SentenceDrillSeedService } from '@/domain/practice/services/SentenceDrillSeedService';
+import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
 
 const url_raw = process.env.DATABASE_URL!;
 let url = url_raw;
@@ -362,24 +365,25 @@ async function main() {
     { sentencePattern: 'DO_SVO', english: 'I rode my horse.', japanese: '私は馬に乗りました。', sortOrder: 63 },
   ];
 
-  for (const drill of sentenceDrills) {
-    await prisma.sentenceDrill.upsert({
-      where: { id: `drill-${drill.sortOrder}` },
-      update: {
-        sentencePattern: drill.sentencePattern,
-        english: drill.english,
-        japanese: drill.japanese,
-        sortOrder: drill.sortOrder,
-      },
-      create: {
-        id: `drill-${drill.sortOrder}`,
-        sentencePattern: drill.sentencePattern,
-        english: drill.english,
-        japanese: drill.japanese,
-        sortOrder: drill.sortOrder,
-      },
-    });
-  }
+  console.log('Using SentenceDrillSeedService...');
+  
+  // Use Domain Service for seeding SentenceDrills
+  // Note: We use the repository implementation which internally uses the singleton prisma client
+  // Make sure your environment variables are set correctly for both this script and the client
+  const sentenceDrillRepository = new PrismaSentenceDrillRepository();
+  const seedService = new SentenceDrillSeedService(sentenceDrillRepository);
+
+  const drills = sentenceDrills.map(drill => 
+    SentenceDrill.reconstruct({
+      id: `drill-${drill.sortOrder}`,
+      sentencePattern: drill.sentencePattern,
+      english: drill.english,
+      japanese: drill.japanese,
+      sortOrder: drill.sortOrder,
+    })
+  );
+
+  await seedService.seed(drills);
 
   console.log('Seeding completed!');
 }
