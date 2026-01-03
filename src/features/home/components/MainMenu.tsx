@@ -3,7 +3,7 @@
 import { 
   useMainMenu,
   MENU_DATA
-} from '../hooks/useMainMenu';
+} from './useMainMenu';
 
 export function MainMenu() {
   const {

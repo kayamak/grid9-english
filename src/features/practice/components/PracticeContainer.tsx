@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { PracticeBattleArea } from './practice_areas/PracticeBattleArea';
 import { PracticeAnswerArea } from './practice_areas/PracticeAnswerArea';
 import { PracticeResultArea } from './practice_areas/PracticeResultArea';
-import { usePractice } from '../hooks/usePractice';
+import { usePractice } from './usePractice';
 import { WordProps } from '@/domain/practice/types';
 
 export function PracticeContainer({ initialWords, allDrills }: { 
