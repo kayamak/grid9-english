@@ -192,12 +192,8 @@ export function PracticeAnswerArea({
                             <OnboardingBubble
                                 message="リストから「ぶんけい」を選びます。&#10;Sは主語、Vは動詞、&#10;Oは目的語、Cは補語を表します。"
                                 onClick={onOnboardingNext}
-<<<<<<< Updated upstream
                                 position="bottom"
                                 align="start"
-=======
-                                position="top"
->>>>>>> Stashed changes
                             />
                         )}
                       </div>

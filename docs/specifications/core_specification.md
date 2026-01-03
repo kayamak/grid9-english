@@ -37,38 +37,40 @@ Next.js 15とDDD（ドメイン駆動設計）をベースとした「堅牢な�
 
 ```text
 src/
-├── app/                  # Presentation Layer (Routing & Page Components)
+├── app/                  # プレゼンテーション層 (ルーティング & ページコンポーネント)
 │   ├── layout.tsx        # 全体レイアウト
 │   ├── page.tsx          # トップページ
-│   ├── (auth)/           # 認証・ユーザー管理関連ページ
-│   └── practice/         # 練習モードページ (Main entry point)
+│   └── practice/page.tsx # 各種モードページ
 │
-├── features/             # Application & Presentation logic (Feature-based)
+├── features/             # アプリケーション & プレゼンテーションロジック (機能単位)
+│   ├── home/
+│   │   └── components/   # UIコンポーネント (MainMenuなど)
 │   └── practice/
-│       ├── actions/      # Server Actions & UseCase classes
-│       ├── components/   # UI components (AnswerArea, BattleArea, etc.)
-│       ├── hooks/        # Complex UI logic (usePractice.ts)
-│       └── schemas/      # Validation schemas
+│       ├── actions/      # Server Actions & ユースケースクラス
+│       ├── components/   # UIコンポーネント (AnswerArea, BattleAreaなど)
+│       ├── hooks/        # 複雑なUIロジック (usePractice.ts)
+│       └── schemas/      # バリデーションスキーマ
 │
-├── domain/               # Domain Layer (Pure logic, organized by subdomain)
+├── domain/               # ドメイン層 (純粋なロジック, サブドメインごとに構成)
 │   ├── shared/
-│   │   ├── entities/     # (Word.ts等)
-│   │   └── repositories/
+│   │   ├── entities/     # エンティティ (Word.ts等)
+│   │   └── repositories/ # リポジトリインターフェース
 │   └── practice/
-│       ├── entities/     # SentenceDrill.ts, QuestSession.ts
-│       ├── vo/           # SentencePattern.ts
-│       ├── services/     # PatternGenerator.ts, SentenceDrillSeedService.ts
-│       └── spec/         # SentencePatternSpecification.ts
+│       ├── entities/     # エンティティ (SentenceDrill.ts, QuestSession.ts)
+│       ├── vo/           # 値オブジェクト (SentencePattern.ts)
+│       ├── repositories/ # リポジトリインターフェース (ISentenceDrillRepository.ts)
+│       ├── services/     # ドメインサービス (PatternGenerator.ts, SentenceDrillSeedService.ts)
+│       └── spec/         # 仕様パターン (SentencePatternSpecification.ts)
 │
-├── infrastructure/       # Infrastructure Layer (Technical details)
-│   ├── prisma/           # Prisma client & Schema logic
-│   └── repositories/     # Repository implementations
+├── infrastructure/       # インフラストラクチャ層 (技術的詳細)
+│   ├── prisma/           # Prismaクライアント & スキーマロジック
+│   └── repositories/     # リポジトリの実装
 │
-├── components/           # Presentation Layer (Common components)
-│   └── ui/               # shadcn/ui components
+├── components/           # プレゼンテーション層 (共通コンポーネント)
+│   └── ui/               # shadcn/ui コンポーネント
 │
-├── lib/                  # Shared utilities & configurations
-└── types/                # Project-wide type definitions
+├── lib/                  # 共通ユーティリティ & 設定
+└── types/                # プロジェクト全体の型定義
 ```
 
 ---

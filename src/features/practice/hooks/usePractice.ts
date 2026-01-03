@@ -166,9 +166,15 @@ export function usePractice(
       setIsTimerActive(false);
       const audio = new Audio(getAssetPath('/assets/sounds/monster_attack.wav'));
       audio.playbackRate = 0.5;
-      (audio as any).preservesPitch = false;
-      (audio as any).mozPreservesPitch = false;
-      (audio as any).webkitPreservesPitch = false;
+      interface AudioWithPitch extends HTMLAudioElement {
+        preservesPitch: boolean;
+        mozPreservesPitch?: boolean;
+        webkitPreservesPitch?: boolean;
+      }
+      const pitchAudio = audio as AudioWithPitch;
+      pitchAudio.preservesPitch = false;
+      pitchAudio.mozPreservesPitch = false;
+      pitchAudio.webkitPreservesPitch = false;
       audio.play().catch(() => {});
       setMonsterState('attack');
       setTimeout(() => {
