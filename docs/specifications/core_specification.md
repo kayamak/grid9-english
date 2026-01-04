@@ -78,6 +78,29 @@ src/
 
 ---
 
+### 3.1 practiceコンポーネントの階層化ルール (`src/features/practice/components`)
+
+practice機能の複雑なUIを管理するため、以下の階層化ルールを適用します。
+
+1. **コンポーネントの抽出とディレクトリ化**:
+   - コンポーネントが肥大化したり、特定の責務（エリア）を持つサブコンポーネントが存在する場合、それらを専用のサブディレクトリにまとめます。
+2. **ディレクトリ名の命名規約**:
+   - サブディレクトリ名は、親コンポーネントの役割を「**複数形のスネークケース**」で命名します。
+   - 接尾辞が `Area` のコンポーネント群を格納する場合は `_areas` とします。
+3. **再帰的な構造化**:
+   - サブコンポーネントがさらに抽出される場合も、同様のルールで階層を深くしていきます。
+
+**構成例:**
+- `practice_areas/` : practice画面の主要なエリアを格納
+  - `PracticeBattleArea.tsx` : 親コンポーネント
+  - `battle_areas/` : `PracticeBattleArea` から抽出されたコンポーネント
+    - `BattleOverlayArea.tsx`
+    - `overlay_areas/` : `BattleOverlayArea` から抽出されたコンポーネント
+      - `OverlayTimerBar.tsx`
+      - `OverlayTopUiArea.tsx`
+
+---
+
 ## 4. ドメインモデル実装原則 (Domain implementation)
 
 ### 4.1 エンティティ (Entities)
@@ -133,3 +156,4 @@ src/
 - 2025-12-26: ソースコードの最新状態（SentenceDrill、活用形DB化、UI改善等）を反映。
 - 2025-12-27: 「Drill Quest」の仕様を追加。
 - 2025-12-31: プレゼンテーション層の分離（Hooks抽出、コンポーネント分割）および `QuestSession` エンティティの導入を反映。
+- 2026-01-04: `src/features/practice/components` のディレクトリ階層ルールを追記。
