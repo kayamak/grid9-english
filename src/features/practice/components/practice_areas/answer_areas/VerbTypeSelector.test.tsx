@@ -3,10 +3,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { VerbTypeSelector } from './VerbTypeSelector';
 import { usePracticeStore } from '../../../hooks/usePracticeStore';
 import { usePracticeActions } from '../../../hooks/usePracticeActions';
+import { useBattleStore } from '../../../hooks/useBattleStore';
 
 // Mock dependencies
 vi.mock('../../../hooks/usePracticeStore');
 vi.mock('../../../hooks/usePracticeActions');
+vi.mock('../../../hooks/useBattleStore');
 
 describe('VerbTypeSelector', () => {
   const mockHandleTabChange = vi.fn();
@@ -17,6 +19,11 @@ describe('VerbTypeSelector', () => {
     vi.mocked(usePracticeActions).mockReturnValue({
       handleTabChange: mockHandleTabChange,
     } as unknown as ReturnType<typeof usePracticeActions>);
+
+    // Default mock for battle store
+    vi.mocked(useBattleStore).mockReturnValue({
+      monsterState: 'idle',
+    } as unknown as ReturnType<typeof useBattleStore>);
   });
 
   it('renders correctly', () => {
@@ -87,6 +94,27 @@ describe('VerbTypeSelector', () => {
       isQuestMode: true,
       timeLeft: 0,
     } as unknown as ReturnType<typeof usePracticeStore>);
+
+    render(<VerbTypeSelector />);
+
+    // Check wrapper opacity class or button disabled attribute
+    const wrapper = screen.getByText('Doどうし').closest('div');
+    expect(wrapper?.className).toContain('opacity-50');
+
+    expect(screen.getByText('Doどうし')).toHaveProperty('disabled', true);
+    expect(screen.getByText('Beどうし')).toHaveProperty('disabled', true);
+  });
+  it('disables buttons when battle is won (monster is defeated)', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      activeTab: 'do',
+      isAdmin: false,
+      isQuestMode: true,
+      timeLeft: 30, // Time is remaining
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    vi.mocked(useBattleStore).mockReturnValue({
+      monsterState: 'defeated',
+    } as unknown as ReturnType<typeof useBattleStore>);
 
     render(<VerbTypeSelector />);
 

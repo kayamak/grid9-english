@@ -1,12 +1,14 @@
 import React from 'react';
 import { usePracticeStore } from '../../../hooks/usePracticeStore';
 import { usePracticeActions } from '../../../hooks/usePracticeActions';
+import { useBattleStore } from '../../../hooks/useBattleStore';
 
 export const VerbTypeSelector: React.FC = () => {
   const { activeTab, isAdmin, isQuestMode, timeLeft } = usePracticeStore();
   const { handleTabChange } = usePracticeActions();
+  const { monsterState } = useBattleStore();
 
-  const disabled = isQuestMode && timeLeft === 0;
+  const disabled = (isQuestMode && timeLeft === 0) || monsterState === 'defeated';
 
   return (
     <div
