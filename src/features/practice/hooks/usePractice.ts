@@ -149,8 +149,7 @@ export function usePractice(
     if (isCorrect) return;
 
     const timer = setTimeout(() => {
-      battleStore.setMonsterState('idle');
-      battleStore.setShowVictoryEffect(false);
+      battleStore.resetBattle();
     }, 0);
 
     return () => clearTimeout(timer);

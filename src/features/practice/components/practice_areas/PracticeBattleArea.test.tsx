@@ -40,8 +40,14 @@ vi.mock('next/link', () => ({
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-      <div {...props}>{children}</div>
+    div: ({ children, animate, transition, ...props }: any) => (
+      <div 
+        {...props} 
+        data-animate={JSON.stringify(animate)} 
+        data-transition={JSON.stringify(transition)}
+      >
+        {children}
+      </div>
     ),
   },
 }));
@@ -280,6 +286,27 @@ describe('BattleArea', () => {
     });
     render(<PracticeBattleArea />);
     expect(screen.getByAltText('Item')).toBeDefined();
+    });
+
+    it('sets defeated animation props when monster is defeated', () => {
+      (useBattleStore as any).mockReturnValue({
+        ...mockBattleStore,
+        monsterState: 'defeated',
+      });
+      
+      render(<PracticeBattleArea />);
+      
+      const monsterImg = screen.getByAltText(/Monster/);
+      const monsterContainer = monsterImg.closest('div[data-animate]');
+      
+      const animateAttr = monsterContainer?.getAttribute('data-animate');
+      expect(animateAttr).toBeDefined();
+      
+      const animate = JSON.parse(animateAttr || '{}');
+      // Verify keyframes for defeated state
+      expect(animate.y).toEqual([0, -20, 20]);
+      expect(animate.rotate).toEqual([0, 0, 90]);
+      expect(animate.filter).toContain('grayscale(100%) brightness(1)');
     });
   });
 });

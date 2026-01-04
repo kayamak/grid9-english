@@ -27,16 +27,15 @@ export function BattleObjectArea({
           key={`item-${object}`}
           initial={{ x: 20, opacity: 0 }}
           animate={{
-            x:
+            opacity: monsterState === 'defeated' ? [1, 1, 0.6] : 1,
+            y: monsterState === 'defeated' ? [0, -10, 20] : 0,
+            rotate: monsterState === 'defeated' ? [0, 0, 90] : 0,
+            scale:
               monsterState === 'damaged'
-                ? [0, 5, -5, 5, 0]
-                : monsterState === 'attack'
-                  ? [0, -attackDistance, 0]
-                  : 0,
-            opacity: monsterState === 'defeated' ? 0.6 : 1,
-            y: monsterState === 'defeated' ? 20 : 0,
-            rotate: monsterState === 'defeated' ? 90 : 0,
-            scale: monsterState === 'damaged' ? [1, 0.95, 1] : 1,
+                ? [1, 0.95, 1]
+                : monsterState === 'defeated'
+                  ? [1, 1.05, 1]
+                  : 1,
             filter:
               monsterState === 'damaged'
                 ? [
@@ -45,8 +44,20 @@ export function BattleObjectArea({
                     'brightness(1)',
                   ]
                 : monsterState === 'defeated'
-                  ? 'grayscale(100%)'
+                  ? [
+                      'brightness(1)',
+                      'brightness(1.5)', // Hit flash
+                      'grayscale(100%)',
+                    ]
                   : 'none',
+            x:
+              monsterState === 'damaged'
+                ? [0, 5, -5, 5, 0]
+                : monsterState === 'attack'
+                  ? [0, -attackDistance, 0]
+                  : monsterState === 'defeated'
+                    ? [0, 5, 0] // Slight shake
+                    : 0,
           }}
           transition={{
             duration:
@@ -54,7 +65,10 @@ export function BattleObjectArea({
                 ? 0.3
                 : monsterState === 'attack'
                   ? 0.3
-                  : 0.5,
+                  : monsterState === 'defeated'
+                    ? 0.6
+                    : 0.5,
+            times: monsterState === 'defeated' ? [0, 0.3, 1] : undefined,
           }}
           className="z-10 flex flex-col items-center"
         >

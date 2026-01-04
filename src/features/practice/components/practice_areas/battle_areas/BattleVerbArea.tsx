@@ -28,49 +28,50 @@ export function VerbArea({
           initial={{ y: 20, opacity: 0, scale: 0.8 * monsterScale }}
           animate={{
             y:
-              monsterState === 'hit'
-                ? [0, -20, 0]
-                : monsterState === 'defeated'
-                  ? 20
-                  : 0,
-            rotate: monsterState === 'defeated' ? 90 : 0,
-            opacity: monsterState === 'defeated' ? 0.6 : monsterOpacity,
+              monsterState === 'defeated'
+                ? [0, -20, 20] // Start, Peak, End
+                : 0,
+            rotate: monsterState === 'defeated' ? [0, 0, 90] : 0,
+            opacity: monsterState === 'defeated' ? [monsterOpacity, monsterOpacity, 0.6] : monsterOpacity,
             scale:
-              monsterState === 'hit'
-                ? 1.1 * monsterScale
-                : monsterState === 'damaged'
-                  ? [1 * monsterScale, 0.95 * monsterScale, 1 * monsterScale]
+              monsterState === 'damaged'
+                ? [1 * monsterScale, 0.95 * monsterScale, 1 * monsterScale]
+                : monsterState === 'defeated'
+                  ? [1 * monsterScale, 1.1 * monsterScale, 1 * monsterScale]
                   : 1 * monsterScale,
             filter:
-              monsterState === 'hit'
-                ? 'brightness(2) contrast(2)'
-                : monsterState === 'damaged'
+              monsterState === 'damaged'
+                ? [
+                    'brightness(1)',
+                    'brightness(1.5) sepia(0.5) hue-rotate(-50deg)',
+                    'brightness(1)',
+                  ]
+                : monsterState === 'defeated'
                   ? [
                       'brightness(1)',
-                      'brightness(1.5) sepia(0.5) hue-rotate(-50deg)',
-                      'brightness(1)',
+                      'brightness(2) contrast(1.5)', // Hit flash peak
+                      'grayscale(100%) brightness(1)', // Final fall
                     ]
-                  : monsterState === 'defeated'
-                    ? 'grayscale(100%)'
-                    : 'none',
+                  : 'none',
             x:
-              monsterState === 'hit'
-                ? [0, 10, -10, 10, 0]
-                : monsterState === 'damaged'
-                  ? [0, 5, -5, 5, 0]
-                  : monsterState === 'attack'
-                    ? [0, -attackDistance, 0]
+              monsterState === 'damaged'
+                ? [0, 5, -5, 5, 0]
+                : monsterState === 'attack'
+                  ? [0, -attackDistance, 0]
+                  : monsterState === 'defeated'
+                    ? [0, 10, 0] // Quick shake
                     : 0,
           }}
           transition={{
             duration:
-              monsterState === 'hit'
-                ? 0.2
-                : monsterState === 'damaged'
+              monsterState === 'damaged'
+                ? 0.3
+                : monsterState === 'attack'
                   ? 0.3
-                  : monsterState === 'attack'
-                    ? 0.3
+                  : monsterState === 'defeated'
+                    ? 0.6
                     : 0.5,
+            times: monsterState === 'defeated' ? [0, 0.3, 1] : undefined,
           }}
           className="z-10"
           style={{ transformOrigin: 'bottom' }}
@@ -95,37 +96,36 @@ export function VerbArea({
           initial={{ y: 20, opacity: 0, scale: 0.8 * monsterScale }}
           animate={{
             y:
-              monsterState === 'hit'
-                ? [0, -20, 0]
-                : monsterState === 'defeated'
-                  ? 20
-                  : 0,
-            rotate: monsterState === 'defeated' ? 90 : 0,
-            opacity: monsterState === 'defeated' ? 0 : monsterOpacity, // Hide FX on defeat
+              monsterState === 'defeated'
+                ? [0, -20, 20]
+                : 0,
+            rotate: monsterState === 'defeated' ? [0, 0, 90] : 0,
+            opacity: monsterState === 'defeated' ? [monsterOpacity, monsterOpacity, 0] : monsterOpacity, // Fade out FX
             scale:
-              monsterState === 'hit'
-                ? 1.1 * monsterScale
-                : monsterState === 'damaged'
-                  ? [1 * monsterScale, 0.95 * monsterScale, 1 * monsterScale]
+              monsterState === 'damaged'
+                ? [1 * monsterScale, 0.95 * monsterScale, 1 * monsterScale]
+                : monsterState === 'defeated'
+                  ? [1 * monsterScale, 1.1 * monsterScale, 1 * monsterScale]
                   : 1 * monsterScale,
             x:
-              monsterState === 'hit'
-                ? [0, 10, -10, 10, 0]
-                : monsterState === 'damaged'
-                  ? [0, 5, -5, 5, 0]
-                  : monsterState === 'attack'
-                    ? [0, -attackDistance, 0]
+              monsterState === 'damaged'
+                ? [0, 5, -5, 5, 0]
+                : monsterState === 'attack'
+                  ? [0, -attackDistance, 0]
+                  : monsterState === 'defeated'
+                    ? [0, 10, 0]
                     : 0,
           }}
           transition={{
             duration:
-              monsterState === 'hit'
-                ? 0.2
-                : monsterState === 'damaged'
+              monsterState === 'damaged'
+                ? 0.3
+                : monsterState === 'attack'
                   ? 0.3
-                  : monsterState === 'attack'
-                    ? 0.3
+                  : monsterState === 'defeated'
+                    ? 0.6
                     : 0.5,
+            times: monsterState === 'defeated' ? [0, 0.3, 1] : undefined,
           }}
           className="absolute inset-0 pointer-events-none z-10"
           style={{ transformOrigin: 'bottom' }}
