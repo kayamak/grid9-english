@@ -1,4 +1,11 @@
-import { VerbType, SentenceType, Subject, Tense, FiveSentencePattern, NumberForm } from '../types';
+import {
+  VerbType,
+  SentenceType,
+  Subject,
+  Tense,
+  FiveSentencePattern,
+  NumberForm,
+} from '../types';
 import { SentencePatternSpecification } from '../spec/SentencePatternSpecification';
 
 export class SentencePattern {
@@ -43,30 +50,50 @@ export class SentencePattern {
   private validate(): void {
     const spec = new SentencePatternSpecification();
     if (!spec.isSatisfiedBy(this)) {
-      throw new Error('Invalid sentence pattern: Be verb cannot have SVO, SVOO, or SVOC patterns');
+      throw new Error(
+        'Invalid sentence pattern: Be verb cannot have SVO, SVOO, or SVOC patterns'
+      );
     }
   }
 
   // Getters
-  get verbType(): VerbType { return this._verbType; }
-  get verb(): string { return this._verb; }
-  get sentenceType(): SentenceType { return this._sentenceType; }
-  get subject(): Subject { return this._subject; }
-  get tense(): Tense { return this._tense; }
-  get fiveSentencePattern(): FiveSentencePattern { return this._fiveSentencePattern; }
-  get object(): string { return this._object; }
-  get numberForm(): NumberForm { return this._numberForm; }
-  get beComplement(): string { return this._beComplement; }
+  get verbType(): VerbType {
+    return this._verbType;
+  }
+  get verb(): string {
+    return this._verb;
+  }
+  get sentenceType(): SentenceType {
+    return this._sentenceType;
+  }
+  get subject(): Subject {
+    return this._subject;
+  }
+  get tense(): Tense {
+    return this._tense;
+  }
+  get fiveSentencePattern(): FiveSentencePattern {
+    return this._fiveSentencePattern;
+  }
+  get object(): string {
+    return this._object;
+  }
+  get numberForm(): NumberForm {
+    return this._numberForm;
+  }
+  get beComplement(): string {
+    return this._beComplement;
+  }
 
   // Business Logic: rotateSubject (Invariant 1)
   rotateSubject(): SentencePattern {
     const nextSubject: Record<Subject, Subject> = {
-      'first_s': 'first_p',
-      'first_p': 'first_s',
-      'second': 'second_p',
-      'second_p': 'second',
-      'third_s': 'third_p',
-      'third_p': 'third_s',
+      first_s: 'first_p',
+      first_p: 'first_s',
+      second: 'second_p',
+      second_p: 'second',
+      third_s: 'third_p',
+      third_p: 'third_s',
     };
     return this.copyWith({ subject: nextSubject[this._subject] });
   }
@@ -82,17 +109,19 @@ export class SentencePattern {
   }
 
   // Helper method for immutability
-  private copyWith(props: Partial<{
-    verbType: VerbType;
-    verb: string;
-    sentenceType: SentenceType;
-    subject: Subject;
-    tense: Tense;
-    fiveSentencePattern: FiveSentencePattern;
-    object: string;
-    numberForm: NumberForm;
-    beComplement: string;
-  }>): SentencePattern {
+  private copyWith(
+    props: Partial<{
+      verbType: VerbType;
+      verb: string;
+      sentenceType: SentenceType;
+      subject: Subject;
+      tense: Tense;
+      fiveSentencePattern: FiveSentencePattern;
+      object: string;
+      numberForm: NumberForm;
+      beComplement: string;
+    }>
+  ): SentencePattern {
     return new SentencePattern(
       props.verbType ?? this._verbType,
       props.verb ?? this._verb,

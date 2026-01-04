@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-background: var(--bg-color);
@@ -14,7 +14,7 @@
   --primary-color: #ffffff;
   --secondary-color: #1a1a1a;
   --accent-color: #ffd700;
-  --font-dot: var(--font-dot-gothic), "DotGothic16", monospace;
+  --font-dot: var(--font-dot-gothic), 'DotGothic16', monospace;
 }
 
 @layer base {
@@ -26,7 +26,9 @@
     image-rendering: pixelated;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     @apply font-normal mb-4;
     font-family: var(--font-dot);
   }
@@ -41,12 +43,14 @@
     color: var(--accent-color);
   }
 
-  input, select {
+  input,
+  select {
     @apply w-full p-3 mb-4 bg-black border-2 border-white text-white;
     font-family: var(--font-dot);
   }
 
-  input:focus, select:focus {
+  input:focus,
+  select:focus {
     @apply outline-none border-yellow-400;
   }
 }
@@ -56,8 +60,8 @@
     @apply relative p-4;
     background: linear-gradient(135deg, #0015a0 0%, #000a60 100%);
     border: 4px solid #f0f0f0;
-    box-shadow: 
-      inset 0 0 0 2px #000, 
+    box-shadow:
+      inset 0 0 0 2px #000,
       0 0 0 2px #000,
       0 4px 15px rgba(0, 0, 0, 0.5);
     border-radius: 4px;
@@ -68,7 +72,7 @@
     @apply relative p-5;
     background: linear-gradient(180deg, #0033cc 0%, #001144 100%);
     border: 3px solid #ffd700;
-    box-shadow: 
+    box-shadow:
       inset 0 0 0 2px #442200,
       0 4px 10px rgba(0, 0, 0, 0.6);
     border-radius: 8px;
@@ -99,12 +103,12 @@
   }
 
   .dq-menu-item::before {
-    content: " ";
+    content: ' ';
     @apply w-4;
   }
 
   .dq-menu-item:hover::before {
-    content: "▶";
+    content: '▶';
     @apply text-yellow-400;
   }
 
@@ -119,8 +123,12 @@
   }
 
   @keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
   }
 
   .dq-battle-bg {
@@ -128,10 +136,10 @@
     background-position: bottom center;
     image-rendering: pixelated;
     border: 4px solid #f0f0f0;
-    box-shadow: 
-      inset 0 0 0 2px #000, 
+    box-shadow:
+      inset 0 0 0 2px #000,
       0 0 0 2px #000,
-      0 10px 30px rgba(0,0,0,0.5);
+      0 10px 30px rgba(0, 0, 0, 0.5);
     border-radius: 4px;
     position: relative;
     overflow: hidden;
@@ -142,13 +150,20 @@
   }
 
   .dq-battle-bg::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background: 
+    background:
       linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
-      linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-    background-size: 100% 4px, 3px 100%;
+      linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.03),
+        rgba(0, 255, 0, 0.01),
+        rgba(0, 0, 255, 0.03)
+      );
+    background-size:
+      100% 4px,
+      3px 100%;
     pointer-events: none;
     z-index: 5;
     animation: crt-flicker 0.15s infinite;
@@ -156,34 +171,80 @@
   }
 
   @keyframes crt-flicker {
-    0% { opacity: 0.75296; }
-    5% { opacity: 0.70311; }
-    10% { opacity: 0.7481; }
-    15% { opacity: 0.70014; }
-    20% { opacity: 0.7601; }
-    25% { opacity: 0.75122; }
-    30% { opacity: 0.72911; }
-    35% { opacity: 0.7434; }
-    40% { opacity: 0.7121; }
-    45% { opacity: 0.7201; }
-    50% { opacity: 0.70715; }
-    55% { opacity: 0.76315; }
-    60% { opacity: 0.7461; }
-    65% { opacity: 0.7201; }
-    70% { opacity: 0.7501; }
-    75% { opacity: 0.7301; }
-    80% { opacity: 0.7251; }
-    85% { opacity: 0.7601; }
-    90% { opacity: 0.7412; }
-    95% { opacity: 0.7101; }
-    100% { opacity: 0.7501; }
+    0% {
+      opacity: 0.75296;
+    }
+    5% {
+      opacity: 0.70311;
+    }
+    10% {
+      opacity: 0.7481;
+    }
+    15% {
+      opacity: 0.70014;
+    }
+    20% {
+      opacity: 0.7601;
+    }
+    25% {
+      opacity: 0.75122;
+    }
+    30% {
+      opacity: 0.72911;
+    }
+    35% {
+      opacity: 0.7434;
+    }
+    40% {
+      opacity: 0.7121;
+    }
+    45% {
+      opacity: 0.7201;
+    }
+    50% {
+      opacity: 0.70715;
+    }
+    55% {
+      opacity: 0.76315;
+    }
+    60% {
+      opacity: 0.7461;
+    }
+    65% {
+      opacity: 0.7201;
+    }
+    70% {
+      opacity: 0.7501;
+    }
+    75% {
+      opacity: 0.7301;
+    }
+    80% {
+      opacity: 0.7251;
+    }
+    85% {
+      opacity: 0.7601;
+    }
+    90% {
+      opacity: 0.7412;
+    }
+    95% {
+      opacity: 0.7101;
+    }
+    100% {
+      opacity: 0.7501;
+    }
   }
 
   .dq-battle-bg::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.3) 100%);
+    background: radial-gradient(
+      circle at center,
+      transparent 40%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
     pointer-events: none;
     z-index: 4;
   }

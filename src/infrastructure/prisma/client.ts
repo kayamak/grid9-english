@@ -5,7 +5,10 @@ const globalForPrisma = global as unknown as { prisma_: PrismaClient };
 
 import path from 'path';
 
-const url_raw = process.env.APP_ENV === 'staging' ? process.env.TURSO_DATABASE_URL : (process.env.DATABASE_URL || 'file:./dev.db');
+const url_raw =
+  process.env.APP_ENV === 'staging'
+    ? process.env.TURSO_DATABASE_URL
+    : process.env.DATABASE_URL || 'file:./dev.db';
 
 let url = url_raw;
 if (url?.startsWith('file:')) {
@@ -35,11 +38,13 @@ if (url?.startsWith('file:')) {
   prismaClient = new PrismaClient({
     adapter,
     log: ['query'],
-    datasources: adapter ? undefined : {
-      db: {
-        url,
-      },
-    },
+    datasources: adapter
+      ? undefined
+      : {
+          db: {
+            url,
+          },
+        },
   });
 }
 

@@ -8,23 +8,23 @@ Grid9 Englishプロジェクトへようこそ。このプロジェクトは、�
 
 ### 📂 docs/ (ルート)
 
-*   **[README.md](./docs/README.md)**
-    *   ドキュメントの全体像と、ドキュメント更新の際のガイドラインが記載されているインデックスファイルです。
-*   **[database-guide.md](./docs/database-guide.md)**
-    *   データベース（Turso & Prisma）のセットアップ、マイグレーション、シードデータの投入方法についてのガイドです。
-*   **[database-cheatsheet.md](./docs/database-cheatsheet.md)**
-    *   日常的な開発で使用するデータベース操作のコマンド集、およびSQLクエリのクイックリファレンスです。
-*   **[er-diagram.md](./docs/er-diagram.md)**
-    *   Mermaid形式で記述されたデータベースのER図です。テーブル間のリレーションを確認できます。
+- **[README.md](./docs/README.md)**
+  - ドキュメントの全体像と、ドキュメント更新の際のガイドラインが記載されているインデックスファイルです。
+- **[database-guide.md](./docs/database-guide.md)**
+  - データベース（Turso & Prisma）のセットアップ、マイグレーション、シードデータの投入方法についてのガイドです。
+- **[database-cheatsheet.md](./docs/database-cheatsheet.md)**
+  - 日常的な開発で使用するデータベース操作のコマンド集、およびSQLクエリのクイックリファレンスです。
+- **[er-diagram.md](./docs/er-diagram.md)**
+  - Mermaid形式で記述されたデータベースのER図です。テーブル間のリレーションを確認できます。
 
 ### 📂 docs/specifications/ (仕様書)
 
 各機能の詳細な振る舞いや要件が記載されています。
 
-*   **[core_specicifation.md](./docs/specifications/core_specicifation.md)**
-    *   プロジェクト全体のコアとなる仕様や設計方針が記載されています。
-*   **[practice_mode_specicifation.md](./docs/specifications/practice_mode_specicifation.md)**
-    *   英作文練習モードの具体的な動作仕様、UI構成、および実装上の考慮事項が記載されています。
+- **[core_specicifation.md](./docs/specifications/core_specicifation.md)**
+  - プロジェクト全体のコアとなる仕様や設計方針が記載されています。
+- **[practice_mode_specicifation.md](./docs/specifications/practice_mode_specicifation.md)**
+  - 英作文練習モードの具体的な動作仕様、UI構成、および実装上の考慮事項が記載されています。
 
 ### 📂 docs/sequence-diagrams/ (シーケンス図)
 

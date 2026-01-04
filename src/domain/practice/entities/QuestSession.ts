@@ -22,18 +22,28 @@ export class QuestSession {
     );
   }
 
-  get level(): number { return this._level; }
-  get drills(): SentenceDrill[] { return this._drills; }
-  get results(): AnswerResult[] { return this._results; }
-  get currentIndex(): number { return this._currentIndex; }
-  get status(): QuestStatus { return this._status; }
+  get level(): number {
+    return this._level;
+  }
+  get drills(): SentenceDrill[] {
+    return this._drills;
+  }
+  get results(): AnswerResult[] {
+    return this._results;
+  }
+  get currentIndex(): number {
+    return this._currentIndex;
+  }
+  get status(): QuestStatus {
+    return this._status;
+  }
 
   get currentDrill(): SentenceDrill | undefined {
     return this._drills[this._currentIndex];
   }
 
   get correctCount(): number {
-    return this._results.filter(r => r === 'correct').length;
+    return this._results.filter((r) => r === 'correct').length;
   }
 
   get isLastDrill(): boolean {
@@ -43,7 +53,7 @@ export class QuestSession {
   getTimeLimit(): number {
     if (this._level === 10) return 10;
     if (this._level < 4) return 30;
-    return Math.max(5, 30 - (this._level * 2));
+    return Math.max(5, 30 - this._level * 2);
   }
 
   withResults(results: AnswerResult[]): QuestSession {
@@ -77,7 +87,7 @@ export class QuestSession {
     if (this.isLastDrill) {
       const correctCount = this.correctCount;
       let nextStatus: QuestStatus = 'failed';
-      
+
       if (correctCount >= 8) {
         nextStatus = this._level === 10 ? 'all-cleared' : 'result';
       }
@@ -106,7 +116,12 @@ export class QuestSession {
   }
 
   static checkAnswer(generatedText: string, targetEnglish: string): boolean {
-    const normalize = (text: string) => text.toLowerCase().replace(/[.,?!]/g, '').replace(/\s+/g, ' ').trim();
+    const normalize = (text: string) =>
+      text
+        .toLowerCase()
+        .replace(/[.,?!]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
     return normalize(generatedText) === normalize(targetEnglish);
   }
 }

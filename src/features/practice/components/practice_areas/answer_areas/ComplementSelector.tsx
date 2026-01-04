@@ -1,5 +1,10 @@
 import React from 'react';
-import { BeComplement, FiveSentencePattern, NumberForm, Word } from '@/domain/practice/types';
+import {
+  BeComplement,
+  FiveSentencePattern,
+  NumberForm,
+  Word,
+} from '@/domain/practice/types';
 
 interface ComplementSelectorProps {
   selectedComplement: BeComplement;
@@ -13,58 +18,67 @@ interface ComplementSelectorProps {
   adverbWords: Word[];
 }
 
-
-
-export const ComplementSelector: React.FC<ComplementSelectorProps> = ({ 
-  selectedComplement, 
-  onChange, 
+export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
+  selectedComplement,
+  onChange,
   pattern,
   numberForm,
   disabled,
   children,
   nounWords,
   adjectiveWords,
-  adverbWords
+  adverbWords,
 }) => {
   const options = React.useMemo(() => {
     let opts: { value: BeComplement; label: string; numberForm?: NumberForm }[];
-    
+
     if (pattern === 'SV') {
-      opts = adverbWords.map(word => ({
+      opts = adverbWords.map((word) => ({
         value: word.value as BeComplement,
-        label: word.label
+        label: word.label,
       }));
     } else {
-      const nounOptions = nounWords.map(noun => ({
+      const nounOptions = nounWords.map((noun) => ({
         value: noun.value as BeComplement,
         label: noun.label,
-        numberForm: noun.numberForm as NumberForm
+        numberForm: noun.numberForm as NumberForm,
       }));
 
-      const adjectiveOptions = adjectiveWords.map(adj => ({
+      const adjectiveOptions = adjectiveWords.map((adj) => ({
         value: adj.value as BeComplement,
         label: adj.label,
-        numberForm: 'adjective' as const
+        numberForm: 'adjective' as const,
       }));
-      
+
       const allSVCOptions = [...nounOptions, ...adjectiveOptions];
-      
+
       if (numberForm) {
-        const showAllExceptSomething = ['the', 'my', 'our', 'your', 'his', 'her', 'their', 'no_article'].includes(numberForm);
+        const showAllExceptSomething = [
+          'the',
+          'my',
+          'our',
+          'your',
+          'his',
+          'her',
+          'their',
+          'no_article',
+        ].includes(numberForm);
         opts = showAllExceptSomething
-          ? allSVCOptions.filter(option => option.value !== 'something')
-          : allSVCOptions.filter(option => option.numberForm === numberForm);
+          ? allSVCOptions.filter((option) => option.value !== 'something')
+          : allSVCOptions.filter((option) => option.numberForm === numberForm);
       } else {
         opts = allSVCOptions;
       }
     }
-    
+
     return [...opts].sort((a, b) => a.value.localeCompare(b.value));
   }, [pattern, numberForm, nounWords, adjectiveWords, adverbWords]);
-  
+
   // Auto-select first option if current selection is not in the list
   React.useEffect(() => {
-    const isCurrentSelectionValid = options.some(option => option.value === selectedComplement);
+    const isCurrentSelectionValid = options.some(
+      (option) => option.value === selectedComplement
+    );
     if (!isCurrentSelectionValid && options.length > 0) {
       onChange(options[0].value);
     }
@@ -84,13 +98,21 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
           className="dq-button !py-2 !px-2 appearance-none !pr-8 w-full disabled:opacity-30"
         >
           {options.map((option) => (
-            <option key={option.value} value={option.value} className="bg-blue-900 text-white">
+            <option
+              key={option.value}
+              value={option.value}
+              className="bg-blue-900 text-white"
+            >
               {option.label}
             </option>
           ))}
         </select>
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
-          <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <svg
+            className="fill-current h-4 w-4"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
             <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
           </svg>
         </div>

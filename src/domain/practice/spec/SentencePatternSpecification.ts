@@ -14,7 +14,7 @@ export class SentencePatternSpecification {
     }
 
     // Add more rules here as needed
-    
+
     return true;
   }
 }

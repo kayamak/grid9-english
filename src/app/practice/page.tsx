@@ -1,5 +1,10 @@
 import React, { Suspense } from 'react';
-import { getNounWords, getVerbWords, getAdjectiveWords, getAdverbWords } from '@/features/practice/actions/words';
+import {
+  getNounWords,
+  getVerbWords,
+  getAdjectiveWords,
+  getAdverbWords,
+} from '@/features/practice/actions/words';
 import { getSentenceDrills } from '@/features/practice/actions/drills';
 import { PracticeContainer } from '@/features/practice/components/PracticeContainer';
 
@@ -10,7 +15,7 @@ export default async function PracticePage() {
     adjectives: await getAdjectiveWords(),
     adverbs: await getAdverbWords(),
   };
-  
+
   const allDrills = await getSentenceDrills();
 
   return (

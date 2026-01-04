@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { ResultLevelUpArea } from './result_areas/ResultLevelUpArea';
@@ -41,9 +41,7 @@ export function PracticeResultArea({
         />
       )}
 
-      {questStatus === 'all-cleared' && (
-        <ResultAllClearedArea />
-      )}
+      {questStatus === 'all-cleared' && <ResultAllClearedArea />}
     </>
   );
 }

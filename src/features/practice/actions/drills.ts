@@ -1,15 +1,13 @@
 // Removed 'use server' for SSG
 
-
-
-import { PrismaSentenceDrillRepository } from "@/infrastructure/repositories/PrismaSentenceDrillRepository";
+import { PrismaSentenceDrillRepository } from '@/infrastructure/repositories/PrismaSentenceDrillRepository';
 
 export async function getSentenceDrills(pattern?: string) {
   const repository = new PrismaSentenceDrillRepository();
-  const drills = pattern 
+  const drills = pattern
     ? await repository.findByPattern(pattern)
     : await repository.findAll();
-  return drills.map(d => d.toObject());
+  return drills.map((d) => d.toObject());
 }
 
 export async function getDrillQuestQuestions(level: number) {
@@ -27,14 +25,13 @@ export async function getDrillQuestQuestions(level: number) {
     drills = await repository.findByPattern(pattern);
   }
 
-  
   if (level <= 3) {
     // Lead 10 questions (First 10)
-    return drills.slice(0, 10).map(d => d.toObject());
+    return drills.slice(0, 10).map((d) => d.toObject());
   } else {
     // Random 10 questions
     const shuffled = [...drills].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 10).map(d => d.toObject());
+    return shuffled.slice(0, 10).map((d) => d.toObject());
   }
 }
 
@@ -42,4 +39,3 @@ export async function getUniquePatterns() {
   const repository = new PrismaSentenceDrillRepository();
   return await repository.findUniquePatterns();
 }
-

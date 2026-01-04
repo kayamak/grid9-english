@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const isGithubActions = process.env.GITHUB_ACTIONS === 'true';
 

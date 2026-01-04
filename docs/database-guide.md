@@ -16,18 +16,21 @@
 ローカルマシン上の SQLite ファイルを使用して開発を行うデフォルトの環境です。
 
 ### 特徴
+
 - **コマンド**: `npm run dev`
 - **DBエンジン**: SQLite
 - **保存先**: `project_root/prisma/dev.db`
 - **メリット**: セットアップ不要、オフライン動作、高速なスキーマ変更。
 
 ### プロジェクト設定 (`.env`)
+
 ```env
 # ローカルDB設定
 # SQLite の場合、相対パスは「schema.prisma ファイルがあるディレクトリ」からの相対パスとなります。
 DATABASE_URL="file:./dev.db"
 ```
-> **パスの解決について**: 
+
+> **パスの解決について**:
 > `schema.prisma` は `prisma/` フォルダにあるため、本来の設定は `prisma/dev.db` を指します。
 >
 > **【解決済み】ルートにある 0KB の `dev.db` について**:
@@ -35,6 +38,7 @@ DATABASE_URL="file:./dev.db"
 > これにより、**ルートディレクトリに不要なファイルが作成されることはありません。** もしルートに `dev.db` が残っている場合は、削除してしまって大丈夫です。
 
 ### 基本操作
+
 - **Prisma クライアント生成**: `npx prisma generate`
 - **DBリセット & シード**: `npx prisma db push --force-reset && npx prisma db seed`
 - **データ確認 (Prisma Studio)**: `npx prisma studio`
@@ -46,13 +50,16 @@ DATABASE_URL="file:./dev.db"
 Turso (LibSQL) を使用した、本番に近いクラウドデータベース環境です。
 
 ### 特徴
+
 - **コマンド**: `npm run stg`
 - **DBエンジン**: Turso (LibSQL)
 - **保存先**: Turso Cloud
 - **メリット**: チーム間でのデータ共有、実データの確認、Next.js Edge Runtime との互換性テスト。
 
 ### プロジェクト設定 (`.env`)
+
 `APP_ENV` は `.env` に設定せず、スクリプト (`npm run stg`) によって動的に注入されます。
+
 ```env
 # Turso 接続情報
 TURSO_DATABASE_URL="libsql://your-db-name.turso.io"
@@ -60,8 +67,10 @@ TURSO_AUTH_TOKEN="your-auth-token"
 ```
 
 ### 基本操作
+
 - **Turso CLI で接続**: `turso db shell grid9-english-db`
 - **Staging へのシード実行**:
+
   ```bash
   # DB初期化 (初回のみ、またはスキーマ変更時)
   npm run db:init:stg
@@ -71,7 +80,9 @@ TURSO_AUTH_TOKEN="your-auth-token"
   ```
 
 ### Turso でのテーブル管理
+
 Turso 環境では `prisma db push` は使用できない場合があるため、以下のスクリプトを利用します。
+
 - **テーブル作成・更新**:
   ```bash
   npm run db:init:stg
@@ -89,12 +100,14 @@ Turso 環境では `prisma db push` は使用できない場合があるため�
 スキーマの変更は常に `prisma/schema.prisma` で行います。
 
 ### スキーマ変更のワークフロー
+
 1. `prisma/schema.prisma` を編集。
 2. `npx prisma generate` を実行してクライアントを更新。
 3. **Local**: `npx prisma db push` で反映。
 4. **Staging**: `turso db shell` で SQL を実行して反映（または migration ファイルの適用）。
 
 ### モデル構成例
+
 ```prisma
 model BeVerbWord {
   id        String @id @default(cuid())
@@ -121,10 +134,12 @@ model DoVerbWord {
 ## トラブルシューティング
 
 ### Local
+
 - **`dev.db` が壊れた**: ファイルを削除して `npx prisma db push` を再実行。
 - **型が古い**: `npx prisma generate` を実行。
 
 ### Staging (`npm run stg`)
+
 - **接続エラー**: `.env` の `TURSO_AUTH_TOKEN` が正しいか確認（`turso db tokens create` で再発行可能）。
 - **`prisma.doVerbWord is undefined`**: `npm run stg` を使用しているか確認（`npm run dev` では Local を見てしまいます）。
 - **テーブルが存在しない**: Turso shell で `CREATE TABLE` が実行されているか確認。
@@ -132,5 +147,6 @@ model DoVerbWord {
 ---
 
 ## 参考リンク
+
 - [Turso Docs](https://docs.turso.tech/)
 - [Prisma Docs](https://www.prisma.io/docs)

@@ -11,14 +11,16 @@ export class PrismaWordRepository implements IWordRepository {
       },
     });
 
-    return data.map((item) => Word.reconstruct({
-      id: item.id,
-      value: item.value,
-      label: item.label,
-      type: 'noun' as WordType,
-      numberForm: item.numberForm,
-      sortOrder: item.sortOrder,
-    }));
+    return data.map((item) =>
+      Word.reconstruct({
+        id: item.id,
+        value: item.value,
+        label: item.label,
+        type: 'noun' as WordType,
+        numberForm: item.numberForm,
+        sortOrder: item.sortOrder,
+      })
+    );
   }
 
   async getVerbWords(type?: 'do' | 'be', pattern?: string): Promise<Word[]> {
@@ -40,21 +42,30 @@ export class PrismaWordRepository implements IWordRepository {
 
     // Create a unified structure for mapping
     const combined = [
-      ...beVerbs.map((v) => ({ ...v, type: 'verb' as WordType, pastForm: undefined, thirdPersonForm: undefined, adverb: undefined, sentencePattern: undefined })),
+      ...beVerbs.map((v) => ({
+        ...v,
+        type: 'verb' as WordType,
+        pastForm: undefined,
+        thirdPersonForm: undefined,
+        adverb: undefined,
+        sentencePattern: undefined,
+      })),
       ...doVerbs.map((v) => ({ ...v, type: 'verb' as WordType })),
     ].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-    return combined.map((item) => Word.reconstruct({
-      id: item.id,
-      value: item.value,
-      label: item.label,
-      type: 'verb' as WordType,
-      sortOrder: item.sortOrder,
-      pastForm: item.pastForm || undefined,
-      thirdPersonForm: item.thirdPersonForm || undefined,
-      adverb: item.adverb || undefined,
-      sentencePattern: item.sentencePattern || undefined,
-    }));
+    return combined.map((item) =>
+      Word.reconstruct({
+        id: item.id,
+        value: item.value,
+        label: item.label,
+        type: 'verb' as WordType,
+        sortOrder: item.sortOrder,
+        pastForm: item.pastForm || undefined,
+        thirdPersonForm: item.thirdPersonForm || undefined,
+        adverb: item.adverb || undefined,
+        sentencePattern: item.sentencePattern || undefined,
+      })
+    );
   }
 
   async getAdjectiveWords(): Promise<Word[]> {
@@ -64,13 +75,15 @@ export class PrismaWordRepository implements IWordRepository {
       },
     });
 
-    return data.map((item) => Word.reconstruct({
-      id: item.id,
-      value: item.value,
-      label: item.label,
-      type: 'adjective' as WordType,
-      sortOrder: item.sortOrder,
-    }));
+    return data.map((item) =>
+      Word.reconstruct({
+        id: item.id,
+        value: item.value,
+        label: item.label,
+        type: 'adjective' as WordType,
+        sortOrder: item.sortOrder,
+      })
+    );
   }
 
   async getAdverbWords(): Promise<Word[]> {
@@ -80,12 +93,14 @@ export class PrismaWordRepository implements IWordRepository {
       },
     });
 
-    return data.map((item) => Word.reconstruct({
-      id: item.id,
-      value: item.value,
-      label: item.label,
-      type: 'adverb' as WordType,
-      sortOrder: item.sortOrder,
-    }));
+    return data.map((item) =>
+      Word.reconstruct({
+        id: item.id,
+        value: item.value,
+        label: item.label,
+        type: 'adverb' as WordType,
+        sortOrder: item.sortOrder,
+      })
+    );
   }
 }

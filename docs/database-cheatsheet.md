@@ -59,8 +59,8 @@ turso db shell grid9-english-db "SELECT * FROM AdjectiveWord;"
 
 # 複数行SQL実行
 turso db shell grid9-english-db "
-  SELECT * FROM AdjectiveWord 
-  WHERE sortOrder > 3 
+  SELECT * FROM AdjectiveWord
+  WHERE sortOrder > 3
   ORDER BY sortOrder;
 "
 ```
@@ -99,14 +99,14 @@ turso db shell grid9-english-db "SELECT * FROM AdjectiveWord WHERE label LIKE '%
 
 # データ挿入
 turso db shell grid9-english-db "
-  INSERT INTO AdjectiveWord (id, value, label, sortOrder) 
+  INSERT INTO AdjectiveWord (id, value, label, sortOrder)
   VALUES ('abc123', 'excited', 'excited (興奮した)', 6);
 "
 
 # データ更新
 turso db shell grid9-english-db "
-  UPDATE AdjectiveWord 
-  SET label = 'happy (幸福)' 
+  UPDATE AdjectiveWord
+  SET label = 'happy (幸福)'
   WHERE value = 'happy';
 "
 
@@ -255,7 +255,7 @@ CREATE TABLE IF NOT EXISTS VerbWord (
     sortOrder INTEGER NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS VerbWord_verbType_sentencePattern_idx 
+CREATE INDEX IF NOT EXISTS VerbWord_verbType_sentencePattern_idx
 ON VerbWord(verbType, sentencePattern);
 ```
 
@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS NounWord (
     sortOrder INTEGER NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS NounWord_numberForm_idx 
+CREATE INDEX IF NOT EXISTS NounWord_numberForm_idx
 ON NounWord(numberForm);
 ```
 
@@ -283,23 +283,23 @@ ON NounWord(numberForm);
 ```bash
 # 重複チェック
 turso db shell grid9-english-db "
-  SELECT value, COUNT(*) as count 
-  FROM AdjectiveWord 
-  GROUP BY value 
+  SELECT value, COUNT(*) as count
+  FROM AdjectiveWord
+  GROUP BY value
   HAVING count > 1;
 "
 
 # NULL値チェック
 turso db shell grid9-english-db "
-  SELECT * FROM AdjectiveWord 
+  SELECT * FROM AdjectiveWord
   WHERE value IS NULL OR label IS NULL;
 "
 
 # sortOrder重複チェック
 turso db shell grid9-english-db "
-  SELECT sortOrder, COUNT(*) as count 
-  FROM AdjectiveWord 
-  GROUP BY sortOrder 
+  SELECT sortOrder, COUNT(*) as count
+  FROM AdjectiveWord
+  GROUP BY sortOrder
   HAVING count > 1;
 "
 ```
@@ -309,13 +309,13 @@ turso db shell grid9-english-db "
 ```bash
 # 各テーブルの件数
 turso db shell grid9-english-db "
-  SELECT 
+  SELECT
     'VerbWord' as table_name, COUNT(*) as count FROM VerbWord
   UNION ALL
-  SELECT 
+  SELECT
     'NounWord' as table_name, COUNT(*) as count FROM NounWord
   UNION ALL
-  SELECT 
+  SELECT
     'AdjectiveWord' as table_name, COUNT(*) as count FROM AdjectiveWord;
 "
 ```

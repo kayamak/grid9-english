@@ -6,7 +6,13 @@ import React from 'react';
 // Mock next/link
 vi.mock('next/link', () => {
   return {
-    default: ({ children, href }: { children: React.ReactNode; href: string }) => {
+    default: ({
+      children,
+      href,
+    }: {
+      children: React.ReactNode;
+      href: string;
+    }) => {
       return <a href={href}>{children}</a>;
     },
   };
@@ -22,7 +28,7 @@ vi.mock('next/navigation', () => ({
 describe('MainMenu', () => {
   it('renders category list initially', () => {
     render(<MainMenu />);
-    
+
     // Check if category buttons exist
     expect(screen.getByRole('button', { name: /たたかう/i })).toBeDefined();
     expect(screen.getByRole('button', { name: /れんしゅう/i })).toBeDefined();
@@ -34,29 +40,29 @@ describe('MainMenu', () => {
 
   it('switches to "たたかう" category and shows its items when clicked', async () => {
     render(<MainMenu />);
-    
+
     const tatakauBtn = screen.getByRole('button', { name: /たたかう/i });
     fireEvent.click(tatakauBtn);
-    
+
     // Header should update
     const header = screen.getByRole('heading', { level: 2 });
     expect(header.textContent).toBe('たたかう');
     expect(header.className).toContain('text-yellow-400');
-    
+
     // Items should appear
     expect(screen.getByText('ドリルクエスト')).toBeDefined();
   });
 
   it('switches to "れんしゅう" category and shows its items when clicked', () => {
     render(<MainMenu />);
-    
+
     const jumonBtn = screen.getByRole('button', { name: /れんしゅう/i });
     fireEvent.click(jumonBtn);
-    
+
     // Header should update
     const header = screen.getByRole('heading', { level: 2 });
     expect(header.textContent).toBe('れんしゅう');
-    
+
     // Items should appear
     expect(screen.getByText('しゅご ＋ Doどうし')).toBeDefined(); // Label for DO_SV
     expect(screen.getByText('しゅご ＋ Doどうし ＋ もくてきご')).toBeDefined(); // Label for DO_SVO
@@ -65,29 +71,29 @@ describe('MainMenu', () => {
 
   it('switches to "おためし" category and shows its items when clicked', () => {
     render(<MainMenu />);
-    
+
     const doguBtn = screen.getByRole('button', { name: /おためし/i });
     fireEvent.click(doguBtn);
-    
+
     // Header should update
     const header = screen.getByRole('heading', { level: 2 });
     expect(header.textContent).toBe('おためし');
-    
+
     // Items should appear
     expect(screen.getByText('じゆうトレーニング')).toBeDefined();
   });
-  
+
   it('allows going back to category list', () => {
     render(<MainMenu />);
-    
+
     // Enter a category
     fireEvent.click(screen.getByRole('button', { name: /たたかう/i }));
     expect(screen.getByText('ドリルクエスト')).toBeDefined();
-    
+
     // Click back
     const backBtn = screen.getByText('[もどる]');
     fireEvent.click(backBtn);
-    
+
     // Should be back to initial state
     expect(screen.getByRole('button', { name: /たたかう/i })).toBeDefined();
     expect(screen.queryByText('ドリルクエスト')).toBeNull();

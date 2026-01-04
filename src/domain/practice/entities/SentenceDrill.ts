@@ -46,11 +46,21 @@ export class SentenceDrill {
     );
   }
 
-  get id(): string { return this._id; }
-  get sentencePattern(): string { return this._sentencePattern; }
-  get english(): string { return this._english; }
-  get japanese(): string { return this._japanese; }
-  get sortOrder(): number { return this._sortOrder; }
+  get id(): string {
+    return this._id;
+  }
+  get sentencePattern(): string {
+    return this._sentencePattern;
+  }
+  get english(): string {
+    return this._english;
+  }
+  get japanese(): string {
+    return this._japanese;
+  }
+  get sortOrder(): number {
+    return this._sortOrder;
+  }
 
   toObject() {
     return {

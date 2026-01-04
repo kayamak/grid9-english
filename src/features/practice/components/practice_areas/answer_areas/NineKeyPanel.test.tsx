@@ -15,7 +15,7 @@ describe('NineKeyPanel', () => {
 
   it('renders correctly with default props', () => {
     render(<NineKeyPanel {...defaultProps} />);
-    
+
     // Check if rows are rendered
     expect(screen.getByText('しゅるい')).toBeDefined();
     expect(screen.getByText('しゅご')).toBeDefined();

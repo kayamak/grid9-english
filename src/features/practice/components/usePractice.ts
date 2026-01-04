@@ -1,15 +1,41 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { QuestSession, AnswerResult } from '@/domain/practice/entities/QuestSession';
+import {
+  QuestSession,
+  AnswerResult,
+} from '@/domain/practice/entities/QuestSession';
 import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
-import { SentencePattern, Word, VerbType, SentenceType, Subject, Tense, FiveSentencePattern, Verb, Object as ObjectType, NumberForm, BeComplement, WordProps } from '@/domain/practice/types';
+import {
+  SentencePattern,
+  Word,
+  VerbType,
+  SentenceType,
+  Subject,
+  Tense,
+  FiveSentencePattern,
+  Verb,
+  Object as ObjectType,
+  NumberForm,
+  BeComplement,
+  WordProps,
+} from '@/domain/practice/types';
 import { PatternGenerator } from '@/domain/practice/services/PatternGenerator';
 import { getAssetPath } from '@/lib/assets';
 
-
 export function usePractice(
-  initialWords?: { nouns: WordProps[]; verbs: WordProps[]; adjectives: WordProps[]; adverbs: WordProps[] },
-  allDrills: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }[] = []
+  initialWords?: {
+    nouns: WordProps[];
+    verbs: WordProps[];
+    adjectives: WordProps[];
+    adverbs: WordProps[];
+  },
+  allDrills: {
+    id: string;
+    sentencePattern: string;
+    english: string;
+    japanese: string;
+    sortOrder: number;
+  }[] = []
 ) {
   const searchParams = useSearchParams();
   const isQuestMode = searchParams.get('mode') === 'quest';
@@ -34,7 +60,7 @@ export function usePractice(
   const setCookie = useCallback((name: string, value: string, days = 365) => {
     if (typeof document === 'undefined') return;
     const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     const expires = `; expires=${date.toUTCString()}`;
     document.cookie = `${name}=${value}${expires}; path=/`;
   }, []);
@@ -44,26 +70,34 @@ export function usePractice(
   }, [currentLevel, setCookie]);
 
   // UI States
-  const [heroAction, setHeroAction] = useState<'idle' | 'run-away' | 'defeated' | 'attack' | 'damaged'>('idle');
-  const [monsterState, setMonsterState] = useState<'idle' | 'hit' | 'defeated' | 'damaged' | 'attack'>('idle');
+  const [heroAction, setHeroAction] = useState<
+    'idle' | 'run-away' | 'defeated' | 'attack' | 'damaged'
+  >('idle');
+  const [monsterState, setMonsterState] = useState<
+    'idle' | 'hit' | 'defeated' | 'damaged' | 'attack'
+  >('idle');
   const [showVictoryEffect, setShowVictoryEffect] = useState(false);
   const [isScreenShaking, setIsScreenShaking] = useState(false);
   const [isScreenFlashing, setIsScreenFlashing] = useState(false);
 
   // Domain State: Sentence Pattern
-  const [state, setState] = useState<SentencePattern>(() => SentencePattern.create({
-    verbType: 'do',
-    verb: 'do',
-    sentenceType: 'positive',
-    subject: 'first_s',
-    tense: 'present',
-    fiveSentencePattern: 'SV',
-    object: 'something',
-    numberForm: 'none',
-    beComplement: 'here',
-  }));
+  const [state, setState] = useState<SentencePattern>(() =>
+    SentencePattern.create({
+      verbType: 'do',
+      verb: 'do',
+      sentenceType: 'positive',
+      subject: 'first_s',
+      tense: 'present',
+      fiveSentencePattern: 'SV',
+      object: 'something',
+      numberForm: 'none',
+      beComplement: 'here',
+    })
+  );
 
-  const [activeTab, setActiveTab] = useState<VerbType | 'admin'>(state.verbType);
+  const [activeTab, setActiveTab] = useState<VerbType | 'admin'>(
+    state.verbType
+  );
   const [sessionId, setSessionId] = useState('');
 
   useEffect(() => {
@@ -72,15 +106,15 @@ export function usePractice(
 
   // Domain State: Quest Session
   const [questSession, setQuestSession] = useState<QuestSession | null>(null);
-  
+
   // Data States
   const reconstructedWords = useMemo(() => {
     if (initialWords) {
       return {
-        nouns: initialWords.nouns.map(w => Word.reconstruct(w)),
-        verbs: initialWords.verbs.map(w => Word.reconstruct(w)),
-        adjectives: initialWords.adjectives.map(w => Word.reconstruct(w)),
-        adverbs: initialWords.adverbs.map(w => Word.reconstruct(w)),
+        nouns: initialWords.nouns.map((w) => Word.reconstruct(w)),
+        verbs: initialWords.verbs.map((w) => Word.reconstruct(w)),
+        adjectives: initialWords.adjectives.map((w) => Word.reconstruct(w)),
+        adverbs: initialWords.adverbs.map((w) => Word.reconstruct(w)),
       };
     }
     return { nouns: [], verbs: [], adjectives: [], adverbs: [] };
@@ -94,8 +128,18 @@ export function usePractice(
   }, [reconstructedWords]);
 
   const [isLoadingWords, setIsLoadingWords] = useState(!initialWords);
-  const [drills, setDrills] = useState<{ id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }[]>([]);
-  const [currentDrillIndex, setCurrentDrillIndex] = useState(Math.max(0, initialDrillIndex));
+  const [drills, setDrills] = useState<
+    {
+      id: string;
+      sentencePattern: string;
+      english: string;
+      japanese: string;
+      sortOrder: number;
+    }[]
+  >([]);
+  const [currentDrillIndex, setCurrentDrillIndex] = useState(
+    Math.max(0, initialDrillIndex)
+  );
 
   // Timer States
   const [timeLeft, setTimeLeft] = useState(30);
@@ -105,13 +149,13 @@ export function usePractice(
   // In SSG mode, initialWords are always provided.
   useEffect(() => {
     if (initialWords) {
-        setWords({
-          nouns: initialWords.nouns.map(w => Word.reconstruct(w)),
-          verbs: initialWords.verbs.map(w => Word.reconstruct(w)),
-          adjectives: initialWords.adjectives.map(w => Word.reconstruct(w)),
-          adverbs: initialWords.adverbs.map(w => Word.reconstruct(w)),
-        });
-        setIsLoadingWords(false);
+      setWords({
+        nouns: initialWords.nouns.map((w) => Word.reconstruct(w)),
+        verbs: initialWords.verbs.map((w) => Word.reconstruct(w)),
+        adjectives: initialWords.adjectives.map((w) => Word.reconstruct(w)),
+        adverbs: initialWords.adverbs.map((w) => Word.reconstruct(w)),
+      });
+      setIsLoadingWords(false);
     }
   }, [initialWords]);
 
@@ -126,16 +170,26 @@ export function usePractice(
         if ([1, 4, 7].includes(currentLevel)) pattern = 'DO_SV';
         else if ([2, 5, 8].includes(currentLevel)) pattern = 'DO_SVO';
         else if ([3, 6, 9].includes(currentLevel)) pattern = 'BE_SVC';
-        filtered = allDrills.filter(d => d.sentencePattern === pattern);
+        filtered = allDrills.filter((d) => d.sentencePattern === pattern);
       }
 
       if (currentLevel <= 3) {
         selectedDrills = filtered.slice(0, 10);
       } else {
-        selectedDrills = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
+        selectedDrills = [...filtered]
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 10);
       }
 
-      const drillEntities = selectedDrills.map((d: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }) => SentenceDrill.reconstruct(d));
+      const drillEntities = selectedDrills.map(
+        (d: {
+          id: string;
+          sentencePattern: string;
+          english: string;
+          japanese: string;
+          sortOrder: number;
+        }) => SentenceDrill.reconstruct(d)
+      );
       const session = QuestSession.start(currentLevel, drillEntities);
       setQuestSession(session);
       setDrills(selectedDrills);
@@ -148,8 +202,8 @@ export function usePractice(
         setDrills([]);
         setQuestSession(null);
       } else {
-        selectedDrills = selectedPattern 
-          ? allDrills.filter(d => d.sentencePattern === selectedPattern)
+        selectedDrills = selectedPattern
+          ? allDrills.filter((d) => d.sentencePattern === selectedPattern)
           : allDrills;
         setDrills(selectedDrills);
         setQuestSession(null);
@@ -160,11 +214,22 @@ export function usePractice(
   // Timer Logic
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>;
-    if (isQuestMode && isTimerActive && timeLeft > 0 && questSession?.status === 'playing') {
-      timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-    } else if (timeLeft === 0 && questSession?.status === 'playing' && isTimerActive) {
+    if (
+      isQuestMode &&
+      isTimerActive &&
+      timeLeft > 0 &&
+      questSession?.status === 'playing'
+    ) {
+      timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    } else if (
+      timeLeft === 0 &&
+      questSession?.status === 'playing' &&
+      isTimerActive
+    ) {
       setIsTimerActive(false);
-      const audio = new Audio(getAssetPath('/assets/sounds/monster_attack.wav'));
+      const audio = new Audio(
+        getAssetPath('/assets/sounds/monster_attack.wav')
+      );
       audio.playbackRate = 0.5;
       interface AudioWithPitch extends HTMLAudioElement {
         preservesPitch: boolean;
@@ -192,7 +257,7 @@ export function usePractice(
   // Background Music
   useEffect(() => {
     let bgmFile = 'free_training_bgm.mp3'; // Default: Sentence Training (ぶんしょうトレーニング)
-    
+
     if (heroAction === 'defeated') {
       bgmFile = 'dead_bgm.mp3';
     } else if (isQuestMode) {
@@ -219,8 +284,13 @@ export function usePractice(
   }, [isQuestMode, isFreeMode, heroAction]);
 
   // Generated Text and Correctness
-  const generatedText = useMemo(() => 
-    PatternGenerator.generate(state, reconstructedWords.nouns, reconstructedWords.verbs), 
+  const generatedText = useMemo(
+    () =>
+      PatternGenerator.generate(
+        state,
+        reconstructedWords.nouns,
+        reconstructedWords.verbs
+      ),
     [state, reconstructedWords.nouns, reconstructedWords.verbs]
   );
 
@@ -255,7 +325,13 @@ export function usePractice(
         setHasMarkedCorrect(true);
       }
     }
-  }, [isCorrect, hasMarkedCorrect, isQuestMode, questSession, triggerVictoryEffect]);
+  }, [
+    isCorrect,
+    hasMarkedCorrect,
+    isQuestMode,
+    questSession,
+    triggerVictoryEffect,
+  ]);
 
   useEffect(() => {
     setHasMarkedCorrect(false);
@@ -288,7 +364,7 @@ export function usePractice(
   const handleNextDrill = async (isEscape?: boolean) => {
     if (isEscape === true) {
       setHeroAction('run-away');
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     if (isQuestMode && questSession) {
@@ -310,21 +386,31 @@ export function usePractice(
     // Just resetting the current drill index if needed, but the effect will re-run if we force it.
     // To force a retry with same level, we might need a reset trigger.
     // For now, let's just re-randomize if level > 3
-    const filtered = currentLevel === 10 
-      ? allDrills 
-      : allDrills.filter(d => {
-          let p = '';
-          if ([1, 4, 7].includes(currentLevel)) p = 'DO_SV';
-          else if ([2, 5, 8].includes(currentLevel)) p = 'DO_SVO';
-          else if ([3, 6, 9].includes(currentLevel)) p = 'BE_SVC';
-          return d.sentencePattern === p;
-        });
+    const filtered =
+      currentLevel === 10
+        ? allDrills
+        : allDrills.filter((d) => {
+            let p = '';
+            if ([1, 4, 7].includes(currentLevel)) p = 'DO_SV';
+            else if ([2, 5, 8].includes(currentLevel)) p = 'DO_SVO';
+            else if ([3, 6, 9].includes(currentLevel)) p = 'BE_SVC';
+            return d.sentencePattern === p;
+          });
 
-    const selectedDrills = currentLevel <= 3 
-      ? filtered.slice(0, 10)
-      : [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
+    const selectedDrills =
+      currentLevel <= 3
+        ? filtered.slice(0, 10)
+        : [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
 
-    const drillEntities = selectedDrills.map((d: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }) => SentenceDrill.reconstruct(d));
+    const drillEntities = selectedDrills.map(
+      (d: {
+        id: string;
+        sentencePattern: string;
+        english: string;
+        japanese: string;
+        sortOrder: number;
+      }) => SentenceDrill.reconstruct(d)
+    );
     const session = QuestSession.start(currentLevel, drillEntities);
     setQuestSession(session);
     setDrills(selectedDrills);
@@ -334,117 +420,171 @@ export function usePractice(
     setHeroAction('idle');
   };
 
-  const setCorrectCountInLevel = useCallback((update: number | ((prev: number) => number)) => {
-    if (!questSession) return;
-    const currentCount = questSession.correctCount;
-    const nextCount = typeof update === 'function' ? update(currentCount) : update;
-    
-    // Create new results array with nextCount 'correct' and the rest 'wrong' or null
-    const newResults: AnswerResult[] = new Array(questSession.drills.length).fill(null);
-    for (let i = 0; i < nextCount; i++) {
-        newResults[i] = 'correct';
-    }
-    setQuestSession(questSession.withResults(newResults));
-  }, [questSession]);
+  const setCorrectCountInLevel = useCallback(
+    (update: number | ((prev: number) => number)) => {
+      if (!questSession) return;
+      const currentCount = questSession.correctCount;
+      const nextCount =
+        typeof update === 'function' ? update(currentCount) : update;
 
-  const handleLevelUp = () => setCurrentLevel(prev => prev + 1);
+      // Create new results array with nextCount 'correct' and the rest 'wrong' or null
+      const newResults: AnswerResult[] = new Array(
+        questSession.drills.length
+      ).fill(null);
+      for (let i = 0; i < nextCount; i++) {
+        newResults[i] = 'correct';
+      }
+      setQuestSession(questSession.withResults(newResults));
+    },
+    [questSession]
+  );
+
+  const handleLevelUp = () => setCurrentLevel((prev) => prev + 1);
 
   // Handlers for Pattern Changes
-  const handleVerbTypeChange = useCallback((verbType: VerbType) => {
-    triggerAttackAnim();
-    setActiveTab(verbType);
-    setState((prev) => {
-      if (verbType === 'be') {
-        return SentencePattern.create({
-          ...prev.toObject(),
-          verbType,
-          verb: 'be',
-          fiveSentencePattern: 'SV',
-          beComplement: 'here',
-          numberForm: 'a'
-        });
-      } else {
-        return SentencePattern.create({
-          ...prev.toObject(),
-          verbType,
-          verb: 'do',
-          fiveSentencePattern: 'SV'
-        });
-      }
-    });
-  }, [triggerAttackAnim]);
+  const handleVerbTypeChange = useCallback(
+    (verbType: VerbType) => {
+      triggerAttackAnim();
+      setActiveTab(verbType);
+      setState((prev) => {
+        if (verbType === 'be') {
+          return SentencePattern.create({
+            ...prev.toObject(),
+            verbType,
+            verb: 'be',
+            fiveSentencePattern: 'SV',
+            beComplement: 'here',
+            numberForm: 'a',
+          });
+        } else {
+          return SentencePattern.create({
+            ...prev.toObject(),
+            verbType,
+            verb: 'do',
+            fiveSentencePattern: 'SV',
+          });
+        }
+      });
+    },
+    [triggerAttackAnim]
+  );
 
-  const handleVerbChange = useCallback((verb: Verb) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), verb }));
-  }, [triggerAttackAnim]);
+  const handleVerbChange = useCallback(
+    (verb: Verb) => {
+      triggerAttackAnim();
+      setState((prev) => SentencePattern.create({ ...prev.toObject(), verb }));
+    },
+    [triggerAttackAnim]
+  );
 
-  const handleSentenceTypeChange = useCallback((sentenceType: SentenceType) => {
-    triggerAttackAnim();
-    setState((prev) => prev.toggleSentenceType(sentenceType));
-  }, [triggerAttackAnim]);
+  const handleSentenceTypeChange = useCallback(
+    (sentenceType: SentenceType) => {
+      triggerAttackAnim();
+      setState((prev) => prev.toggleSentenceType(sentenceType));
+    },
+    [triggerAttackAnim]
+  );
 
   const handleSubjectChange = useCallback((subject: Subject) => {
     setState((prev) => {
-        if (subject === prev.subject) {
-          return prev.rotateSubject();
-        } else {
-          return SentencePattern.create({ ...prev.toObject(), subject });
-        }
+      if (subject === prev.subject) {
+        return prev.rotateSubject();
+      } else {
+        return SentencePattern.create({ ...prev.toObject(), subject });
+      }
     });
   }, []);
 
-  const handleTenseChange = useCallback((tense: Tense) => {
-    triggerAttackAnim();
-    setState((prev) => prev.changeTense(tense));
-  }, [triggerAttackAnim]);
+  const handleTenseChange = useCallback(
+    (tense: Tense) => {
+      triggerAttackAnim();
+      setState((prev) => prev.changeTense(tense));
+    },
+    [triggerAttackAnim]
+  );
 
-  const handleFiveSentencePatternChange = useCallback((fiveSentencePattern: FiveSentencePattern) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({
-       ...prev.toObject(),
-       fiveSentencePattern,
-       verb: 'do'
-    }));
-  }, [triggerAttackAnim]);
+  const handleFiveSentencePatternChange = useCallback(
+    (fiveSentencePattern: FiveSentencePattern) => {
+      triggerAttackAnim();
+      setState((prev) =>
+        SentencePattern.create({
+          ...prev.toObject(),
+          fiveSentencePattern,
+          verb: 'do',
+        })
+      );
+    },
+    [triggerAttackAnim]
+  );
 
-  const handleObjectChange = useCallback((object: ObjectType) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), object }));
-  }, [triggerAttackAnim]);
+  const handleObjectChange = useCallback(
+    (object: ObjectType) => {
+      triggerAttackAnim();
+      setState((prev) =>
+        SentencePattern.create({ ...prev.toObject(), object })
+      );
+    },
+    [triggerAttackAnim]
+  );
 
-  const handleNumberFormChange = useCallback((numberForm: NumberForm) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), numberForm }));
-  }, [triggerAttackAnim]);
+  const handleNumberFormChange = useCallback(
+    (numberForm: NumberForm) => {
+      triggerAttackAnim();
+      setState((prev) =>
+        SentencePattern.create({ ...prev.toObject(), numberForm })
+      );
+    },
+    [triggerAttackAnim]
+  );
 
-  const handleBeComplementChange = useCallback((beComplement: BeComplement) => {
-    triggerAttackAnim();
-    setState((prev) => SentencePattern.create({ ...prev.toObject(), beComplement }));
-  }, [triggerAttackAnim]);
+  const handleBeComplementChange = useCallback(
+    (beComplement: BeComplement) => {
+      triggerAttackAnim();
+      setState((prev) =>
+        SentencePattern.create({ ...prev.toObject(), beComplement })
+      );
+    },
+    [triggerAttackAnim]
+  );
 
-  const handleTabChange = useCallback((tab: VerbType | 'admin') => {
-    if (tab === 'admin') {
-      setActiveTab('admin');
-    } else {
-      handleVerbTypeChange(tab);
-    }
-  }, [handleVerbTypeChange]);
+  const handleTabChange = useCallback(
+    (tab: VerbType | 'admin') => {
+      if (tab === 'admin') {
+        setActiveTab('admin');
+      } else {
+        handleVerbTypeChange(tab);
+      }
+    },
+    [handleVerbTypeChange]
+  );
 
   const battleImages = useMemo(() => {
     let subjectImg = '/assets/heroes/hero.png';
-    if (state.subject === 'second' || state.subject === 'second_p') subjectImg = '/assets/heroes/mage.png';
-    else if (state.subject === 'third_s' || state.subject === 'third_p') subjectImg = '/assets/heroes/warrior.png';
+    if (state.subject === 'second' || state.subject === 'second_p')
+      subjectImg = '/assets/heroes/mage.png';
+    else if (state.subject === 'third_s' || state.subject === 'third_p')
+      subjectImg = '/assets/heroes/warrior.png';
 
     let monsterImg = '/assets/monsters/slime.png';
-    let monsterScale = 1.0; 
-    if (state.verbType === 'be' && (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVC')) {
+    let monsterScale = 1.0;
+    if (
+      state.verbType === 'be' &&
+      (state.fiveSentencePattern === 'SV' ||
+        state.fiveSentencePattern === 'SVC')
+    ) {
       monsterImg = '/assets/monsters/bit_golem.png';
       monsterScale = 1.0;
-    } else if (state.fiveSentencePattern === 'SV' || state.fiveSentencePattern === 'SVO') {
+    } else if (
+      state.fiveSentencePattern === 'SV' ||
+      state.fiveSentencePattern === 'SVO'
+    ) {
       monsterImg = '/assets/monsters/void_dragon_v2.png';
       monsterScale = 1.7;
-    } else if (state.verb === 'have' || state.verb === 'see' || state.verb === 'get') {
+    } else if (
+      state.verb === 'have' ||
+      state.verb === 'see' ||
+      state.verb === 'get'
+    ) {
       monsterImg = '/assets/monsters/dragon.png';
       monsterScale = 1.7;
     }
@@ -461,8 +601,8 @@ export function usePractice(
 
   const { heroOpacity, monsterOpacity } = useMemo(() => {
     if (!questSession) return { heroOpacity: 1, monsterOpacity: 1 };
-    const correct = questSession.results.filter(r => r === 'correct').length;
-    const wrong = questSession.results.filter(r => r === 'wrong').length;
+    const correct = questSession.results.filter((r) => r === 'correct').length;
+    const wrong = questSession.results.filter((r) => r === 'wrong').length;
     let h = 1;
     let m = 1;
     if (correct < wrong) h = 0.5;

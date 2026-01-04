@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
@@ -8,9 +8,23 @@ import { PracticeResultArea } from './practice_areas/PracticeResultArea';
 import { usePractice } from './usePractice';
 import { WordProps } from '@/domain/practice/types';
 
-export function PracticeContainer({ initialWords, allDrills }: { 
-  initialWords: { nouns: WordProps[]; verbs: WordProps[]; adjectives: WordProps[]; adverbs: WordProps[] },
-  allDrills: { id: string; sentencePattern: string; english: string; japanese: string; sortOrder: number }[]
+export function PracticeContainer({
+  initialWords,
+  allDrills,
+}: {
+  initialWords: {
+    nouns: WordProps[];
+    verbs: WordProps[];
+    adjectives: WordProps[];
+    adverbs: WordProps[];
+  };
+  allDrills: {
+    id: string;
+    sentencePattern: string;
+    english: string;
+    japanese: string;
+    sortOrder: number;
+  }[];
 }) {
   const {
     isQuestMode,
@@ -66,12 +80,14 @@ export function PracticeContainer({ initialWords, allDrills }: {
     if (onboardingStep >= 7) {
       router.push('/');
     } else {
-      setOnboardingStep(prev => prev + 1);
+      setOnboardingStep((prev) => prev + 1);
     }
   };
 
   return (
-    <main className={`min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white transition-all duration-75 ${isScreenShaking ? 'translate-x-2 -translate-y-1 rotate-1' : ''}`}>
+    <main
+      className={`min-h-screen bg-[#000840] flex flex-col items-center p-4 md:p-8 font-dot text-white transition-all duration-75 ${isScreenShaking ? 'translate-x-2 -translate-y-1 rotate-1' : ''}`}
+    >
       {isScreenFlashing && (
         <div className="fixed inset-0 bg-white z-[1000] opacity-80 pointer-events-none" />
       )}
@@ -111,38 +127,38 @@ export function PracticeContainer({ initialWords, allDrills }: {
         />
 
         <PracticeAnswerArea
-            activeTab={activeTab}
-            onChangeTab={handleTabChange}
-            isAdmin={isAdmin}
-            currentLevel={currentLevel}
-            setCurrentLevel={setCurrentLevel}
-            correctCountInLevel={correctCountInLevel}
-            setCorrectCountInLevel={setCorrectCountInLevel}
-            state={state}
-            handleSentenceTypeChange={handleSentenceTypeChange}
-            handleSubjectChange={handleSubjectChange}
-            handleTenseChange={handleTenseChange}
-            handleFiveSentencePatternChange={handleFiveSentencePatternChange}
-            handleVerbChange={handleVerbChange}
-            handleObjectChange={handleObjectChange}
-            handleNumberFormChange={handleNumberFormChange}
-            handleBeComplementChange={handleBeComplementChange}
-            nounWords={words.nouns}
-            verbWords={words.verbs}
-            adjectiveWords={words.adjectives}
-            adverbWords={words.adverbs}
-            isLoadingNouns={isLoadingWords}
-            generatedText={generatedText}
-            isCorrect={isCorrect}
-            isQuestMode={isQuestMode}
-            timeLeft={timeLeft}
-            isOnboardingMode={isOnboardingMode}
-            onboardingStep={onboardingStep}
-            onOnboardingNext={handleOnboardingNext}
+          activeTab={activeTab}
+          onChangeTab={handleTabChange}
+          isAdmin={isAdmin}
+          currentLevel={currentLevel}
+          setCurrentLevel={setCurrentLevel}
+          correctCountInLevel={correctCountInLevel}
+          setCorrectCountInLevel={setCorrectCountInLevel}
+          state={state}
+          handleSentenceTypeChange={handleSentenceTypeChange}
+          handleSubjectChange={handleSubjectChange}
+          handleTenseChange={handleTenseChange}
+          handleFiveSentencePatternChange={handleFiveSentencePatternChange}
+          handleVerbChange={handleVerbChange}
+          handleObjectChange={handleObjectChange}
+          handleNumberFormChange={handleNumberFormChange}
+          handleBeComplementChange={handleBeComplementChange}
+          nounWords={words.nouns}
+          verbWords={words.verbs}
+          adjectiveWords={words.adjectives}
+          adverbWords={words.adverbs}
+          isLoadingNouns={isLoadingWords}
+          generatedText={generatedText}
+          isCorrect={isCorrect}
+          isQuestMode={isQuestMode}
+          timeLeft={timeLeft}
+          isOnboardingMode={isOnboardingMode}
+          onboardingStep={onboardingStep}
+          onOnboardingNext={handleOnboardingNext}
         />
-        
+
         <div className="mt-12 text-center opacity-30 text-xs font-mono">
-           SESSION_ID: {sessionId}
+          SESSION_ID: {sessionId}
         </div>
       </div>
     </main>

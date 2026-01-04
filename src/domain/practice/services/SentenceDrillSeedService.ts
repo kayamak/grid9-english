@@ -1,4 +1,3 @@
-
 import { SentenceDrill } from '../entities/SentenceDrill';
 import { ISentenceDrillRepository } from '../repositories/ISentenceDrillRepository';
 

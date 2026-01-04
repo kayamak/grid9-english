@@ -60,16 +60,36 @@ export class Word {
     );
   }
 
-  get id(): string { return this._id; }
-  get value(): string { return this._value; }
-  get label(): string { return this._label; }
-  get type(): WordType { return this._type; }
-  get numberForm(): string | undefined { return this._numberForm; }
-  get pastForm(): string | undefined { return this._pastForm; }
-  get thirdPersonForm(): string | undefined { return this._thirdPersonForm; }
-  get adverb(): string | undefined { return this._adverb; }
-  get sentencePattern(): string | undefined { return this._sentencePattern; }
-  get sortOrder(): number | undefined { return this._sortOrder; }
+  get id(): string {
+    return this._id;
+  }
+  get value(): string {
+    return this._value;
+  }
+  get label(): string {
+    return this._label;
+  }
+  get type(): WordType {
+    return this._type;
+  }
+  get numberForm(): string | undefined {
+    return this._numberForm;
+  }
+  get pastForm(): string | undefined {
+    return this._pastForm;
+  }
+  get thirdPersonForm(): string | undefined {
+    return this._thirdPersonForm;
+  }
+  get adverb(): string | undefined {
+    return this._adverb;
+  }
+  get sentencePattern(): string | undefined {
+    return this._sentencePattern;
+  }
+  get sortOrder(): number | undefined {
+    return this._sortOrder;
+  }
 
   // Business logic (example from specs: defensive copy if needed)
   toObject() {
