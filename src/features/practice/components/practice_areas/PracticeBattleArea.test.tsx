@@ -55,7 +55,7 @@ describe('BattleArea', () => {
   const mockStore = {
     isQuestMode: false,
     isFreeMode: false,
-    questSession: { status: 'playing', results: [] },
+    questSession: { status: 'playing', results: [], getTimeLimit: vi.fn().mockReturnValue(30) },
     drills: [],
     currentDrillIndex: 0,
     currentLevel: 1,
