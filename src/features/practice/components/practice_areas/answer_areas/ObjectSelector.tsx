@@ -7,12 +7,10 @@ interface ObjectSelectorProps {
   children?: React.ReactNode;
 }
 
-export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
-  children,
-}) => {
+export const ObjectSelector: React.FC<ObjectSelectorProps> = ({ children }) => {
   const { state, words, isLoadingWords } = usePracticeStore();
   const { handleObjectChange } = usePracticeActions();
-  
+
   const { object: selectedObject, numberForm } = state;
   const { nouns: nounWords } = words;
   const disabled = isLoadingWords;

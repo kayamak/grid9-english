@@ -14,7 +14,15 @@ const mockDrills = [
   { english: 'Dog runs', japanese: '犬は走る' },
   { english: 'Cat runs', japanese: '猫は走る' },
   { english: 'Bird runs', japanese: '鳥は走る' },
-].map(d => ({ ...d, sentencePattern: 'SV', id: '1', sortOrder: 1 } as unknown as SentenceDrill));
+].map(
+  (d) =>
+    ({
+      ...d,
+      sentencePattern: 'SV',
+      id: '1',
+      sortOrder: 1,
+    }) as unknown as SentenceDrill
+);
 
 describe('QuestSession', () => {
   describe('start', () => {
@@ -25,7 +33,7 @@ describe('QuestSession', () => {
       expect(session.currentIndex).toBe(0);
       expect(session.status).toBe('playing');
       expect(session.results).toHaveLength(mockDrills.length);
-      expect(session.results.every(r => r === null)).toBe(true);
+      expect(session.results.every((r) => r === null)).toBe(true);
     });
   });
 
@@ -60,13 +68,13 @@ describe('QuestSession', () => {
     });
 
     it('playing状態でない場合は変更されないこと', () => {
-        // mock a completed session state if possible, or transition to it
-        // For now, let's just assume we can reach a non-playing state via nextDrill
-        // But manually mocking state isn't easy without internal access, 
-        // so we rely on status check.
-        // Let's create a session and advance to end
-        // But simpler to just test checking status logic if we could inject, but we can't.
-        // We will test this via integration of methods.
+      // mock a completed session state if possible, or transition to it
+      // For now, let's just assume we can reach a non-playing state via nextDrill
+      // But manually mocking state isn't easy without internal access,
+      // so we rely on status check.
+      // Let's create a session and advance to end
+      // But simpler to just test checking status logic if we could inject, but we can't.
+      // We will test this via integration of methods.
     });
   });
 
@@ -90,52 +98,52 @@ describe('QuestSession', () => {
       // Actually answers are submitted to current index, so we need to fill previous results?
       // submitAnswer updates current index result.
       // So we need to play properly: submit -> next -> submit -> next
-      
+
       session = QuestSession.start(1, mockDrills);
-      for(let i=0; i<7; i++) {
-          session = session.submitAnswer(true);
-          session = session.nextDrill();
+      for (let i = 0; i < 7; i++) {
+        session = session.submitAnswer(true);
+        session = session.nextDrill();
       }
-      // 7 correct, now at index 7. 
+      // 7 correct, now at index 7.
       // 8th (index 7), 9th (index 8), 10th (index 9) need to be wrong or just 7 correct total.
       session = session.submitAnswer(false); // 8th
       session = session.nextDrill();
       session = session.submitAnswer(false); // 9th
       session = session.nextDrill();
       session = session.submitAnswer(false); // 10th (last)
-      
+
       session = session.nextDrill(); // Should finish
       expect(session.status).toBe('failed');
     });
 
     it('最後のドリルで基準を満たせばresultになること', () => {
       let session = QuestSession.start(1, mockDrills);
-      for(let i=0; i<10; i++) {
-          session = session.submitAnswer(true);
-          if (i < 9) session = session.nextDrill();
+      for (let i = 0; i < 10; i++) {
+        session = session.submitAnswer(true);
+        if (i < 9) session = session.nextDrill();
       }
       session = session.nextDrill();
       expect(session.status).toBe('result');
     });
 
     it('レベル10で基準を満たせばall-clearedになること', () => {
-        let session = QuestSession.start(10, mockDrills);
-        for(let i=0; i<10; i++) {
-            session = session.submitAnswer(true);
-            if (i < 9) session = session.nextDrill();
-        }
-        session = session.nextDrill();
-        expect(session.status).toBe('all-cleared');
+      let session = QuestSession.start(10, mockDrills);
+      for (let i = 0; i < 10; i++) {
+        session = session.submitAnswer(true);
+        if (i < 9) session = session.nextDrill();
+      }
+      session = session.nextDrill();
+      expect(session.status).toBe('all-cleared');
     });
   });
 
   describe('isCorrect / checkAnswer', () => {
-      it('正解判定が正しく行われること', () => {
-          expect(QuestSession.checkAnswer('I run', 'I run')).toBe(true);
-          expect(QuestSession.checkAnswer('I run.', 'I run')).toBe(true); // punctuation
-          expect(QuestSession.checkAnswer('i run', 'I run')).toBe(true); // case
-          expect(QuestSession.checkAnswer('  I   run  ', 'I run')).toBe(true); // spaces
-          expect(QuestSession.checkAnswer('I walk', 'I run')).toBe(false);
-      });
+    it('正解判定が正しく行われること', () => {
+      expect(QuestSession.checkAnswer('I run', 'I run')).toBe(true);
+      expect(QuestSession.checkAnswer('I run.', 'I run')).toBe(true); // punctuation
+      expect(QuestSession.checkAnswer('i run', 'I run')).toBe(true); // case
+      expect(QuestSession.checkAnswer('  I   run  ', 'I run')).toBe(true); // spaces
+      expect(QuestSession.checkAnswer('I walk', 'I run')).toBe(false);
+    });
   });
 });

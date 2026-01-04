@@ -13,8 +13,10 @@ vi.mock('@/lib/assets', () => ({
   getAssetPath: (path: string) => path,
 }));
 vi.mock('next/image', () => ({
-  // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+    <img {...props} />
+  ),
 }));
 
 describe('BattleSubjectArea', () => {
@@ -32,14 +34,20 @@ describe('BattleSubjectArea', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
-    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as unknown as ReturnType<typeof useBattleStore>);
-    vi.mocked(usePracticeDerivedState).mockReturnValue(mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>);
+    vi.mocked(usePracticeStore).mockReturnValue(
+      mockStore as unknown as ReturnType<typeof usePracticeStore>
+    );
+    vi.mocked(useBattleStore).mockReturnValue(
+      mockBattleStore as unknown as ReturnType<typeof useBattleStore>
+    );
+    vi.mocked(usePracticeDerivedState).mockReturnValue(
+      mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>
+    );
   });
 
   it('単数形の主語の場合、画像が1つ表示されること', () => {
     render(<BattleSubjectArea attackDistance={100} />);
-    
+
     const images = screen.getAllByRole('img');
     // メイン画像のみ
     expect(images).toHaveLength(1);
@@ -54,7 +62,7 @@ describe('BattleSubjectArea', () => {
     } as unknown as ReturnType<typeof usePracticeStore>);
 
     render(<BattleSubjectArea attackDistance={100} />);
-    
+
     const images = screen.getAllByRole('img');
     // サブ画像 + メイン画像
     expect(images).toHaveLength(2);
@@ -72,24 +80,24 @@ describe('BattleSubjectArea', () => {
     const image = screen.getByAltText('Hero');
     expect(image.className).toContain('scale-x-[-1]');
   });
-  
-  it('heroActionがdamagedの場合でも描画されること', () => {
-     vi.mocked(useBattleStore).mockReturnValue({
-        heroAction: 'damaged',
-     } as unknown as ReturnType<typeof useBattleStore>);
-     
-     render(<BattleSubjectArea attackDistance={100} />);
-     const image = screen.getByAltText('Hero');
-     expect(image).toBeDefined();
-  });
-  
-  it('heroActionがdefeatedの場合でも描画されること', () => {
-     vi.mocked(useBattleStore).mockReturnValue({
-        heroAction: 'defeated',
-     } as unknown as ReturnType<typeof useBattleStore>);
 
-     render(<BattleSubjectArea attackDistance={100} />);
-     const image = screen.getByAltText('Hero');
-     expect(image).toBeDefined();
+  it('heroActionがdamagedの場合でも描画されること', () => {
+    vi.mocked(useBattleStore).mockReturnValue({
+      heroAction: 'damaged',
+    } as unknown as ReturnType<typeof useBattleStore>);
+
+    render(<BattleSubjectArea attackDistance={100} />);
+    const image = screen.getByAltText('Hero');
+    expect(image).toBeDefined();
+  });
+
+  it('heroActionがdefeatedの場合でも描画されること', () => {
+    vi.mocked(useBattleStore).mockReturnValue({
+      heroAction: 'defeated',
+    } as unknown as ReturnType<typeof useBattleStore>);
+
+    render(<BattleSubjectArea attackDistance={100} />);
+    const image = screen.getByAltText('Hero');
+    expect(image).toBeDefined();
   });
 });

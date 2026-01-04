@@ -25,7 +25,7 @@ describe('usePractice', () => {
   const mockSetState = vi.fn();
   const mockSetQuestSession = vi.fn();
   const mockSetCurrentDrillIndex = vi.fn();
-  
+
   // Default store state
   const defaultStoreState = {
     setInitialState: mockSetInitialState,
@@ -51,14 +51,21 @@ describe('usePractice', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (usePracticeStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => defaultStoreState);
-    (usePracticeStore as unknown as { setState: unknown }).setState = mockSetState;
-    (useBattleStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue(mockBattleStore);
+    (
+      usePracticeStore as unknown as ReturnType<typeof vi.fn>
+    ).mockImplementation(() => defaultStoreState);
+    (usePracticeStore as unknown as { setState: unknown }).setState =
+      mockSetState;
+    (useBattleStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+      mockBattleStore
+    );
     (useTimer as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       resetTimer: mockResetTimer,
       stopTimer: mockStopTimer,
     });
-    (usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    (
+      usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
       isCorrect: false,
     });
     (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -67,7 +74,7 @@ describe('usePractice', () => {
         return null;
       }),
     });
-    
+
     // Mock document.cookie
     Object.defineProperty(document, 'cookie', {
       writable: true,
@@ -87,11 +94,13 @@ describe('usePractice', () => {
 
     renderHook(() => usePractice(undefined, []));
 
-    expect(mockSetInitialState).toHaveBeenCalledWith(expect.objectContaining({
-      isQuestMode: true,
-      isAdmin: true,
-      currentLevel: 1,
-    }));
+    expect(mockSetInitialState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isQuestMode: true,
+        isAdmin: true,
+        currentLevel: 1,
+      })
+    );
   });
 
   it('initializes level from cookie if present', () => {
@@ -102,13 +111,17 @@ describe('usePractice', () => {
 
     renderHook(() => usePractice(undefined, []));
 
-    expect(mockSetInitialState).toHaveBeenCalledWith(expect.objectContaining({
-      currentLevel: 5,
-    }));
+    expect(mockSetInitialState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentLevel: 5,
+      })
+    );
   });
 
   it('updates cookie when currentLevel changes', () => {
-    (usePracticeStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => ({
+    (
+      usePracticeStore as unknown as ReturnType<typeof vi.fn>
+    ).mockImplementation(() => ({
       ...defaultStoreState,
       currentLevel: 3,
     }));
@@ -129,9 +142,11 @@ describe('usePractice', () => {
 
     renderHook(() => usePractice(undefined, []));
 
-    expect(mockSetState).toHaveBeenCalledWith(expect.objectContaining({
-        drills: [] 
-    }));
+    expect(mockSetState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        drills: [],
+      })
+    );
     expect(mockSetQuestSession).toHaveBeenCalledWith(null);
   });
 
@@ -143,20 +158,22 @@ describe('usePractice', () => {
         return null;
       }),
     });
-    
+
     const mockDrills = [
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       { id: '1', sentencePattern: 'DO_SV' } as unknown as any,
     ];
-    
+
     // Setup store to have correct level for the pattern
-    (usePracticeStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => ({
+    (
+      usePracticeStore as unknown as ReturnType<typeof vi.fn>
+    ).mockImplementation(() => ({
       ...defaultStoreState,
       currentLevel: 1, // Matches DO_SV
     }));
 
     (QuestSession.start as ReturnType<typeof vi.fn>).mockReturnValue({
-       getTimeLimit: () => 60,
+      getTimeLimit: () => 60,
     });
     (SentenceDrill.reconstruct as ReturnType<typeof vi.fn>).mockReturnValue({});
 
@@ -164,7 +181,9 @@ describe('usePractice', () => {
 
     expect(QuestSession.start).toHaveBeenCalled();
     expect(mockSetQuestSession).toHaveBeenCalled();
-    expect(mockSetState).toHaveBeenCalledWith(expect.objectContaining({ drills: expect.any(Array) }));
+    expect(mockSetState).toHaveBeenCalledWith(
+      expect.objectContaining({ drills: expect.any(Array) })
+    );
     expect(mockSetCurrentDrillIndex).toHaveBeenCalledWith(0);
     expect(mockResetTimer).toHaveBeenCalledWith(60);
   });
@@ -184,54 +203,62 @@ describe('usePractice', () => {
       submitAnswer: mockSubmitAnswer,
     };
 
-    (usePracticeStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => ({
+    (
+      usePracticeStore as unknown as ReturnType<typeof vi.fn>
+    ).mockImplementation(() => ({
       ...defaultStoreState,
       questSession: mockSession,
     }));
-    
-    (usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+
+    (
+      usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
       isCorrect: true,
     });
 
     renderHook(() => usePractice(undefined, []));
 
     await waitFor(() => {
-        expect(mockSubmitAnswer).toHaveBeenCalledWith(true);
-        expect(mockSetQuestSession).toHaveBeenCalled();
-        expect(mockStopTimer).toHaveBeenCalled();
-        expect(mockTriggerVictoryEffect).toHaveBeenCalled();
+      expect(mockSubmitAnswer).toHaveBeenCalledWith(true);
+      expect(mockSetQuestSession).toHaveBeenCalled();
+      expect(mockStopTimer).toHaveBeenCalled();
+      expect(mockTriggerVictoryEffect).toHaveBeenCalled();
     });
   });
 
-    it('handles correct answer in other modes', async () => {
-    (usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+  it('handles correct answer in other modes', async () => {
+    (
+      usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
       isCorrect: true,
     });
 
     renderHook(() => usePractice(undefined, []));
-    
-     await waitFor(() => {
-         expect(mockTriggerVictoryEffect).toHaveBeenCalled();
-     });
-     // Should not call quest session logic
-     expect(mockStopTimer).not.toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(mockTriggerVictoryEffect).toHaveBeenCalled();
+    });
+    // Should not call quest session logic
+    expect(mockStopTimer).not.toHaveBeenCalled();
   });
 
   it('resets battle when moving to next drill or changing state', () => {
-     renderHook(() => usePractice(undefined, []));
-     
-     // Trigger effect cleanup/re-run logic simulation if needed, 
-     // but the effect runs on dependency change.
-     // The reset effect has a timeout.
-     
-     // Let's force a dependency change that triggers the effect
-    (usePracticeStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => ({
+    renderHook(() => usePractice(undefined, []));
+
+    // Trigger effect cleanup/re-run logic simulation if needed,
+    // but the effect runs on dependency change.
+    // The reset effect has a timeout.
+
+    // Let's force a dependency change that triggers the effect
+    (
+      usePracticeStore as unknown as ReturnType<typeof vi.fn>
+    ).mockImplementation(() => ({
       ...defaultStoreState,
       currentDrillIndex: 1, // Changed
     }));
 
-     // This particular test case about the timeout is tricky with just re-rendering, 
-     // as we can't easily wait for the side effect of a fresh renderHook without some work.
-     // But we can check if it compiles for now.
+    // This particular test case about the timeout is tricky with just re-rendering,
+    // as we can't easily wait for the side effect of a fresh renderHook without some work.
+    // But we can check if it compiles for now.
   });
 });

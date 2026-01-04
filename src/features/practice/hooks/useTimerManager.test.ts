@@ -21,11 +21,11 @@ vi.mock('./useSounds', () => ({
 
 describe('useTimerManager', () => {
   const mockPlaySound = vi.fn();
-  
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
-    
+
     // Default useSounds mock
     vi.mocked(useSounds).mockReturnValue({
       playSound: mockPlaySound,
@@ -54,12 +54,12 @@ describe('useTimerManager', () => {
     }
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(usePracticeStore).mockImplementation(((selector: any) => 
+    vi.mocked(usePracticeStore).mockImplementation(((selector: any) =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       selector(practiceState)) as any);
-      
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(useBattleStore).mockImplementation(((selector: any) => 
+    vi.mocked(useBattleStore).mockImplementation(((selector: any) =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       selector(battleState)) as any);
 
@@ -92,7 +92,7 @@ describe('useTimerManager', () => {
     // Since we mock the store, we can't easily check the implementation of the callback passed to setTimeLeft
     // unless we inspect the call arguments.
     // However, knowing it's called repeatedly is good enough for this side-effect test.
-    
+
     vi.advanceTimersByTime(1000);
     expect(setTimeLeft).toHaveBeenCalledTimes(2);
   });
@@ -131,7 +131,7 @@ describe('useTimerManager', () => {
     expect(setMonsterState).toHaveBeenCalledWith('attack');
 
     // Verify sequences (nested setTimeouts are mocked by fake timers, so runAllTimers executes them)
-    
+
     // After 300ms
     expect(setMonsterState).toHaveBeenCalledWith('idle');
     expect(setHeroAction).toHaveBeenCalledWith('damaged');

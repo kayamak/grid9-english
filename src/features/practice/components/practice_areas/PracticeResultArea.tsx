@@ -15,12 +15,8 @@ export function PracticeResultArea() {
 
   return (
     <div className="w-full flex flex-col items-center px-4">
-      {questStatus === 'result' && (
-        <ResultLevelUpArea />
-      )}
-      {questStatus === 'failed' && (
-        <ResultFailedArea />
-      )}
+      {questStatus === 'result' && <ResultLevelUpArea />}
+      {questStatus === 'failed' && <ResultFailedArea />}
       {questStatus === 'all-cleared' && <ResultAllClearedArea />}
     </div>
   );

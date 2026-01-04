@@ -28,7 +28,9 @@ describe('NineKeyPanel', () => {
       state: mockState,
       isOnboardingMode: false,
     } as unknown as ReturnType<typeof usePracticeStore>);
-    vi.mocked(usePracticeActions).mockReturnValue(mockActions as unknown as ReturnType<typeof usePracticeActions>);
+    vi.mocked(usePracticeActions).mockReturnValue(
+      mockActions as unknown as ReturnType<typeof usePracticeActions>
+    );
   });
 
   it('renders correctly with default state', () => {
@@ -49,7 +51,9 @@ describe('NineKeyPanel', () => {
     render(<NineKeyPanel />);
     const negativeBtn = screen.getByText('X');
     fireEvent.click(negativeBtn);
-    expect(mockActions.handleSentenceTypeChange).toHaveBeenCalledWith('negative');
+    expect(mockActions.handleSentenceTypeChange).toHaveBeenCalledWith(
+      'negative'
+    );
   });
 
   it('calls handleSubjectChange when a subject cell is clicked', () => {

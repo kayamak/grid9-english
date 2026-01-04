@@ -27,7 +27,7 @@ describe('useBattleStore', () => {
 
   it('triggerVictoryEffectが正しく動作すること', () => {
     useBattleStore.getState().triggerVictoryEffect();
-    
+
     // 直後は攻撃モーション
     expect(useBattleStore.getState().heroAction).toBe('attack');
     // まだエフェクトは出ない
@@ -52,9 +52,9 @@ describe('useBattleStore', () => {
 
   it('triggerAttackAnimが正しく動作すること', () => {
     useBattleStore.getState().triggerAttackAnim();
-    
+
     expect(useBattleStore.getState().heroAction).toBe('attack');
-    
+
     // 150ms後：モンスターがダメージを受ける
     vi.advanceTimersByTime(150);
     expect(useBattleStore.getState().monsterState).toBe('damaged');
@@ -72,7 +72,7 @@ describe('useBattleStore', () => {
     useBattleStore.getState().setHeroAction('attack');
     useBattleStore.getState().setMonsterState('damaged');
     useBattleStore.getState().resetBattle();
-    
+
     expect(useBattleStore.getState().heroAction).toBe('idle');
     expect(useBattleStore.getState().monsterState).toBe('idle');
   });

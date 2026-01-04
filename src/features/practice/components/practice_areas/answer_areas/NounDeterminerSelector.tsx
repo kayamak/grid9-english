@@ -51,7 +51,7 @@ export const NounDeterminerSelector: React.FC<NounDeterminerSelectorProps> = ({
 }) => {
   const { state, isLoadingWords } = usePracticeStore();
   const { handleNumberFormChange } = usePracticeActions();
-  
+
   const { numberForm: selectedNumberForm } = state;
   const disabled = isLoadingWords;
 

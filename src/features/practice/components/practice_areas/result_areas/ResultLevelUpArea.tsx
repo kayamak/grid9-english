@@ -9,7 +9,7 @@ import { usePracticeActions } from '../../../hooks/usePracticeActions';
 export function ResultLevelUpArea() {
   const { currentLevel, questSession } = usePracticeStore();
   const { handleLevelUp } = usePracticeActions();
-  
+
   const correctCountInLevel = questSession?.correctCount || 0;
 
   return (
@@ -37,7 +37,10 @@ export function ResultLevelUpArea() {
           </div>
         </div>
 
-        <button onClick={handleLevelUp} className="dq-button w-full py-4 text-xl">
+        <button
+          onClick={handleLevelUp}
+          className="dq-button w-full py-4 text-xl"
+        >
           Lv {currentLevel + 1} に　すすむ
         </button>
         <div className="w-full mt-2">

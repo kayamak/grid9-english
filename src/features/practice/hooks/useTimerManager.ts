@@ -15,10 +15,10 @@ export function useTimerManager() {
   const setTimeLeft = usePracticeStore((s) => s.setTimeLeft);
   const isTimerActive = usePracticeStore((s) => s.isTimerActive);
   const setIsTimerActive = usePracticeStore((s) => s.setIsTimerActive);
-  
+
   const setHeroAction = useBattleStore((s) => s.setHeroAction);
   const setMonsterState = useBattleStore((s) => s.setMonsterState);
-  
+
   const { playSound } = useSounds();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function useTimerManager() {
         setIsTimerActive(false);
         playSound('monster_attack.wav');
         setMonsterState('attack');
-        
+
         setTimeout(() => {
           setMonsterState('idle');
           setHeroAction('damaged');
@@ -52,5 +52,16 @@ export function useTimerManager() {
       }, 0);
     }
     return () => clearInterval(timer);
-  }, [isQuestMode, isTimerActive, timeLeft, questSession, setQuestSession, setHeroAction, setMonsterState, playSound, setTimeLeft, setIsTimerActive]);
+  }, [
+    isQuestMode,
+    isTimerActive,
+    timeLeft,
+    questSession,
+    setQuestSession,
+    setHeroAction,
+    setMonsterState,
+    playSound,
+    setTimeLeft,
+    setIsTimerActive,
+  ]);
 }

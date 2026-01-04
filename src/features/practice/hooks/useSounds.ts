@@ -8,7 +8,6 @@ import { getAssetPath } from '@/lib/assets';
  * Safe to call in any component as it contains no side effects.
  */
 export function useSounds() {
-
   const subject = usePracticeStore((s) => s.state.subject);
 
   const playSound = useCallback((soundFile: string) => {
@@ -21,7 +20,7 @@ export function useSounds() {
 
   const playAttackSound = useCallback(() => {
     let soundFile = 'hero_attack.wav';
-    
+
     if (subject === 'second' || subject === 'second_p') {
       soundFile = 'magic_attack.wav';
     } else if (subject === 'third_s' || subject === 'third_p') {

@@ -10,13 +10,11 @@ interface BattleSubjectAreaProps {
   attackDistance: number;
 }
 
-export function BattleSubjectArea({
-  attackDistance,
-}: BattleSubjectAreaProps) {
+export function BattleSubjectArea({ attackDistance }: BattleSubjectAreaProps) {
   const { state, currentDrillIndex } = usePracticeStore();
   const { heroAction } = useBattleStore();
   const { battleImages, heroOpacity } = usePracticeDerivedState();
-  
+
   const { subject } = state;
   const { subjectImg } = battleImages;
 

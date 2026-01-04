@@ -11,11 +11,7 @@ import { usePracticeStore } from '../../hooks/usePracticeStore';
 import { usePracticeDerivedState } from '../../hooks/usePracticeDerivedState';
 
 export function PracticeBattleArea() {
-  const {
-    isQuestMode,
-    isFreeMode,
-    questSession,
-  } = usePracticeStore();
+  const { isQuestMode, isFreeMode, questSession } = usePracticeStore();
   const { currentDrill } = usePracticeDerivedState();
 
   const questStatus = questSession?.status || 'playing';
@@ -51,19 +47,13 @@ export function PracticeBattleArea() {
       <BattleOverlayArea />
 
       {/* Subject Area (Hero) */}
-      <BattleSubjectArea
-        attackDistance={attackDistance}
-      />
+      <BattleSubjectArea attackDistance={attackDistance} />
 
       {/* Verb Area (Monster) */}
-      <VerbArea
-        attackDistance={attackDistance}
-      />
+      <VerbArea attackDistance={attackDistance} />
 
       {/* Object Area (Item) */}
-      <BattleObjectArea
-        attackDistance={attackDistance}
-      />
+      <BattleObjectArea attackDistance={attackDistance} />
     </div>
   );
 }

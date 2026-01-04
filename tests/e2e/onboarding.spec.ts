@@ -6,7 +6,9 @@ test.describe('Onboarding Flow', () => {
     await page.getByRole('button', { name: 'せつめい' }).click();
     await page.getByRole('button', { name: 'オンボーディング' }).click();
 
-    await expect(page).toHaveURL(/\/practice\?mode=drill&pattern=DO_SV&onboarding=true/);
+    await expect(page).toHaveURL(
+      /\/practice\?mode=drill&pattern=DO_SV&onboarding=true/
+    );
 
     const nextBubble = async () => {
       await page.getByText('(クリックしてすすむ)').first().click();
@@ -29,11 +31,15 @@ test.describe('Onboarding Flow', () => {
     await nextBubble();
 
     // Step 5: Pattern Selection
-    await expect(page.getByText(/リストから「ぶんけい」を選びます/)).toBeVisible();
+    await expect(
+      page.getByText(/リストから「ぶんけい」を選びます/)
+    ).toBeVisible();
     await nextBubble();
 
     // Step 6: Verb Selection
-    await expect(page.getByText(/リストから「どうし」を選びます/)).toBeVisible();
+    await expect(
+      page.getByText(/リストから「どうし」を選びます/)
+    ).toBeVisible();
     await nextBubble();
 
     // Step 7: Result Check

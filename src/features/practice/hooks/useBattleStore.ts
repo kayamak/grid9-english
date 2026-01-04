@@ -12,7 +12,7 @@ interface BattleState {
   setShowVictoryEffect: (show: boolean) => void;
   setScreenShaking: (shaking: boolean) => void;
   setScreenFlashing: (flashing: boolean) => void;
-  
+
   triggerVictoryEffect: () => void;
   triggerAttackAnim: () => void;
   resetBattle: () => void;
@@ -39,12 +39,12 @@ export const useBattleStore = create<BattleState>((set) => ({
     setTimeout(() => {
       set({ isScreenShaking: true });
       set({ isScreenFlashing: true });
-      
+
       set(() => ({
-        monsterState: 'defeated'
+        monsterState: 'defeated',
       }));
       set({ showVictoryEffect: true });
-      
+
       // Stop shaking/flashing
       setTimeout(() => set({ isScreenFlashing: false }), 150);
       setTimeout(() => set({ isScreenShaking: false }), 500);
@@ -53,7 +53,7 @@ export const useBattleStore = create<BattleState>((set) => ({
     // 3. Hero Back to Idle
     setTimeout(() => {
       set((state) => ({
-        heroAction: state.heroAction === 'attack' ? 'idle' : state.heroAction
+        heroAction: state.heroAction === 'attack' ? 'idle' : state.heroAction,
       }));
     }, 300);
   },
@@ -63,26 +63,33 @@ export const useBattleStore = create<BattleState>((set) => ({
     setTimeout(() => {
       // Only set to damaged if not already defeated or hit
       set((state) => ({
-        monsterState: (state.monsterState === 'idle') ? 'damaged' : state.monsterState
+        monsterState:
+          state.monsterState === 'idle' ? 'damaged' : state.monsterState,
       }));
-      
-      setTimeout(() => set((state) => ({
-        monsterState: state.monsterState === 'damaged' ? 'idle' : state.monsterState
-      })), 300);
+
+      setTimeout(
+        () =>
+          set((state) => ({
+            monsterState:
+              state.monsterState === 'damaged' ? 'idle' : state.monsterState,
+          })),
+        300
+      );
     }, 150);
 
     setTimeout(() => {
       set((state) => ({
-        heroAction: state.heroAction === 'attack' ? 'idle' : state.heroAction
+        heroAction: state.heroAction === 'attack' ? 'idle' : state.heroAction,
       }));
     }, 300);
   },
 
-  resetBattle: () => set({
-    heroAction: 'idle',
-    monsterState: 'idle',
-    showVictoryEffect: false,
-    isScreenShaking: false,
-    isScreenFlashing: false,
-  }),
+  resetBattle: () =>
+    set({
+      heroAction: 'idle',
+      monsterState: 'idle',
+      showVictoryEffect: false,
+      isScreenShaking: false,
+      isScreenFlashing: false,
+    }),
 }));

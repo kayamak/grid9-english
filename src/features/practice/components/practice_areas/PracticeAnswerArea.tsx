@@ -34,9 +34,7 @@ export function PracticeAnswerArea({
     timeLeft,
   } = usePracticeStore();
 
-  const {
-    setCorrectCountInLevel,
-  } = usePracticeActions();
+  const { setCorrectCountInLevel } = usePracticeActions();
 
   const { generatedText, isCorrect } = usePracticeDerivedState();
 
@@ -107,7 +105,9 @@ export function PracticeAnswerArea({
                 <div className="flex gap-4">
                   <button
                     onClick={() =>
-                      setCorrectCountInLevel(Math.max(0, correctCountInLevel - 1))
+                      setCorrectCountInLevel(
+                        Math.max(0, correctCountInLevel - 1)
+                      )
                     }
                     className="dq-button !py-2 !px-6 text-2xl"
                   >
@@ -115,7 +115,9 @@ export function PracticeAnswerArea({
                   </button>
                   <button
                     onClick={() =>
-                      setCorrectCountInLevel(Math.min(10, correctCountInLevel + 1))
+                      setCorrectCountInLevel(
+                        Math.min(10, correctCountInLevel + 1)
+                      )
                     }
                     className="dq-button !py-2 !px-6 text-2xl"
                   >
@@ -181,9 +183,7 @@ export function PracticeAnswerArea({
                   {state.verbType === 'be' &&
                     (state.fiveSentencePattern === 'SVC' ? (
                       <ComplementSelector>
-                        <NounDeterminerSelector
-                          isAdjective={true}
-                        />
+                        <NounDeterminerSelector isAdjective={true} />
                       </ComplementSelector>
                     ) : (
                       <ComplementSelector />

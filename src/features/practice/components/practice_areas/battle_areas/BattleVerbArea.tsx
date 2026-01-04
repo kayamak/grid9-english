@@ -10,13 +10,11 @@ interface BattleVerbAreaProps {
   attackDistance: number;
 }
 
-export function VerbArea({
-  attackDistance,
-}: BattleVerbAreaProps) {
+export function VerbArea({ attackDistance }: BattleVerbAreaProps) {
   const { currentDrillIndex } = usePracticeStore();
   const { monsterState } = useBattleStore();
   const { battleImages, monsterOpacity } = usePracticeDerivedState();
-  
+
   const { monsterImg, monsterScale } = battleImages;
 
   return (
@@ -32,7 +30,10 @@ export function VerbArea({
                 ? [0, -20, 20] // Start, Peak, End
                 : 0,
             rotate: monsterState === 'defeated' ? [0, 0, 90] : 0,
-            opacity: monsterState === 'defeated' ? [monsterOpacity, monsterOpacity, 0.6] : monsterOpacity,
+            opacity:
+              monsterState === 'defeated'
+                ? [monsterOpacity, monsterOpacity, 0.6]
+                : monsterOpacity,
             scale:
               monsterState === 'damaged'
                 ? [1 * monsterScale, 0.95 * monsterScale, 1 * monsterScale]
@@ -95,12 +96,12 @@ export function VerbArea({
           key={`monster-fx-${currentDrillIndex}-${monsterImg}`}
           initial={{ y: 20, opacity: 0, scale: 0.8 * monsterScale }}
           animate={{
-            y:
-              monsterState === 'defeated'
-                ? [0, -20, 20]
-                : 0,
+            y: monsterState === 'defeated' ? [0, -20, 20] : 0,
             rotate: monsterState === 'defeated' ? [0, 0, 90] : 0,
-            opacity: monsterState === 'defeated' ? [monsterOpacity, monsterOpacity, 0] : monsterOpacity, // Fade out FX
+            opacity:
+              monsterState === 'defeated'
+                ? [monsterOpacity, monsterOpacity, 0]
+                : monsterOpacity, // Fade out FX
             scale:
               monsterState === 'damaged'
                 ? [1 * monsterScale, 0.95 * monsterScale, 1 * monsterScale]

@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  BeComplement,
-  NumberForm,
-} from '@/domain/practice/types';
+import { BeComplement, NumberForm } from '@/domain/practice/types';
 import { usePracticeStore } from '../../../hooks/usePracticeStore';
 import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
@@ -15,7 +12,7 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
 }) => {
   const { state, words, isLoadingWords } = usePracticeStore();
   const { handleBeComplementChange } = usePracticeActions();
-  
+
   const {
     beComplement: selectedComplement,
     fiveSentencePattern: pattern,
@@ -92,7 +89,9 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
       <div className="relative flex-1">
         <select
           value={selectedComplement || ''}
-          onChange={(e) => handleBeComplementChange(e.target.value as BeComplement)}
+          onChange={(e) =>
+            handleBeComplementChange(e.target.value as BeComplement)
+          }
           disabled={disabled}
           className="dq-button !py-2 !px-2 appearance-none !pr-8 w-full disabled:opacity-30"
         >

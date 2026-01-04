@@ -18,17 +18,28 @@ vi.mock('@/lib/assets', () => ({
 
 // Mock next/image
 vi.mock('next/image', () => ({
-  // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+    <img {...props} />
+  ),
 }));
 
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, animate, transition, ...props }: { children?: React.ReactNode, animate?: Record<string, unknown>, transition?: Record<string, unknown> }) => (
-      <div 
-        {...props} 
-        data-animate={JSON.stringify(animate)} 
+    div: ({
+      children,
+      animate,
+      transition,
+      ...props
+    }: {
+      children?: React.ReactNode;
+      animate?: Record<string, unknown>;
+      transition?: Record<string, unknown>;
+    }) => (
+      <div
+        {...props}
+        data-animate={JSON.stringify(animate)}
         data-transition={JSON.stringify(transition)}
       >
         {children}
@@ -54,9 +65,15 @@ describe('BattleObjectArea', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
-    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as unknown as ReturnType<typeof useBattleStore>);
-    vi.mocked(usePracticeDerivedState).mockReturnValue(mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>);
+    vi.mocked(usePracticeStore).mockReturnValue(
+      mockStore as unknown as ReturnType<typeof usePracticeStore>
+    );
+    vi.mocked(useBattleStore).mockReturnValue(
+      mockBattleStore as unknown as ReturnType<typeof useBattleStore>
+    );
+    vi.mocked(usePracticeDerivedState).mockReturnValue(
+      mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>
+    );
   });
 
   it('アイテムの画像が正しく表示されること', () => {
@@ -78,10 +95,14 @@ describe('BattleObjectArea', () => {
       monsterState: 'damaged',
     } as unknown as ReturnType<typeof useBattleStore>);
     render(<BattleObjectArea attackDistance={100} />);
-    
-    const itemContainer = screen.getByAltText('Item').closest('div[data-animate]');
-    const animate = JSON.parse(itemContainer?.getAttribute('data-animate') || '{}');
-    
+
+    const itemContainer = screen
+      .getByAltText('Item')
+      .closest('div[data-animate]');
+    const animate = JSON.parse(
+      itemContainer?.getAttribute('data-animate') || '{}'
+    );
+
     expect(animate.x).toEqual([0, 5, -5, 5, 0]);
   });
 });

@@ -28,8 +28,13 @@ describe('useSounds', () => {
       play: vi.fn().mockResolvedValue(undefined),
       pause: vi.fn(),
     };
-    
-    vi.stubGlobal('Audio', vi.fn(function() { return mockAudio; }));
+
+    vi.stubGlobal(
+      'Audio',
+      vi.fn(function () {
+        return mockAudio;
+      })
+    );
   });
 
   afterEach(() => {
@@ -38,7 +43,7 @@ describe('useSounds', () => {
 
   const setMockSubject = (subject: string) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(usePracticeStore).mockImplementation(((selector: any) => 
+    vi.mocked(usePracticeStore).mockImplementation(((selector: any) =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       selector({ state: { subject } })) as any);
   };
@@ -68,7 +73,9 @@ describe('useSounds', () => {
 
     result.current.playAttackSound();
 
-    expect(global.Audio).toHaveBeenCalledWith('/assets/sounds/magic_attack.wav');
+    expect(global.Audio).toHaveBeenCalledWith(
+      '/assets/sounds/magic_attack.wav'
+    );
   });
 
   it('playAttackSound: 魔法使い（second_p）の場合もmagic_attackが再生されること', () => {
@@ -77,7 +84,9 @@ describe('useSounds', () => {
 
     result.current.playAttackSound();
 
-    expect(global.Audio).toHaveBeenCalledWith('/assets/sounds/magic_attack.wav');
+    expect(global.Audio).toHaveBeenCalledWith(
+      '/assets/sounds/magic_attack.wav'
+    );
   });
 
   it('playAttackSound: 戦士（third_s）の場合はwarrior_attackが再生されること', () => {
@@ -86,7 +95,9 @@ describe('useSounds', () => {
 
     result.current.playAttackSound();
 
-    expect(global.Audio).toHaveBeenCalledWith('/assets/sounds/warrior_attack.wav');
+    expect(global.Audio).toHaveBeenCalledWith(
+      '/assets/sounds/warrior_attack.wav'
+    );
   });
 
   it('playAttackSound: 戦士（third_p）の場合もwarrior_attackが再生されること', () => {
@@ -95,6 +106,8 @@ describe('useSounds', () => {
 
     result.current.playAttackSound();
 
-    expect(global.Audio).toHaveBeenCalledWith('/assets/sounds/warrior_attack.wav');
+    expect(global.Audio).toHaveBeenCalledWith(
+      '/assets/sounds/warrior_attack.wav'
+    );
   });
 });

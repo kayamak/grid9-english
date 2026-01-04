@@ -9,7 +9,7 @@ import { usePracticeActions } from '../../../hooks/usePracticeActions';
 export function ResultFailedArea() {
   const { questSession } = usePracticeStore();
   const { handleRetryLevel } = usePracticeActions();
-  
+
   const correctCountInLevel = questSession?.correctCount || 0;
 
   return (

@@ -7,7 +7,12 @@ export function usePracticeDerivedState() {
   const store = usePracticeStore();
 
   const generatedText = useMemo(
-    () => PatternGenerator.generate(store.state, store.words.nouns, store.words.verbs),
+    () =>
+      PatternGenerator.generate(
+        store.state,
+        store.words.nouns,
+        store.words.verbs
+      ),
     [store.state, store.words.nouns, store.words.verbs]
   );
 
@@ -20,15 +25,21 @@ export function usePracticeDerivedState() {
 
   const battleImages = useMemo(() => {
     let subjectImg = '/assets/heroes/hero.png';
-    const { subject, verbType, fiveSentencePattern, verb } = store.state.toObject();
-    
-    if (subject === 'second' || subject === 'second_p') subjectImg = '/assets/heroes/mage.png';
-    else if (subject === 'third_s' || subject === 'third_p') subjectImg = '/assets/heroes/warrior.png';
+    const { subject, verbType, fiveSentencePattern, verb } =
+      store.state.toObject();
+
+    if (subject === 'second' || subject === 'second_p')
+      subjectImg = '/assets/heroes/mage.png';
+    else if (subject === 'third_s' || subject === 'third_p')
+      subjectImg = '/assets/heroes/warrior.png';
 
     let monsterImg = '/assets/monsters/slime.png';
     let monsterScale = 1.0;
-    
-    if (verbType === 'be' && (fiveSentencePattern === 'SV' || fiveSentencePattern === 'SVC')) {
+
+    if (
+      verbType === 'be' &&
+      (fiveSentencePattern === 'SV' || fiveSentencePattern === 'SVC')
+    ) {
       monsterImg = '/assets/monsters/bit_golem.png';
     } else if (fiveSentencePattern === 'SV' || fiveSentencePattern === 'SVO') {
       monsterImg = '/assets/monsters/void_dragon_v2.png';
@@ -50,8 +61,12 @@ export function usePracticeDerivedState() {
 
   const { heroOpacity, monsterOpacity } = useMemo(() => {
     if (!store.questSession) return { heroOpacity: 1, monsterOpacity: 1 };
-    const correct = store.questSession.results.filter((r) => r === 'correct').length;
-    const wrong = store.questSession.results.filter((r) => r === 'wrong').length;
+    const correct = store.questSession.results.filter(
+      (r) => r === 'correct'
+    ).length;
+    const wrong = store.questSession.results.filter(
+      (r) => r === 'wrong'
+    ).length;
     return {
       heroOpacity: correct < wrong ? 0.5 : 1,
       monsterOpacity: correct > wrong ? 0.5 : 1,

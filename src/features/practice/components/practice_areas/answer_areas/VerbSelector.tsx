@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
-import {
-  Verb,
-} from '@/domain/practice/types';
+import { Verb } from '@/domain/practice/types';
 import { usePracticeStore } from '../../../hooks/usePracticeStore';
 import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
 export const VerbSelector: React.FC = () => {
   const { state, words } = usePracticeStore();
   const { handleVerbChange } = usePracticeActions();
-  
+
   const { verbType, verb: selectedVerb, fiveSentencePattern } = state;
   const { verbs: verbWords } = words;
   const disabled = verbType === 'be';

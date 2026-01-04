@@ -20,7 +20,9 @@ describe('useTimer', () => {
 
   beforeEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(usePracticeStore).mockImplementation(((selector: any) => selector(mockStore)) as any);
+    vi.mocked(usePracticeStore).mockImplementation(((selector: any) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      selector(mockStore)) as any);
   });
 
   it('タイマーの状態に正しくアクセスできること', () => {
@@ -31,7 +33,7 @@ describe('useTimer', () => {
 
   it('タイマーのアクションに正しくアクセスできること', () => {
     const { result } = renderHook(() => useTimer());
-    
+
     result.current.resetTimer(10);
     expect(mockStore.resetTimer).toHaveBeenCalledWith(10);
 

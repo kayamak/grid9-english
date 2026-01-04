@@ -4,7 +4,8 @@ import { usePracticeActions } from '@/features/practice/hooks/usePracticeActions
 import { usePracticeDerivedState } from '@/features/practice/hooks/usePracticeDerivedState';
 
 export function OverlayBottomButtonArea() {
-  const { isQuestMode, timeLeft, currentDrillIndex, drills } = usePracticeStore();
+  const { isQuestMode, timeLeft, currentDrillIndex, drills } =
+    usePracticeStore();
   const { handleNextDrill } = usePracticeActions();
   const { isCorrect, currentDrill } = usePracticeDerivedState();
 

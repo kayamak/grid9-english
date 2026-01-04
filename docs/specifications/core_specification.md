@@ -91,6 +91,7 @@ practice機能の複雑なUIを管理するため、以下の階層化ルール�
    - サブコンポーネントがさらに抽出される場合も、同様のルールで階層を深くしていきます。
 
 **構成例:**
+
 - `practice_areas/` : practice画面の主要なエリアを格納
   - `PracticeBattleArea.tsx` : 親コンポーネント
   - `battle_areas/` : `PracticeBattleArea` から抽出されたコンポーネント

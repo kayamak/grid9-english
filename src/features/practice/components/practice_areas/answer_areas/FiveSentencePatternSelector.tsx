@@ -12,9 +12,10 @@ const ALL_PATTERN_OPTIONS: { value: FiveSentencePattern; label: string }[] = [
 export const FiveSentencePatternSelector: React.FC = () => {
   const { state } = usePracticeStore();
   const { handleFiveSentencePatternChange } = usePracticeActions();
-  
+
   const { verbType } = state;
-  const selectedPattern = state.fiveSentencePattern || (verbType === 'do' ? 'SVO' : 'SV');
+  const selectedPattern =
+    state.fiveSentencePattern || (verbType === 'do' ? 'SVO' : 'SV');
 
   // Filter pattern options based on verb type
   const patternOptions =
@@ -36,7 +37,11 @@ export const FiveSentencePatternSelector: React.FC = () => {
       <div className="relative w-auto">
         <select
           value={selectedPattern}
-          onChange={(e) => handleFiveSentencePatternChange(e.target.value as FiveSentencePattern)}
+          onChange={(e) =>
+            handleFiveSentencePatternChange(
+              e.target.value as FiveSentencePattern
+            )
+          }
           className="dq-button !p-2 !pr-8 appearance-none"
         >
           {patternOptions.map((option) => (

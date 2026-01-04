@@ -33,7 +33,7 @@ export function PracticeContainer({
   usePractice(initialWords, allDrills);
   useTimerManager();
   useBGMManager();
-  
+
   const { isScreenShaking, isScreenFlashing } = useBattleStore();
   const { isOnboardingMode, sessionId } = usePracticeStore();
 

@@ -40,10 +40,19 @@ vi.mock('next/link', () => ({
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, animate, transition, ...props }: { children?: React.ReactNode, animate?: Record<string, unknown>, transition?: Record<string, unknown> }) => (
-      <div 
-        {...props} 
-        data-animate={JSON.stringify(animate)} 
+    div: ({
+      children,
+      animate,
+      transition,
+      ...props
+    }: {
+      children?: React.ReactNode;
+      animate?: Record<string, unknown>;
+      transition?: Record<string, unknown>;
+    }) => (
+      <div
+        {...props}
+        data-animate={JSON.stringify(animate)}
         data-transition={JSON.stringify(transition)}
       >
         {children}
@@ -61,7 +70,11 @@ describe('BattleArea', () => {
   const mockStore = {
     isQuestMode: false,
     isFreeMode: false,
-    questSession: { status: 'playing', results: [], getTimeLimit: vi.fn().mockReturnValue(30) },
+    questSession: {
+      status: 'playing',
+      results: [],
+      getTimeLimit: vi.fn().mockReturnValue(30),
+    },
     drills: [],
     currentDrillIndex: 0,
     currentLevel: 1,
@@ -96,10 +109,18 @@ describe('BattleArea', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
-    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as unknown as ReturnType<typeof useBattleStore>);
-    vi.mocked(usePracticeActions).mockReturnValue(mockActions as unknown as ReturnType<typeof usePracticeActions>);
-    vi.mocked(usePracticeDerivedState).mockReturnValue(mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>);
+    vi.mocked(usePracticeStore).mockReturnValue(
+      mockStore as unknown as ReturnType<typeof usePracticeStore>
+    );
+    vi.mocked(useBattleStore).mockReturnValue(
+      mockBattleStore as unknown as ReturnType<typeof useBattleStore>
+    );
+    vi.mocked(usePracticeActions).mockReturnValue(
+      mockActions as unknown as ReturnType<typeof usePracticeActions>
+    );
+    vi.mocked(usePracticeDerivedState).mockReturnValue(
+      mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>
+    );
   });
 
   describe('Mode Rendering', () => {
@@ -158,7 +179,12 @@ describe('BattleArea', () => {
     it('displays the current drill when provided', () => {
       vi.mocked(usePracticeDerivedState).mockReturnValue({
         ...mockDerivedState,
-        currentDrill: { english: 'I run.', japanese: 'わたしははしる', id: '1', sentencePattern: 'SV' },
+        currentDrill: {
+          english: 'I run.',
+          japanese: 'わたしははしる',
+          id: '1',
+          sentencePattern: 'SV',
+        },
       } as unknown as ReturnType<typeof usePracticeDerivedState>);
       render(<PracticeBattleArea />);
 
@@ -174,9 +200,14 @@ describe('BattleArea', () => {
       } as unknown as ReturnType<typeof usePracticeStore>);
       vi.mocked(usePracticeDerivedState).mockReturnValue({
         ...mockDerivedState,
-        currentDrill: { english: 'I run.', japanese: 'わたしははしる', id: '1', sentencePattern: 'SV' },
+        currentDrill: {
+          english: 'I run.',
+          japanese: 'わたしははしる',
+          id: '1',
+          sentencePattern: 'SV',
+        },
       } as unknown as ReturnType<typeof usePracticeDerivedState>);
-      
+
       render(<PracticeBattleArea />);
 
       expect(screen.getByText('I run.')).toBeDefined();
@@ -191,7 +222,7 @@ describe('BattleArea', () => {
         ...mockDerivedState,
         currentDrill: undefined,
       } as unknown as ReturnType<typeof usePracticeDerivedState>);
-      
+
       render(<PracticeBattleArea />);
 
       // Use regex to be resilient against whitespace differences
@@ -238,7 +269,7 @@ describe('BattleArea', () => {
         ...mockDerivedState,
         currentDrill: undefined,
       } as unknown as ReturnType<typeof usePracticeDerivedState>);
-      
+
       render(<PracticeBattleArea />);
 
       expect(screen.queryByText('にげる')).toBeNull();
@@ -246,46 +277,46 @@ describe('BattleArea', () => {
   });
 
   describe('Visual Elements', () => {
-  it('renders Hero image', () => {
-    vi.mocked(usePracticeStore).mockReturnValue({
-      ...mockStore,
-      state: { subject: 'first_s' },
-    } as unknown as ReturnType<typeof usePracticeStore>);
-    render(<PracticeBattleArea />);
-    expect(screen.getByAltText('Hero')).toBeDefined();
-    expect(screen.getByAltText('Hero').getAttribute('src')).toBe(
-      'mocked-asset/hero.png'
-    );
-  });
+    it('renders Hero image', () => {
+      vi.mocked(usePracticeStore).mockReturnValue({
+        ...mockStore,
+        state: { subject: 'first_s' },
+      } as unknown as ReturnType<typeof usePracticeStore>);
+      render(<PracticeBattleArea />);
+      expect(screen.getByAltText('Hero')).toBeDefined();
+      expect(screen.getByAltText('Hero').getAttribute('src')).toBe(
+        'mocked-asset/hero.png'
+      );
+    });
 
-  it('renders plural Hero images', () => {
-    vi.mocked(usePracticeStore).mockReturnValue({
-      ...mockStore,
-      state: { subject: 'first_p' },
-    } as unknown as ReturnType<typeof usePracticeStore>);
-    render(<PracticeBattleArea />);
-    expect(screen.getByAltText('Hero')).toBeDefined();
-    expect(screen.getByAltText('Hero Second')).toBeDefined();
-  });
+    it('renders plural Hero images', () => {
+      vi.mocked(usePracticeStore).mockReturnValue({
+        ...mockStore,
+        state: { subject: 'first_p' },
+      } as unknown as ReturnType<typeof usePracticeStore>);
+      render(<PracticeBattleArea />);
+      expect(screen.getByAltText('Hero')).toBeDefined();
+      expect(screen.getByAltText('Hero Second')).toBeDefined();
+    });
 
-  it('renders Monster image', () => {
-    render(<PracticeBattleArea />);
-    expect(screen.getByAltText(/Monster/)).toBeDefined();
-    expect(screen.getByAltText(/Monster/).getAttribute('src')).toBe(
-      'mocked-asset/monster.png'
-    );
-  });
+    it('renders Monster image', () => {
+      render(<PracticeBattleArea />);
+      expect(screen.getByAltText(/Monster/)).toBeDefined();
+      expect(screen.getByAltText(/Monster/).getAttribute('src')).toBe(
+        'mocked-asset/monster.png'
+      );
+    });
 
-  it('renders Item image when present', () => {
-    vi.mocked(usePracticeDerivedState).mockReturnValue({
-      ...mockDerivedState,
-      battleImages: {
-        ...mockDerivedState.battleImages,
-        itemImg: '/item.png',
-      },
-    } as unknown as ReturnType<typeof usePracticeDerivedState>);
-    render(<PracticeBattleArea />);
-    expect(screen.getByAltText('Item')).toBeDefined();
+    it('renders Item image when present', () => {
+      vi.mocked(usePracticeDerivedState).mockReturnValue({
+        ...mockDerivedState,
+        battleImages: {
+          ...mockDerivedState.battleImages,
+          itemImg: '/item.png',
+        },
+      } as unknown as ReturnType<typeof usePracticeDerivedState>);
+      render(<PracticeBattleArea />);
+      expect(screen.getByAltText('Item')).toBeDefined();
     });
 
     it('sets defeated animation props when monster is defeated', () => {
@@ -293,15 +324,15 @@ describe('BattleArea', () => {
         ...mockBattleStore,
         monsterState: 'defeated',
       } as unknown as ReturnType<typeof useBattleStore>);
-      
+
       render(<PracticeBattleArea />);
-      
+
       const monsterImg = screen.getByAltText(/Monster/);
       const monsterContainer = monsterImg.closest('div[data-animate]');
-      
+
       const animateAttr = monsterContainer?.getAttribute('data-animate');
       expect(animateAttr).toBeDefined();
-      
+
       const animate = JSON.parse(animateAttr || '{}');
       // Verify keyframes for defeated state
       expect(animate.y).toEqual([0, -20, 20]);

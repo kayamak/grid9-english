@@ -10,13 +10,11 @@ interface BattleObjectAreaProps {
   attackDistance: number;
 }
 
-export function BattleObjectArea({
-  attackDistance,
-}: BattleObjectAreaProps) {
+export function BattleObjectArea({ attackDistance }: BattleObjectAreaProps) {
   const { state } = usePracticeStore();
   const { monsterState } = useBattleStore();
   const { battleImages } = usePracticeDerivedState();
-  
+
   const { object } = state;
   const { itemImg } = battleImages;
 

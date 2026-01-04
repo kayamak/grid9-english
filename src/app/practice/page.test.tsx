@@ -43,28 +43,24 @@ vi.mock('@/infrastructure/repositories/ApiWordRepository', () => {
 });
 
 vi.mock('@/features/practice/actions/drills', () => ({
-  getSentenceDrills: vi
-    .fn()
-    .mockResolvedValue([
-      {
-        id: 'd1',
-        english: 'I play.',
-        japanese: 'わたしはあそぶ',
-        sentencePattern: 'DO_SV',
-        sortOrder: 1,
-      },
-    ]),
-  getDrillQuestQuestions: vi
-    .fn()
-    .mockResolvedValue([
-      {
-        id: 'q1',
-        english: 'I play.',
-        japanese: 'わたしはあそぶ',
-        sentencePattern: 'DO_SV',
-        sortOrder: 1,
-      },
-    ]),
+  getSentenceDrills: vi.fn().mockResolvedValue([
+    {
+      id: 'd1',
+      english: 'I play.',
+      japanese: 'わたしはあそぶ',
+      sentencePattern: 'DO_SV',
+      sortOrder: 1,
+    },
+  ]),
+  getDrillQuestQuestions: vi.fn().mockResolvedValue([
+    {
+      id: 'q1',
+      english: 'I play.',
+      japanese: 'わたしはあそぶ',
+      sentencePattern: 'DO_SV',
+      sortOrder: 1,
+    },
+  ]),
 }));
 
 // Mock framer-motion

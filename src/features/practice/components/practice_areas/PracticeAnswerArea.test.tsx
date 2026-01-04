@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PracticeAnswerArea } from './PracticeAnswerArea';
@@ -16,7 +15,9 @@ vi.mock('./answer_areas/NineKeyPanel', () => ({
   NineKeyPanel: () => <div data-testid="nine-key-panel">NineKeyPanel</div>,
 }));
 vi.mock('./answer_areas/VerbTypeSelector', () => ({
-  VerbTypeSelector: () => <div data-testid="verb-type-selector">VerbTypeSelector</div>,
+  VerbTypeSelector: () => (
+    <div data-testid="verb-type-selector">VerbTypeSelector</div>
+  ),
 }));
 vi.mock('./answer_areas/FiveSentencePatternSelector', () => ({
   FiveSentencePatternSelector: () => <div>FiveSentencePatternSelector</div>,
@@ -25,22 +26,31 @@ vi.mock('./answer_areas/VerbSelector', () => ({
   VerbSelector: () => <div>VerbSelector</div>,
 }));
 vi.mock('./answer_areas/ObjectSelector', () => ({
-  ObjectSelector: ({ children }: { children: React.ReactNode }) => <div>ObjectSelector {children}</div>,
+  ObjectSelector: ({ children }: { children: React.ReactNode }) => (
+    <div>ObjectSelector {children}</div>
+  ),
 }));
 vi.mock('./answer_areas/NounDeterminerSelector', () => ({
   NounDeterminerSelector: () => <div>NounDeterminerSelector</div>,
 }));
 vi.mock('./answer_areas/ComplementSelector', () => ({
-  ComplementSelector: ({ children }: { children: React.ReactNode }) => <div>ComplementSelector {children}</div>,
+  ComplementSelector: ({ children }: { children: React.ReactNode }) => (
+    <div>ComplementSelector {children}</div>
+  ),
 }));
 vi.mock('./answer_areas/OnboardingBubble', () => ({
   OnboardingBubble: () => <div>OnboardingBubble</div>,
 }));
 
 describe('PracticeAnswerArea', () => {
-  const mockUsePracticeStore = usePracticeStore as unknown as ReturnType<typeof vi.fn>;
-  const mockUsePracticeDerivedState = usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>;
-  const mockUsePracticeActions = usePracticeActions as unknown as ReturnType<typeof vi.fn>;
+  const mockUsePracticeStore = usePracticeStore as unknown as ReturnType<
+    typeof vi.fn
+  >;
+  const mockUsePracticeDerivedState =
+    usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>;
+  const mockUsePracticeActions = usePracticeActions as unknown as ReturnType<
+    typeof vi.fn
+  >;
 
   const defaultStoreState = {
     activeTab: 'practice',
@@ -79,9 +89,11 @@ describe('PracticeAnswerArea', () => {
     });
 
     render(<PracticeAnswerArea />);
-    
+
     // Check if the pointer-events-none class is applied to the wrapper div
-    const wrapperDiv = screen.getByTestId('nine-key-panel').closest('.pointer-events-none');
+    const wrapperDiv = screen
+      .getByTestId('nine-key-panel')
+      .closest('.pointer-events-none');
     expect(wrapperDiv).not.toBeNull();
     expect(wrapperDiv?.classList.contains('grayscale')).toBe(true);
   });
@@ -94,18 +106,20 @@ describe('PracticeAnswerArea', () => {
     });
 
     render(<PracticeAnswerArea />);
-    
-    const wrapperDiv = screen.getByTestId('nine-key-panel').closest('.pointer-events-none');
+
+    const wrapperDiv = screen
+      .getByTestId('nine-key-panel')
+      .closest('.pointer-events-none');
     expect(wrapperDiv).not.toBeNull();
     expect(wrapperDiv?.classList.contains('grayscale')).toBe(true);
   });
 
   it('enables interactions when not correct and time remains', () => {
     render(<PracticeAnswerArea />);
-    
+
     const panel = screen.getByTestId('nine-key-panel');
     const wrapperDiv = panel.parentElement?.parentElement;
-    
+
     expect(wrapperDiv?.classList.contains('pointer-events-none')).toBe(false);
     expect(wrapperDiv?.classList.contains('grayscale')).toBe(false);
   });

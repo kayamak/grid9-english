@@ -34,7 +34,13 @@ describe('usePracticeStore', () => {
 
   it('setInitialStateが正しく動作すること', () => {
     const allDrills = [
-      { id: '1', sentencePattern: 'SV', english: 'I run', japanese: '走る', sortOrder: 1 }
+      {
+        id: '1',
+        sentencePattern: 'SV',
+        english: 'I run',
+        japanese: '走る',
+        sortOrder: 1,
+      },
     ];
     usePracticeStore.getState().setInitialState({
       isQuestMode: true,
@@ -91,7 +97,7 @@ describe('usePracticeStore', () => {
   it('setIsTimerActiveが正しく動作すること', () => {
     usePracticeStore.getState().setIsTimerActive(true);
     expect(usePracticeStore.getState().isTimerActive).toBe(true);
-    
+
     usePracticeStore.getState().setIsTimerActive((prev) => !prev);
     expect(usePracticeStore.getState().isTimerActive).toBe(false);
   });
@@ -128,7 +134,7 @@ describe('usePracticeStore', () => {
   it('rotateSubjectで現在の主語と異なる場合はその主語に設定されること', () => {
     // 初期状態は first_s
     expect(usePracticeStore.getState().state.subject).toBe('first_s');
-    
+
     usePracticeStore.getState().rotateSubject('second');
     expect(usePracticeStore.getState().state.subject).toBe('second');
   });

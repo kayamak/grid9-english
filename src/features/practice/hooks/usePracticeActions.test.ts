@@ -55,17 +55,25 @@ describe('usePracticeActions', () => {
   };
 
   beforeEach(() => {
-    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
-    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as unknown as ReturnType<typeof useBattleStore>);
-    vi.mocked(useTimer).mockReturnValue(mockTimer as unknown as ReturnType<typeof useTimer>);
-    vi.mocked(useSounds).mockReturnValue(mockSounds as unknown as ReturnType<typeof useSounds>);
+    vi.mocked(usePracticeStore).mockReturnValue(
+      mockStore as unknown as ReturnType<typeof usePracticeStore>
+    );
+    vi.mocked(useBattleStore).mockReturnValue(
+      mockBattleStore as unknown as ReturnType<typeof useBattleStore>
+    );
+    vi.mocked(useTimer).mockReturnValue(
+      mockTimer as unknown as ReturnType<typeof useTimer>
+    );
+    vi.mocked(useSounds).mockReturnValue(
+      mockSounds as unknown as ReturnType<typeof useSounds>
+    );
     vi.clearAllMocks();
   });
 
   it('handleSentenceTypeChangeがアニメーションを伴って動作すること', () => {
     const { result } = renderHook(() => usePracticeActions());
     result.current.handleSentenceTypeChange('negative');
-    
+
     expect(mockSounds.playAttackSound).toHaveBeenCalled();
     expect(mockBattleStore.triggerAttackAnim).toHaveBeenCalled();
     expect(mockStore.toggleSentenceType).toHaveBeenCalledWith('negative');
@@ -74,7 +82,7 @@ describe('usePracticeActions', () => {
   it('handleTenseChangeがアニメーションを伴って動作すること', () => {
     const { result } = renderHook(() => usePracticeActions());
     result.current.handleTenseChange('past');
-    
+
     expect(mockSounds.playAttackSound).toHaveBeenCalled();
     expect(mockBattleStore.triggerAttackAnim).toHaveBeenCalled();
     expect(mockStore.changeTense).toHaveBeenCalledWith('past');
@@ -83,44 +91,53 @@ describe('usePracticeActions', () => {
   it('handleFiveSentencePatternChangeがアニメーションを伴って動作すること', () => {
     const { result } = renderHook(() => usePracticeActions());
     result.current.handleFiveSentencePatternChange('SVO');
-    
+
     expect(mockSounds.playAttackSound).toHaveBeenCalled();
     expect(mockBattleStore.triggerAttackAnim).toHaveBeenCalled();
-    expect(mockStore.updatePattern).toHaveBeenCalledWith({ fiveSentencePattern: 'SVO', verb: 'do' });
+    expect(mockStore.updatePattern).toHaveBeenCalledWith({
+      fiveSentencePattern: 'SVO',
+      verb: 'do',
+    });
   });
 
   it('handleObjectChangeがアニメーションを伴って動作すること', () => {
     const { result } = renderHook(() => usePracticeActions());
     result.current.handleObjectChange('baseball');
-    
+
     expect(mockSounds.playAttackSound).toHaveBeenCalled();
     expect(mockBattleStore.triggerAttackAnim).toHaveBeenCalled();
-    expect(mockStore.updatePattern).toHaveBeenCalledWith({ object: 'baseball' });
+    expect(mockStore.updatePattern).toHaveBeenCalledWith({
+      object: 'baseball',
+    });
   });
 
   it('handleNumberFormChangeがアニメーションを伴って動作すること', () => {
     const { result } = renderHook(() => usePracticeActions());
     result.current.handleNumberFormChange('plural');
-    
+
     expect(mockSounds.playAttackSound).toHaveBeenCalled();
     expect(mockBattleStore.triggerAttackAnim).toHaveBeenCalled();
-    expect(mockStore.updatePattern).toHaveBeenCalledWith({ numberForm: 'plural' });
+    expect(mockStore.updatePattern).toHaveBeenCalledWith({
+      numberForm: 'plural',
+    });
   });
 
   it('handleBeComplementChangeがアニメーションを伴って動作すること', () => {
     const { result } = renderHook(() => usePracticeActions());
     result.current.handleBeComplementChange('happy');
-    
+
     expect(mockSounds.playAttackSound).toHaveBeenCalled();
     expect(mockBattleStore.triggerAttackAnim).toHaveBeenCalled();
-    expect(mockStore.updatePattern).toHaveBeenCalledWith({ beComplement: 'happy' });
+    expect(mockStore.updatePattern).toHaveBeenCalledWith({
+      beComplement: 'happy',
+    });
   });
 
   describe('handleTabChange', () => {
     it('adminタブへの切り替えはアニメーションなしで行われること', () => {
       const { result } = renderHook(() => usePracticeActions());
       result.current.handleTabChange('admin');
-      
+
       expect(mockSounds.playAttackSound).not.toHaveBeenCalled();
       expect(mockStore.setActiveTab).toHaveBeenCalledWith('admin');
     });
@@ -128,7 +145,7 @@ describe('usePracticeActions', () => {
     it('beタブへの切り替えはアニメーションを伴い、初期値が設定されること', () => {
       const { result } = renderHook(() => usePracticeActions());
       result.current.handleTabChange('be');
-      
+
       expect(mockSounds.playAttackSound).toHaveBeenCalled();
       expect(mockBattleStore.triggerAttackAnim).toHaveBeenCalled();
       expect(mockStore.setActiveTab).toHaveBeenCalledWith('be');
@@ -144,7 +161,7 @@ describe('usePracticeActions', () => {
     it('doタブへの切り替えはアニメーションを伴い、初期値が設定されること', () => {
       const { result } = renderHook(() => usePracticeActions());
       result.current.handleTabChange('do');
-      
+
       expect(mockSounds.playAttackSound).toHaveBeenCalled();
       expect(mockBattleStore.triggerAttackAnim).toHaveBeenCalled();
       expect(mockStore.setActiveTab).toHaveBeenCalledWith('do');
@@ -163,7 +180,7 @@ describe('usePracticeActions', () => {
         drills: [{}, {}, {}, {}],
         withResults: vi.fn(),
       };
-      
+
       vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,
         questSession: mockQuestSession,
@@ -172,7 +189,12 @@ describe('usePracticeActions', () => {
       const { result } = renderHook(() => usePracticeActions());
       result.current.setCorrectCountInLevel((prev) => prev + 1);
 
-      expect(mockQuestSession.withResults).toHaveBeenCalledWith(['correct', 'correct', 'correct', null]);
+      expect(mockQuestSession.withResults).toHaveBeenCalledWith([
+        'correct',
+        'correct',
+        'correct',
+        null,
+      ]);
       expect(mockStore.setQuestSession).toHaveBeenCalled();
     });
 
@@ -203,27 +225,29 @@ describe('usePracticeActions', () => {
     });
 
     it('handleNextDrillでエスケープフラグがtrueの場合、run-awayアクションが設定されること', async () => {
-        const { result } = renderHook(() => usePracticeActions());
-        const promise = result.current.handleNextDrill(true);
-        
-        expect(mockBattleStore.setHeroAction).toHaveBeenCalledWith('run-away');
-        await promise;
-        // その後の通常の処理も呼ばれることを確認
-        expect(mockBattleStore.setHeroAction).toHaveBeenCalledWith('idle');
+      const { result } = renderHook(() => usePracticeActions());
+      const promise = result.current.handleNextDrill(true);
+
+      expect(mockBattleStore.setHeroAction).toHaveBeenCalledWith('run-away');
+      await promise;
+      // その後の通常の処理も呼ばれることを確認
+      expect(mockBattleStore.setHeroAction).toHaveBeenCalledWith('idle');
     });
 
     it('handleRetryLevelが正しく動作すること', () => {
       // Mock for handleRetryLevel
       const mockDrills = [
         { sentencePattern: 'DO_SV', id: '1' },
-         { sentencePattern: 'DO_SV', id: '2' }
+        { sentencePattern: 'DO_SV', id: '2' },
       ] as unknown as SentenceDrill[];
-      
+
       const sessionStartSpy = vi.spyOn(QuestSession, 'start').mockReturnValue({
         getTimeLimit: () => 30,
       } as unknown as QuestSession);
-      
-      vi.spyOn(SentenceDrill, 'reconstruct').mockImplementation((d) => d as unknown as SentenceDrill);
+
+      vi.spyOn(SentenceDrill, 'reconstruct').mockImplementation(
+        (d) => d as unknown as SentenceDrill
+      );
 
       vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,

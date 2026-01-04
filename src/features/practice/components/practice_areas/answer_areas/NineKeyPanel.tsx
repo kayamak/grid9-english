@@ -31,8 +31,9 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
   onOnboardingNext,
 }) => {
   const { state, isOnboardingMode } = usePracticeStore();
-  const { handleSentenceTypeChange, handleSubjectChange, handleTenseChange } = usePracticeActions();
-  
+  const { handleSentenceTypeChange, handleSubjectChange, handleTenseChange } =
+    usePracticeActions();
+
   const { sentenceType, subject, tense } = state;
 
   const showBubble = (step: number) =>

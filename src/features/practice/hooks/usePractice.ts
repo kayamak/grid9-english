@@ -2,9 +2,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { QuestSession } from '@/domain/practice/entities/QuestSession';
 import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
-import {
-  WordProps,
-} from '@/domain/practice/types';
+import { WordProps } from '@/domain/practice/types';
 
 import { usePracticeStore } from '../hooks/usePracticeStore';
 import { useBattleStore } from '../hooks/useBattleStore';
@@ -104,9 +102,11 @@ export function usePractice(
 
       if (selectedDrills.length === 0) return;
 
-      const drillEntities = selectedDrills.map((d) => SentenceDrill.reconstruct(d));
+      const drillEntities = selectedDrills.map((d) =>
+        SentenceDrill.reconstruct(d)
+      );
       const session = QuestSession.start(store.currentLevel, drillEntities);
-      
+
       store.setQuestSession(session);
       usePracticeStore.setState({ drills: selectedDrills });
       store.setCurrentDrillIndex(0);
@@ -154,5 +154,11 @@ export function usePractice(
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store.currentDrillIndex, store.state.subject, store.state.verb, store.state.object, isCorrect]);
+  }, [
+    store.currentDrillIndex,
+    store.state.subject,
+    store.state.verb,
+    store.state.object,
+    isCorrect,
+  ]);
 }

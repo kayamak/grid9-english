@@ -40,7 +40,12 @@ describe('useBGMManager', () => {
       volume: 1,
     };
 
-    vi.stubGlobal('Audio', vi.fn(function() { return mockAudio; }));
+    vi.stubGlobal(
+      'Audio',
+      vi.fn(function () {
+        return mockAudio;
+      })
+    );
   });
 
   afterEach(() => {
@@ -52,12 +57,12 @@ describe('useBGMManager', () => {
     battleState: { heroAction: string }
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(usePracticeStore).mockImplementation(((selector: any) => 
+    vi.mocked(usePracticeStore).mockImplementation(((selector: any) =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       selector(practiceState)) as any);
-      
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(useBattleStore).mockImplementation(((selector: any) => 
+    vi.mocked(useBattleStore).mockImplementation(((selector: any) =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       selector(battleState)) as any);
   };
@@ -88,7 +93,9 @@ describe('useBGMManager', () => {
 
     renderHook(() => useBGMManager());
 
-    expect(global.Audio).toHaveBeenCalledWith('/assets/sounds/drill_quest_bgm.mp3');
+    expect(global.Audio).toHaveBeenCalledWith(
+      '/assets/sounds/drill_quest_bgm.mp3'
+    );
   });
 
   it('フリーモードの時はwriting_training_bgmが再生されること', () => {
@@ -99,7 +106,9 @@ describe('useBGMManager', () => {
 
     renderHook(() => useBGMManager());
 
-    expect(global.Audio).toHaveBeenCalledWith('/assets/sounds/writing_training_bgm.mp3');
+    expect(global.Audio).toHaveBeenCalledWith(
+      '/assets/sounds/writing_training_bgm.mp3'
+    );
   });
 
   it('デフォルト（どちらでもない場合）はfree_training_bgmが再生されること', () => {
@@ -110,6 +119,8 @@ describe('useBGMManager', () => {
 
     renderHook(() => useBGMManager());
 
-    expect(global.Audio).toHaveBeenCalledWith('/assets/sounds/free_training_bgm.mp3');
+    expect(global.Audio).toHaveBeenCalledWith(
+      '/assets/sounds/free_training_bgm.mp3'
+    );
   });
 });

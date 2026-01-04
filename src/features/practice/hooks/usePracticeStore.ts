@@ -1,7 +1,5 @@
 import { create } from 'zustand';
-import {
-  QuestSession,
-} from '@/domain/practice/entities/QuestSession';
+import { QuestSession } from '@/domain/practice/entities/QuestSession';
 import {
   SentencePattern,
   WordProps,
@@ -77,18 +75,20 @@ interface PracticeState {
       adverbs: WordProps[];
     };
   }) => void;
-  
+
   setCurrentLevel: (level: number) => void;
   setQuestSession: (session: QuestSession | null) => void;
   setCurrentDrillIndex: (index: number | ((prev: number) => number)) => void;
-  
+
   // Pattern Actions
-  updatePattern: (update: Partial<ReturnType<SentencePattern['toObject']>>) => void;
+  updatePattern: (
+    update: Partial<ReturnType<SentencePattern['toObject']>>
+  ) => void;
   toggleSentenceType: (type: SentenceType) => void;
   rotateSubject: (subject: Subject) => void;
   changeTense: (tense: Tense) => void;
   setActiveTab: (tab: VerbType | 'admin') => void;
-  
+
   // Timer Actions
   setTimeLeft: (update: number | ((prev: number) => number)) => void;
   setIsTimerActive: (update: boolean | ((prev: boolean) => boolean)) => void;
@@ -124,14 +124,24 @@ export const usePracticeStore = create<PracticeState>((set) => ({
   timeLeft: 30,
   isTimerActive: false,
 
-  setInitialState: ({ isQuestMode, isFreeMode, isOnboardingMode, isAdmin, currentLevel, allDrills, initialWords }) => {
+  setInitialState: ({
+    isQuestMode,
+    isFreeMode,
+    isOnboardingMode,
+    isAdmin,
+    currentLevel,
+    allDrills,
+    initialWords,
+  }) => {
     const sessionId = Math.random().toString(36).substring(2, 9).toUpperCase();
-    const words = initialWords ? {
-      nouns: initialWords.nouns.map(w => Word.reconstruct(w)),
-      verbs: initialWords.verbs.map(w => Word.reconstruct(w)),
-      adjectives: initialWords.adjectives.map(w => Word.reconstruct(w)),
-      adverbs: initialWords.adverbs.map(w => Word.reconstruct(w)),
-    } : { nouns: [], verbs: [], adjectives: [], adverbs: [] };
+    const words = initialWords
+      ? {
+          nouns: initialWords.nouns.map((w) => Word.reconstruct(w)),
+          verbs: initialWords.verbs.map((w) => Word.reconstruct(w)),
+          adjectives: initialWords.adjectives.map((w) => Word.reconstruct(w)),
+          adverbs: initialWords.adverbs.map((w) => Word.reconstruct(w)),
+        }
+      : { nouns: [], verbs: [], adjectives: [], adverbs: [] };
 
     set({
       isQuestMode,
@@ -148,37 +158,48 @@ export const usePracticeStore = create<PracticeState>((set) => ({
 
   setCurrentLevel: (level) => set({ currentLevel: level }),
   setQuestSession: (session) => set({ questSession: session }),
-  setCurrentDrillIndex: (update) => set((state) => ({
-    currentDrillIndex: typeof update === 'function' ? update(state.currentDrillIndex) : update
-  })),
+  setCurrentDrillIndex: (update) =>
+    set((state) => ({
+      currentDrillIndex:
+        typeof update === 'function' ? update(state.currentDrillIndex) : update,
+    })),
 
-  updatePattern: (update) => set((state) => ({
-    state: SentencePattern.create({ ...state.state.toObject(), ...update })
-  })),
+  updatePattern: (update) =>
+    set((state) => ({
+      state: SentencePattern.create({ ...state.state.toObject(), ...update }),
+    })),
 
-  toggleSentenceType: (type) => set((state) => ({
-    state: state.state.toggleSentenceType(type)
-  })),
+  toggleSentenceType: (type) =>
+    set((state) => ({
+      state: state.state.toggleSentenceType(type),
+    })),
 
-  rotateSubject: (subject) => set((state) => {
-    if (subject === state.state.subject) {
-      return { state: state.state.rotateSubject() };
-    }
-    return { state: SentencePattern.create({ ...state.state.toObject(), subject }) };
-  }),
+  rotateSubject: (subject) =>
+    set((state) => {
+      if (subject === state.state.subject) {
+        return { state: state.state.rotateSubject() };
+      }
+      return {
+        state: SentencePattern.create({ ...state.state.toObject(), subject }),
+      };
+    }),
 
-  changeTense: (tense) => set((state) => ({
-    state: state.state.changeTense(tense)
-  })),
+  changeTense: (tense) =>
+    set((state) => ({
+      state: state.state.changeTense(tense),
+    })),
 
   setActiveTab: (tab) => set({ activeTab: tab }),
 
-  setTimeLeft: (update) => set((state) => ({
-    timeLeft: typeof update === 'function' ? update(state.timeLeft) : update
-  })),
-  setIsTimerActive: (update) => set((state) => ({
-    isTimerActive: typeof update === 'function' ? update(state.isTimerActive) : update
-  })),
+  setTimeLeft: (update) =>
+    set((state) => ({
+      timeLeft: typeof update === 'function' ? update(state.timeLeft) : update,
+    })),
+  setIsTimerActive: (update) =>
+    set((state) => ({
+      isTimerActive:
+        typeof update === 'function' ? update(state.isTimerActive) : update,
+    })),
   resetTimer: (seconds) => set({ timeLeft: seconds, isTimerActive: true }),
   stopTimer: () => set({ isTimerActive: false }),
 }));

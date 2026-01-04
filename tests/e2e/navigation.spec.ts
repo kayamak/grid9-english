@@ -14,7 +14,9 @@ test.describe('Navigation Flow', () => {
 
   test('navigate to Do-SV Drill (Drill Mode)', async ({ page }) => {
     await page.getByRole('button', { name: 'れんしゅう' }).click();
-    await page.getByRole('button', { name: 'しゅご ＋ Doどうし', exact: true }).click();
+    await page
+      .getByRole('button', { name: 'しゅご ＋ Doどうし', exact: true })
+      .click();
     await expect(page).toHaveURL(/\/practice\?mode=drill&pattern=DO_SV/);
   });
 
@@ -26,10 +28,14 @@ test.describe('Navigation Flow', () => {
 
   test('menu back button works', async ({ page }) => {
     await page.getByRole('button', { name: 'たたかう' }).click();
-    await expect(page.getByRole('button', { name: 'ドリルクエスト' })).toBeVisible();
-    
+    await expect(
+      page.getByRole('button', { name: 'ドリルクエスト' })
+    ).toBeVisible();
+
     await page.getByRole('button', { name: '[もどる]' }).click();
     await expect(page.getByRole('button', { name: 'たたかう' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'ドリルクエスト' })).not.toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'ドリルクエスト' })
+    ).not.toBeVisible();
   });
 });

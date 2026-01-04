@@ -12,7 +12,7 @@ test.describe('Practice Drill Flow', () => {
 
     // Select Verb:
     await page.getByLabel('どうし').selectOption({ index: 0 });
-    
+
     // Check if the result area exists
     await expect(page.getByText('けっか', { exact: true })).toBeVisible();
   });
