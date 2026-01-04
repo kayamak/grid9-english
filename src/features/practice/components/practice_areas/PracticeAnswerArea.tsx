@@ -135,9 +135,11 @@ export function PracticeAnswerArea({
           <>
             <div
               className={
-                isQuestMode && timeLeft === 0
+                (isQuestMode && timeLeft === 0)
                   ? 'pointer-events-none grayscale'
-                  : ''
+                  : isCorrect
+                    ? 'pointer-events-none'
+                    : ''
               }
             >
               <div className="w-full max-w-xl">
