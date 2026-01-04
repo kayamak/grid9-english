@@ -3,10 +3,6 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-const isGithubActions = process.env.GITHUB_ACTIONS === 'true';
-const basePath = isGithubActions ? '/grid9-english' : '';
-const baseURL = `http://localhost:3000${basePath}`;
-
 export default defineConfig({
   testDir: './tests/e2e',
   /* Run tests in files in parallel */
@@ -22,10 +18,16 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL,
+    baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    /* Screenshot when test failed */
+    screenshot: {
+      mode: 'only-on-failure',
+      fullPage: true,
+    },
   },
 
   /* Configure projects for major browsers */
@@ -48,8 +50,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
-    url: baseURL,
+    command: 'GITHUB_ACTIONS=false npm run dev',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
