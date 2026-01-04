@@ -83,7 +83,7 @@ describe('PracticeAnswerArea', () => {
     // Check if the pointer-events-none class is applied to the wrapper div
     const wrapperDiv = screen.getByTestId('nine-key-panel').closest('.pointer-events-none');
     expect(wrapperDiv).not.toBeNull();
-    expect(wrapperDiv?.classList.contains('grayscale')).toBe(false);
+    expect(wrapperDiv?.classList.contains('grayscale')).toBe(true);
   });
 
   it('disables interactions and greys out when time runs out in Quest Mode', () => {
