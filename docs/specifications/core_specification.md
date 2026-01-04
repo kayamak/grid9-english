@@ -155,20 +155,20 @@ practice機能の複雑なUIを管理するため、以下の階層化ルール�
 
 開発で使用する主要なコマンド一覧です。
 
-| コマンド                           | 説明                       | 備考                                                   |
-| :--------------------------------- | :------------------------- | :----------------------------------------------------- |
-| `npm run dev`                      | 開発サーバー起動           | `http://localhost:3000` でアクセス可能。               |
-| `npm run stg`                      | ステージング環境モード起動 | `APP_ENV=staging` で起動。                             |
-| `npm run build`                    | 本番ビルド作成             | デプロイ前に必須。                                     |
-| `npm run start`                    | 本番サーバー起動           | `build` 後に使用。                                     |
-| `npm run lint`                     | 静的解析実行               | ESLintを実行。                                         |
-| `npm run format`                   | コードフォーマット適用     | Prettierを実行。コミット前に推奨。                     |
-| `npm run test`                     | ユニットテスト実行         | Vitestを実行。                                         |
-| `npm run test:e2e`                 | E2Eテスト実行              | Playwrightを実行。                                     |
-| `npm run test:e2e:ui`              | E2Eテスト実行 (UIモード)   | PlaywrightをGUIモードで実行。デバッグに有用。          |
-| `npm run test -- --coverage --run` | テストカバレッジ計測       | Vitestでカバレッジレポートを出力。`coverage/` に生成。 |
-| `npm run db:init:stg`              | DB初期化                   | ステージング用DBを初期化・シード投入。                 |
-| `npm run db:init:stg`              | DB初期化                   | ステージング用DBを初期化・シード投入。                 |
+| コマンド                     | 説明                       | 備考                                                   |
+| :--------------------------- | :------------------------- | :----------------------------------------------------- |
+| `npm run dev`                | 開発サーバー起動           | `http://localhost:3000` でアクセス可能。               |
+| `npm run stg`                | ステージング環境モード起動 | `APP_ENV=staging` で起動。                             |
+| `npm run build`              | 本番ビルド作成             | デプロイ前に必須。                                     |
+| `npm run start`              | 本番サーバー起動           | `build` 後に使用。                                     |
+| `npm run lint`               | 静的解析実行               | ESLintを実行。                                         |
+| `npm run format`             | コードフォーマット適用     | Prettierを実行。コミット前に推奨。                     |
+| `npm run test`               | ユニットテスト実行         | Vitestを実行。                                         |
+| `npm run test:e2e`           | E2Eテスト実行              | Playwrightを実行。                                     |
+| `npm run test:e2e:ui`        | E2Eテスト実行 (UIモード)   | PlaywrightをGUIモードで実行。デバッグに有用。          |
+| `npm test -- run --coverage` | テストカバレッジ計測       | Vitestでカバレッジレポートを出力。`coverage/` に生成。 |
+| `npm run db:init:stg`        | DB初期化                   | ステージング用DBを初期化・シード投入。                 |
+| `npm run db:init:stg`        | DB初期化                   | ステージング用DBを初期化・シード投入。                 |
 
 ### 6.1 Gitコミット時の自動実行 (Git Hooks)
 
