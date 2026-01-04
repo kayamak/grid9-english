@@ -1,34 +1,26 @@
 import React from 'react';
 import Link from 'next/link';
 import { Timer } from 'lucide-react';
+import { usePracticeStore } from '@/features/practice/hooks/usePracticeStore';
+import { usePracticeDerivedState } from '@/features/practice/hooks/usePracticeDerivedState';
 
-interface OverlayTopUiAreaProps {
-  isQuestMode: boolean;
-  isOnboardingMode?: boolean;
-  isFreeMode?: boolean;
-  currentLevel: number;
-  currentDrillIndex: number;
-  totalDrills: number;
-  questResults: ('correct' | 'wrong' | null)[];
-  currentDrill?: { english: string; japanese: string };
-  displayEnglish: boolean;
-  isCorrect: boolean;
-  timeLeft: number;
-}
+export function OverlayTopUiArea() {
+  const {
+    isQuestMode,
+    isOnboardingMode,
+    isFreeMode,
+    currentLevel,
+    currentDrillIndex,
+    drills,
+    questSession,
+    timeLeft,
+  } = usePracticeStore();
+  const { isCorrect, currentDrill } = usePracticeDerivedState();
 
-export function OverlayTopUiArea({
-  isQuestMode,
-  isOnboardingMode,
-  isFreeMode,
-  currentLevel,
-  currentDrillIndex,
-  totalDrills,
-  questResults,
-  currentDrill,
-  displayEnglish,
-  isCorrect,
-  timeLeft,
-}: OverlayTopUiAreaProps) {
+  const totalDrills = drills.length;
+  const questResults = questSession?.results || [];
+  const displayEnglish = !isQuestMode || (isQuestMode && timeLeft === 0);
+
   return (
     <div className="absolute top-0 left-0 right-0 p-2 md:p-4 z-30 flex flex-col gap-2 pointer-events-none">
       <div className="relative w-full flex justify-between items-center">

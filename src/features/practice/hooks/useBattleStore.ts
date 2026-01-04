@@ -36,7 +36,9 @@ export const useBattleStore = create<BattleState>((set) => ({
     set({ isScreenShaking: true });
     setTimeout(() => set({ isScreenShaking: false }), 500);
     set({ monsterState: 'hit' });
-    setTimeout(() => set({ monsterState: 'defeated' }), 300);
+    setTimeout(() => set((state) => ({ 
+      monsterState: state.monsterState === 'hit' ? 'defeated' : state.monsterState 
+    })), 300);
     set({ showVictoryEffect: true });
   },
 
@@ -44,7 +46,9 @@ export const useBattleStore = create<BattleState>((set) => ({
     set({ heroAction: 'attack' });
     setTimeout(() => {
       set({ monsterState: 'damaged' });
-      setTimeout(() => set({ monsterState: 'idle' }), 300);
+      setTimeout(() => set((state) => ({
+        monsterState: state.monsterState === 'damaged' ? 'idle' : state.monsterState
+      })), 300);
     }, 150);
     setTimeout(() => {
       set((state) => ({
