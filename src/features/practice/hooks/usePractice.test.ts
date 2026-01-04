@@ -261,4 +261,271 @@ describe('usePractice', () => {
     // as we can't easily wait for the side effect of a fresh renderHook without some work.
     // But we can check if it compiles for now.
   });
+
+  describe('Drill Selection Logic', () => {
+    // Generate dummy drills
+    const generateDrills = (pattern: string, count: number) =>
+      Array.from({ length: count }, (_, i) => ({
+        id: `${pattern}-${i}`,
+        sentencePattern: pattern,
+        english: 'test',
+        japanese: 'test',
+        sortOrder: i,
+      }));
+
+    const mockAllDrills = [
+      ...generateDrills('DO_SV', 15),
+      ...generateDrills('DO_SVO', 15),
+      ...generateDrills('BE_SVC', 15),
+    ];
+
+    it('filters DO_SV drills for levels 1, 4, 7', () => {
+      [1, 4, 7].forEach((level) => {
+        (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
+          get: vi
+            .fn()
+            .mockImplementation((key) => (key === 'mode' ? 'quest' : null)),
+        });
+
+        (
+          usePracticeStore as unknown as ReturnType<typeof vi.fn>
+        ).mockImplementation(() => ({
+          ...defaultStoreState,
+          currentLevel: level,
+        }));
+
+        renderHook(() => usePractice(undefined, mockAllDrills));
+
+        expect(mockSetState).toHaveBeenCalledWith(
+          expect.objectContaining({
+            drills: expect.arrayContaining([
+              expect.objectContaining({ sentencePattern: 'DO_SV' }),
+            ]),
+          })
+        );
+        // Verify we don't have other patterns
+        const lastCall =
+          mockSetState.mock.calls[mockSetState.mock.calls.length - 1][0];
+        const drills = lastCall.drills;
+        expect(
+          drills.every(
+            (d: { sentencePattern: string }) => d.sentencePattern === 'DO_SV'
+          )
+        ).toBe(true);
+      });
+    });
+
+    it('filters DO_SVO drills for levels 2, 5, 8', () => {
+      [2, 5, 8].forEach((level) => {
+        (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
+          get: vi
+            .fn()
+            .mockImplementation((key) => (key === 'mode' ? 'quest' : null)),
+        });
+
+        (
+          usePracticeStore as unknown as ReturnType<typeof vi.fn>
+        ).mockImplementation(() => ({
+          ...defaultStoreState,
+          currentLevel: level,
+        }));
+
+        renderHook(() => usePractice(undefined, mockAllDrills));
+
+        const lastCall =
+          mockSetState.mock.calls[mockSetState.mock.calls.length - 1][0];
+        const drills = lastCall.drills;
+        expect(drills.length).toBeGreaterThan(0);
+        expect(
+          drills.every(
+            (d: { sentencePattern: string }) => d.sentencePattern === 'DO_SVO'
+          )
+        ).toBe(true);
+      });
+    });
+
+    it('filters BE_SVC drills for levels 3, 6, 9', () => {
+      [3, 6, 9].forEach((level) => {
+        (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
+          get: vi
+            .fn()
+            .mockImplementation((key) => (key === 'mode' ? 'quest' : null)),
+        });
+
+        (
+          usePracticeStore as unknown as ReturnType<typeof vi.fn>
+        ).mockImplementation(() => ({
+          ...defaultStoreState,
+          currentLevel: level,
+        }));
+
+        renderHook(() => usePractice(undefined, mockAllDrills));
+
+        const lastCall =
+          mockSetState.mock.calls[mockSetState.mock.calls.length - 1][0];
+        const drills = lastCall.drills;
+        expect(drills.length).toBeGreaterThan(0);
+        expect(
+          drills.every(
+            (d: { sentencePattern: string }) => d.sentencePattern === 'BE_SVC'
+          )
+        ).toBe(true);
+      });
+    });
+
+    it('uses all drills for level 10', () => {
+      (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
+        get: vi
+          .fn()
+          .mockImplementation((key) => (key === 'mode' ? 'quest' : null)),
+      });
+
+      (
+        usePracticeStore as unknown as ReturnType<typeof vi.fn>
+      ).mockImplementation(() => ({
+        ...defaultStoreState,
+        currentLevel: 10,
+      }));
+
+      renderHook(() => usePractice(undefined, mockAllDrills));
+
+      const lastCall =
+        mockSetState.mock.calls[mockSetState.mock.calls.length - 1][0];
+      const drills = lastCall.drills;
+      // Should pick 10 from all available
+      expect(drills.length).toBe(10);
+    });
+
+    it('slices first 10 drills for level <= 3', () => {
+      (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
+        get: vi
+          .fn()
+          .mockImplementation((key) => (key === 'mode' ? 'quest' : null)),
+      });
+
+      (
+        usePracticeStore as unknown as ReturnType<typeof vi.fn>
+      ).mockImplementation(() => ({
+        ...defaultStoreState,
+        currentLevel: 1, // DO_SV
+      }));
+
+      renderHook(() => usePractice(undefined, mockAllDrills));
+
+      const lastCall =
+        mockSetState.mock.calls[mockSetState.mock.calls.length - 1][0];
+      const drills = lastCall.drills;
+      expect(drills.length).toBe(10);
+      // Should be the first 10 DO_SV
+      const expectedIds = generateDrills('DO_SV', 10).map((d) => d.id);
+      expect(drills.map((d: { id: string }) => d.id)).toEqual(expectedIds);
+    });
+
+    it('randomly selects 10 drills for level > 3', () => {
+      (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
+        get: vi
+          .fn()
+          .mockImplementation((key) => (key === 'mode' ? 'quest' : null)),
+      });
+
+      (
+        usePracticeStore as unknown as ReturnType<typeof vi.fn>
+      ).mockImplementation(() => ({
+        ...defaultStoreState,
+        currentLevel: 4, // DO_SV
+      }));
+
+      const spy = vi.spyOn(Math, 'random').mockReturnValue(0.1);
+
+      renderHook(() => usePractice(undefined, mockAllDrills));
+
+      const lastCall =
+        mockSetState.mock.calls[mockSetState.mock.calls.length - 1][0];
+      const drills = lastCall.drills;
+      expect(drills.length).toBe(10);
+
+      spy.mockRestore();
+    });
+
+    it('does not crash if no drills match pattern', () => {
+      (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
+        get: vi
+          .fn()
+          .mockImplementation((key) => (key === 'mode' ? 'quest' : null)),
+      });
+
+      (
+        usePracticeStore as unknown as ReturnType<typeof vi.fn>
+      ).mockImplementation(() => ({
+        ...defaultStoreState,
+        currentLevel: 1, // DO_SV
+      }));
+
+      // Provide only BE_SVC drills
+      const badDrills = generateDrills('BE_SVC', 5);
+
+      renderHook(() => usePractice(undefined, badDrills));
+
+      // Specifically check that quest session is NOT started
+      expect(QuestSession.start).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Cookie Parsing Logic', () => {
+    it('ignores invalid cookie format', () => {
+      Object.defineProperty(document, 'cookie', {
+        writable: true,
+        value: 'someOtherCookie=123',
+      });
+
+      renderHook(() => usePractice(undefined, []));
+      expect(mockSetInitialState).toHaveBeenCalledWith(
+        expect.objectContaining({ currentLevel: 1 }) // default
+      );
+
+      // Malformed
+      Object.defineProperty(document, 'cookie', {
+        writable: true,
+        value: 'playerLevel=', // empty val
+      });
+      renderHook(() => usePractice(undefined, []));
+      expect(mockSetInitialState).toHaveBeenCalledWith(
+        expect.objectContaining({ currentLevel: 1 })
+      );
+    });
+  });
+
+  describe('Correct Answer (Non-Quest)', () => {
+    it('handles correct answer in normal practice mode (with delay)', async () => {
+      (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue({
+        get: vi
+          .fn()
+          .mockImplementation((key) => (key === 'mode' ? 'free' : null)),
+      });
+
+      // Setup store to NOT be quest mode
+      (usePracticeStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+        {
+          ...defaultStoreState,
+          questSession: null,
+        }
+      );
+
+      // Trigger isCorrect
+      (
+        usePracticeDerivedState as unknown as ReturnType<typeof vi.fn>
+      ).mockReturnValue({
+        isCorrect: true,
+      });
+
+      vi.useFakeTimers();
+      renderHook(() => usePractice(undefined, []));
+
+      // It uses setTimeout 0
+      await vi.runAllTimersAsync();
+
+      expect(mockTriggerVictoryEffect).toHaveBeenCalled();
+      vi.useRealTimers();
+    });
+  });
 });
