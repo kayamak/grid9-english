@@ -151,10 +151,43 @@ practice機能の複雑なUIを管理するため、以下の階層化ルール�
 
 ---
 
-## 6. 更新履歴
+## 6. 開発コマンド (Development Commands)
+
+開発で使用する主要なコマンド一覧です。
+
+| コマンド              | 説明                       | 備考                                          |
+| :-------------------- | :------------------------- | :-------------------------------------------- |
+| `npm run dev`         | 開発サーバー起動           | `http://localhost:3000` でアクセス可能。      |
+| `npm run stg`         | ステージング環境モード起動 | `APP_ENV=staging` で起動。                    |
+| `npm run build`       | 本番ビルド作成             | デプロイ前に必須。                            |
+| `npm run start`       | 本番サーバー起動           | `build` 後に使用。                            |
+| `npm run lint`        | 静的解析実行               | ESLintを実行。                                |
+| `npm run format`      | コードフォーマット適用     | Prettierを実行。コミット前に推奨。            |
+| `npm run test`        | ユニットテスト実行         | Vitestを実行。                                |
+| `npm run test:e2e`    | E2Eテスト実行              | Playwrightを実行。                            |
+| `npm run test:e2e:ui` | E2Eテスト実行 (UIモード)   | PlaywrightをGUIモードで実行。デバッグに有用。 |
+| `npm run db:init:stg` | DB初期化                   | ステージング用DBを初期化・シード投入。        |
+| `npm run db:init:stg` | DB初期化                   | ステージング用DBを初期化・シード投入。        |
+
+### 6.1 Gitコミット時の自動実行 (Git Hooks)
+
+Gitコミット (`git commit`) 実行時に、Huskyのpre-commitフックにより以下のコマンドが自動的に実行されます。
+これらが成功しない限り、コミットは完了しません。
+
+1. `npm run format`: コードフォーマットの適用
+2. `npm run lint`: 静的解析によるチェック
+3. `npm run test`: ユニットテストの実行
+
+> [!NOTE]
+> `npm run format` (Prettier) によってコードが修正された場合、その修正は**ステージングエリアには自動的に追加されません**。
+> フォーマット修正が発生した場合は、再度 `git add` してからコミットし直してください。
+
+---
+
+## 7. 更新履歴
 
 - 2025-12-22: Zenn記事に基づき全体構成を刷新。
 - 2025-12-26: ソースコードの最新状態（SentenceDrill、活用形DB化、UI改善等）を反映。
 - 2025-12-27: 「Drill Quest」の仕様を追加。
 - 2025-12-31: プレゼンテーション層の分離（Hooks抽出、コンポーネント分割）および `QuestSession` エンティティの導入を反映。
-- 2026-01-04: `src/features/practice/components` のディレクトリ階層ルールを追記。
+- 2026-01-04: `src/features/practice/components` のディレクトリ階層ルールを追記。`npm run` コマンド一覧およびGitコミット時の自動実行仕様を追加。
