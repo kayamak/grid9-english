@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { SentencePattern } from '@/domain/practice/types';
 import { getAssetPath } from '@/lib/assets';
 
-import { SubjectArea } from './battle_areas/SubjectArea';
-import { VerbArea } from './battle_areas/VerbArea';
-import { ObjectArea } from './battle_areas/ObjectArea';
-import { OverlayArea } from './battle_areas/OverlayArea';
+import { BattleSubjectArea } from './battle_areas/BattleSubjectArea';
+import { VerbArea } from './battle_areas/BattleVerbArea';
+import { BattleObjectArea } from './battle_areas/BattleObjectArea';
+import { BattleOverlayArea } from './battle_areas/BattleOverlayArea';
 
 interface PracticeBattleAreaProps {
     isQuestMode: boolean;
@@ -80,7 +80,7 @@ export function PracticeBattleArea({
             className="dq-battle-bg relative w-full h-[333px] md:h-[474px] mb-4 flex justify-around items-end px-4 gap-2 rounded-lg border-2 border-white/20 overflow-hidden shadow-2xl group"
             style={{ backgroundImage: `url(${getAssetPath(isQuestMode ? '/assets/backgrounds/battle_bg.jpeg' : (isFreeMode ? '/assets/backgrounds/dungeon.jpeg' : '/assets/backgrounds/stadium_bg.jpeg'))})` }}
         >
-            <OverlayArea
+            <BattleOverlayArea
                 isQuestMode={isQuestMode}
                 isOnboardingMode={isOnboardingMode}
                 isFreeMode={isFreeMode}
@@ -97,7 +97,7 @@ export function PracticeBattleArea({
             />
 
             {/* Subject Area (Hero) */}
-            <SubjectArea 
+            <BattleSubjectArea 
                 subject={state.subject}
                 currentDrillIndex={currentDrillIndex}
                 heroAction={heroAction}
@@ -117,7 +117,7 @@ export function PracticeBattleArea({
             />
 
             {/* Object Area (Item) */}
-            <ObjectArea 
+            <BattleObjectArea 
                 object={state.object}
                 monsterState={monsterState}
                 attackDistance={attackDistance}

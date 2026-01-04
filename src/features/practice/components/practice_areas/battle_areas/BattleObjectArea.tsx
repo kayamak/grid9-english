@@ -3,19 +3,19 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { getAssetPath } from '@/lib/assets';
 
-interface ObjectAreaProps {
+interface BattleObjectAreaProps {
   object: string;
   monsterState: 'idle' | 'hit' | 'defeated' | 'damaged' | 'attack';
   attackDistance: number;
   itemImg: string | null;
 }
 
-export function ObjectArea({
+export function BattleObjectArea({
   object,
   monsterState,
   attackDistance,
   itemImg,
-}: ObjectAreaProps) {
+}: BattleObjectAreaProps) {
   return (
     <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-12 md:pb-16">
       {itemImg && (

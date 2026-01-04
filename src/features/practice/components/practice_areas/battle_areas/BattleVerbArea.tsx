@@ -35,7 +35,7 @@ function DragonVEffect() {
     );
   }
 
-interface VerbAreaProps {
+interface BattleVerbAreaProps {
   currentDrillIndex: number;
   monsterState: 'idle' | 'hit' | 'defeated' | 'damaged' | 'attack';
   monsterOpacity: number;
@@ -51,7 +51,7 @@ export function VerbArea({
   monsterImg,
   monsterScale,
   attackDistance,
-}: VerbAreaProps) {
+}: BattleVerbAreaProps) {
   return (
     <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-12 md:pb-16">
       <div className="relative" style={{ transformOrigin: 'bottom' }}>

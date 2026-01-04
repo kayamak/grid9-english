@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { getAssetPath } from '@/lib/assets';
 import { Subject } from '@/domain/practice/types';
 
-interface SubjectAreaProps {
+interface BattleSubjectAreaProps {
   subject: Subject;
   currentDrillIndex: number;
   heroAction: 'idle' | 'run-away' | 'defeated' | 'attack' | 'damaged';
@@ -13,14 +13,14 @@ interface SubjectAreaProps {
   subjectImg: string;
 }
 
-export function SubjectArea({
+export function BattleSubjectArea({
   subject,
   currentDrillIndex,
   heroAction,
   heroOpacity,
   attackDistance,
   subjectImg,
-}: SubjectAreaProps) {
+}: BattleSubjectAreaProps) {
   return (
     <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-12 md:pb-16">
       <div className="z-10 flex flex-col items-center">

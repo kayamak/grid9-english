@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Timer } from 'lucide-react';
 
-interface OverlayAreaProps {
+interface BattleOverlayAreaProps {
     isQuestMode: boolean;
     isOnboardingMode?: boolean;
     isFreeMode?: boolean;
@@ -18,7 +18,7 @@ interface OverlayAreaProps {
     onNext: (isEscape?: boolean) => void;
 }
 
-export function OverlayArea({
+export function BattleOverlayArea({
     isQuestMode,
     isOnboardingMode,
     isFreeMode,
@@ -32,7 +32,7 @@ export function OverlayArea({
     displayEnglish,
     isCorrect,
     onNext,
-}: OverlayAreaProps) {
+}: BattleOverlayAreaProps) {
     return (
         <div className="absolute top-0 left-0 right-0 bottom-0 z-20">
             {/* Timer Bar */}
