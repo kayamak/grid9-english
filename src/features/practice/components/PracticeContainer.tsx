@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { PracticeBattleArea } from './practice_areas/PracticeBattleArea';
 import { PracticeAnswerArea } from './practice_areas/PracticeAnswerArea';
 import { PracticeResultArea } from './practice_areas/PracticeResultArea';
-import { usePractice } from './usePractice';
+import { usePractice } from '../hooks/usePractice';
 import { WordProps } from '@/domain/practice/types';
 
 export function PracticeContainer({
@@ -131,7 +131,13 @@ export function PracticeContainer({
           onChangeTab={handleTabChange}
           isAdmin={isAdmin}
           currentLevel={currentLevel}
-          setCurrentLevel={setCurrentLevel}
+          setCurrentLevel={(val) => {
+            if (typeof val === 'function') {
+              setCurrentLevel(val(currentLevel));
+            } else {
+              setCurrentLevel(val);
+            }
+          }}
           correctCountInLevel={correctCountInLevel}
           setCorrectCountInLevel={setCorrectCountInLevel}
           state={state}
