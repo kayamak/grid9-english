@@ -146,10 +146,14 @@ export function usePractice(
 
   // Reset effects on change
   useEffect(() => {
-    setTimeout(() => {
+    if (isCorrect) return;
+
+    const timer = setTimeout(() => {
       battleStore.setMonsterState('idle');
       battleStore.setShowVictoryEffect(false);
     }, 0);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [store.currentDrillIndex, store.state.subject, store.state.verb, store.state.object]);
+  }, [store.currentDrillIndex, store.state.subject, store.state.verb, store.state.object, isCorrect]);
 }
