@@ -36,7 +36,7 @@ jobs:
       - name: Setup Database
         run: |
           npx prisma db push --accept-data-loss
-          npm run db:init:stg || npx tsx prisma/seed.ts
+          npx tsx prisma/seed.ts
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Unit Tests

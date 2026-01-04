@@ -12,7 +12,6 @@
     "test": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "db:init:stg": "tsx scripts/init-staging.ts",
     "prepare": "husky"
   },
   "lint-staged": {

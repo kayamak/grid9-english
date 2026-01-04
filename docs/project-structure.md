@@ -124,7 +124,6 @@ Next.js App Router のページコンポーネントとルーティング定義�
 
 開発支援や運用用のスクリプトです。
 
-- **`init-staging.ts`**: ステージング環境の初期化スクリプト。
 - **`generate_sound.py`**: 音声生成用スクリプト（Python）。
 - **`optimize_monsters.py`**: 画像最適化用スクリプト。
 
