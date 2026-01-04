@@ -45,12 +45,16 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({ children }) => {
 
   return (
     <div className="flex items-center gap-3">
-      <label className="text-white font-normal whitespace-nowrap">
+      <label
+        htmlFor="object-selector"
+        className="text-white font-normal whitespace-nowrap"
+      >
         もくてきご
       </label>
       {children}
       <div className="relative flex-1">
         <select
+          id="object-selector"
           value={selectedObject || 'something'}
           onChange={(e) => handleObjectChange(e.target.value as Object)}
           disabled={disabled}

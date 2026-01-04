@@ -31,11 +31,15 @@ export const FiveSentencePatternSelector: React.FC = () => {
 
   return (
     <div className="flex items-center gap-3">
-      <label className="text-white font-normal whitespace-nowrap">
+      <label
+        htmlFor="five-sentence-pattern"
+        className="text-white font-normal whitespace-nowrap"
+      >
         ぶんけい
       </label>
       <div className="relative w-auto">
         <select
+          id="five-sentence-pattern"
           value={selectedPattern}
           onChange={(e) =>
             handleFiveSentencePatternChange(

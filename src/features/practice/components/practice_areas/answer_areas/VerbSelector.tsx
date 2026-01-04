@@ -45,9 +45,15 @@ export const VerbSelector: React.FC = () => {
 
   return (
     <div className="flex items-center gap-3">
-      <label className="text-white font-normal whitespace-nowrap">どうし</label>
+      <label
+        htmlFor="verb-selector"
+        className="text-white font-normal whitespace-nowrap"
+      >
+        どうし
+      </label>
       <div className="relative flex-1">
         <select
+          id="verb-selector"
           value={selectedVerb}
           onChange={(e) => handleVerbChange(e.target.value as Verb)}
           disabled={disabled}

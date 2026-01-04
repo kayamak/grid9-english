@@ -82,12 +82,16 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
 
   return (
     <div className="flex items-center gap-3">
-      <label className="text-white font-normal whitespace-nowrap">
+      <label
+        htmlFor="complement-selector"
+        className="text-white font-normal whitespace-nowrap"
+      >
         {pattern === 'SV' ? 'ば場所・じょう状態' : 'ほご'}
       </label>
       {children}
       <div className="relative flex-1">
         <select
+          id="complement-selector"
           value={selectedComplement || ''}
           onChange={(e) =>
             handleBeComplementChange(e.target.value as BeComplement)
