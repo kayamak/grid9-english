@@ -29,7 +29,7 @@ describe('usePracticeDerivedState', () => {
   };
 
   beforeEach(() => {
-    vi.mocked(usePracticeStore).mockReturnValue(mockStore as any);
+    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
   });
 
   it('generatedTextが正しく生成されること', () => {
@@ -52,7 +52,7 @@ describe('usePracticeDerivedState', () => {
       ...mockStore,
       state: SentencePattern.create({ ...mockStore.state.toObject(), subject: 'second' })
     };
-    vi.mocked(usePracticeStore).mockReturnValue(customStore as any);
+    vi.mocked(usePracticeStore).mockReturnValue(customStore as unknown as ReturnType<typeof usePracticeStore>);
     
     const { result } = renderHook(() => usePracticeDerivedState());
     expect(result.current.isCorrect).toBe(false); // 'You run' vs 'I run'
@@ -66,7 +66,7 @@ describe('usePracticeDerivedState', () => {
     vi.mocked(usePracticeStore).mockReturnValue({
       ...mockStore,
       state: SentencePattern.create({ ...mockStore.state.toObject(), subject: 'third_s' })
-    } as any);
+    } as unknown as ReturnType<typeof usePracticeStore>);
     
     const { result: result2 } = renderHook(() => usePracticeDerivedState());
     expect(result2.current.battleImages.subjectImg).toBe('/assets/heroes/warrior.png');
@@ -78,7 +78,7 @@ describe('usePracticeDerivedState', () => {
       questSession: {
         results: ['wrong', 'wrong']
       }
-    } as any);
+    } as unknown as ReturnType<typeof usePracticeStore>);
     
     const { result } = renderHook(() => usePracticeDerivedState());
     expect(result.current.heroOpacity).toBe(0.5);
@@ -89,7 +89,7 @@ describe('usePracticeDerivedState', () => {
       questSession: {
         results: ['correct', 'correct']
       }
-    } as any);
+    } as unknown as ReturnType<typeof usePracticeStore>);
     
     const { result: result2 } = renderHook(() => usePracticeDerivedState());
     expect(result2.current.heroOpacity).toBe(1);

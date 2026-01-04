@@ -8,8 +8,6 @@ import { VerbArea } from './battle_areas/BattleVerbArea';
 import { BattleObjectArea } from './battle_areas/BattleObjectArea';
 import { BattleOverlayArea } from './battle_areas/BattleOverlayArea';
 import { usePracticeStore } from '../../hooks/usePracticeStore';
-import { useBattleStore } from '../../hooks/useBattleStore';
-import { usePracticeActions } from '../../hooks/usePracticeActions';
 import { usePracticeDerivedState } from '../../hooks/usePracticeDerivedState';
 
 export function PracticeBattleArea() {

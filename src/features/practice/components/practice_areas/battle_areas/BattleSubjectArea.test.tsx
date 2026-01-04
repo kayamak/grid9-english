@@ -13,7 +13,8 @@ vi.mock('@/lib/assets', () => ({
   getAssetPath: (path: string) => path,
 }));
 vi.mock('next/image', () => ({
-  default: (props: any) => <img {...props} />,
+  // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
 }));
 
 describe('BattleSubjectArea', () => {
@@ -31,9 +32,9 @@ describe('BattleSubjectArea', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(usePracticeStore).mockReturnValue(mockStore as any);
-    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as any);
-    vi.mocked(usePracticeDerivedState).mockReturnValue(mockDerivedState as any);
+    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
+    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as unknown as ReturnType<typeof useBattleStore>);
+    vi.mocked(usePracticeDerivedState).mockReturnValue(mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>);
   });
 
   it('単数形の主語の場合、画像が1つ表示されること', () => {
@@ -50,7 +51,7 @@ describe('BattleSubjectArea', () => {
     vi.mocked(usePracticeStore).mockReturnValue({
       ...mockStore,
       state: { subject: 'first_p' },
-    } as any);
+    } as unknown as ReturnType<typeof usePracticeStore>);
 
     render(<BattleSubjectArea attackDistance={100} />);
     
@@ -65,7 +66,7 @@ describe('BattleSubjectArea', () => {
     vi.mocked(usePracticeStore).mockReturnValue({
       ...mockStore,
       state: { subject: 'first_s' },
-    } as any);
+    } as unknown as ReturnType<typeof usePracticeStore>);
 
     render(<BattleSubjectArea attackDistance={100} />);
     const image = screen.getByAltText('Hero');
@@ -75,7 +76,7 @@ describe('BattleSubjectArea', () => {
   it('heroActionがdamagedの場合でも描画されること', () => {
      vi.mocked(useBattleStore).mockReturnValue({
         heroAction: 'damaged',
-     } as any);
+     } as unknown as ReturnType<typeof useBattleStore>);
      
      render(<BattleSubjectArea attackDistance={100} />);
      const image = screen.getByAltText('Hero');
@@ -85,7 +86,7 @@ describe('BattleSubjectArea', () => {
   it('heroActionがdefeatedの場合でも描画されること', () => {
      vi.mocked(useBattleStore).mockReturnValue({
         heroAction: 'defeated',
-     } as any);
+     } as unknown as ReturnType<typeof useBattleStore>);
 
      render(<BattleSubjectArea attackDistance={100} />);
      const image = screen.getByAltText('Hero');

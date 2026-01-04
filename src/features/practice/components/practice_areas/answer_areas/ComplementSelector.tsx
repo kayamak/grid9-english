@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   BeComplement,
-  FiveSentencePattern,
   NumberForm,
 } from '@/domain/practice/types';
 import { usePracticeStore } from '../../../hooks/usePracticeStore';

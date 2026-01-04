@@ -40,7 +40,7 @@ vi.mock('next/link', () => ({
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, animate, transition, ...props }: any) => (
+    div: ({ children, animate, transition, ...props }: { children?: React.ReactNode, animate?: Record<string, unknown>, transition?: Record<string, unknown> }) => (
       <div 
         {...props} 
         data-animate={JSON.stringify(animate)} 
@@ -96,10 +96,10 @@ describe('BattleArea', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (usePracticeStore as any).mockReturnValue(mockStore);
-    (useBattleStore as any).mockReturnValue(mockBattleStore);
-    (usePracticeActions as any).mockReturnValue(mockActions);
-    (usePracticeDerivedState as any).mockReturnValue(mockDerivedState);
+    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
+    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as unknown as ReturnType<typeof useBattleStore>);
+    vi.mocked(usePracticeActions).mockReturnValue(mockActions as unknown as ReturnType<typeof usePracticeActions>);
+    vi.mocked(usePracticeDerivedState).mockReturnValue(mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>);
   });
 
   describe('Mode Rendering', () => {
@@ -119,10 +119,10 @@ describe('BattleArea', () => {
     });
 
     it('renders in Quest Mode', () => {
-      (usePracticeStore as any).mockReturnValue({
+      vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,
         isQuestMode: true,
-      });
+      } as unknown as ReturnType<typeof usePracticeStore>);
       render(<PracticeBattleArea />);
 
       const container = screen
@@ -137,10 +137,10 @@ describe('BattleArea', () => {
     });
 
     it('renders in Free Mode', () => {
-      (usePracticeStore as any).mockReturnValue({
+      vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,
         isFreeMode: true,
-      });
+      } as unknown as ReturnType<typeof usePracticeStore>);
       render(<PracticeBattleArea />);
 
       const container = screen
@@ -156,10 +156,10 @@ describe('BattleArea', () => {
 
   describe('Content Rendering', () => {
     it('displays the current drill when provided', () => {
-      (usePracticeDerivedState as any).mockReturnValue({
+      vi.mocked(usePracticeDerivedState).mockReturnValue({
         ...mockDerivedState,
-        currentDrill: { english: 'I run.', japanese: 'わたしははしる' },
-      });
+        currentDrill: { english: 'I run.', japanese: 'わたしははしる', id: '1', sentencePattern: 'SV' },
+      } as unknown as ReturnType<typeof usePracticeDerivedState>);
       render(<PracticeBattleArea />);
 
       expect(screen.getByText('わたしははしる')).toBeDefined();
@@ -167,15 +167,15 @@ describe('BattleArea', () => {
 
     it('displays "English" hint when it is quest mode and time is up', () => {
       // In BattleOverlayArea logic: displayEnglish = !isQuestMode || (isQuestMode && timeLeft === 0);
-      (usePracticeStore as any).mockReturnValue({
+      vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,
         isQuestMode: true,
         timeLeft: 0,
-      });
-      (usePracticeDerivedState as any).mockReturnValue({
+      } as unknown as ReturnType<typeof usePracticeStore>);
+      vi.mocked(usePracticeDerivedState).mockReturnValue({
         ...mockDerivedState,
-        currentDrill: { english: 'I run.', japanese: 'わたしははしる' },
-      });
+        currentDrill: { english: 'I run.', japanese: 'わたしははしる', id: '1', sentencePattern: 'SV' },
+      } as unknown as ReturnType<typeof usePracticeDerivedState>);
       
       render(<PracticeBattleArea />);
 
@@ -183,14 +183,14 @@ describe('BattleArea', () => {
     });
 
     it('displays instruction text when no drill is provided (Free Mode)', () => {
-      (usePracticeStore as any).mockReturnValue({
+      vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,
         isFreeMode: true,
-      });
-      (usePracticeDerivedState as any).mockReturnValue({
+      } as unknown as ReturnType<typeof usePracticeStore>);
+      vi.mocked(usePracticeDerivedState).mockReturnValue({
         ...mockDerivedState,
         currentDrill: undefined,
-      });
+      } as unknown as ReturnType<typeof usePracticeDerivedState>);
       
       render(<PracticeBattleArea />);
 
@@ -203,10 +203,10 @@ describe('BattleArea', () => {
 
   describe('Interactions', () => {
     it('calls handleNextDrill when "Next" button is clicked (Victory)', () => {
-      (usePracticeDerivedState as any).mockReturnValue({
+      vi.mocked(usePracticeDerivedState).mockReturnValue({
         ...mockDerivedState,
         isCorrect: true,
-      });
+      } as unknown as ReturnType<typeof usePracticeDerivedState>);
       render(<PracticeBattleArea />);
 
       const nextButton = screen.getByText('つぎへすすむ');
@@ -216,10 +216,10 @@ describe('BattleArea', () => {
     });
 
     it('displays "Run Away" button when drill exists and not correct', () => {
-      (usePracticeDerivedState as any).mockReturnValue({
+      vi.mocked(usePracticeDerivedState).mockReturnValue({
         ...mockDerivedState,
         isCorrect: false,
-      });
+      } as unknown as ReturnType<typeof usePracticeDerivedState>);
       render(<PracticeBattleArea />);
 
       const runAwayButton = screen.getByText('にげる');
@@ -230,14 +230,14 @@ describe('BattleArea', () => {
     });
 
     it('does not display Run Away button in Free Mode if there is no drill', () => {
-      (usePracticeStore as any).mockReturnValue({
+      vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,
         isFreeMode: true,
-      });
-      (usePracticeDerivedState as any).mockReturnValue({
+      } as unknown as ReturnType<typeof usePracticeStore>);
+      vi.mocked(usePracticeDerivedState).mockReturnValue({
         ...mockDerivedState,
         currentDrill: undefined,
-      });
+      } as unknown as ReturnType<typeof usePracticeDerivedState>);
       
       render(<PracticeBattleArea />);
 
@@ -247,10 +247,10 @@ describe('BattleArea', () => {
 
   describe('Visual Elements', () => {
   it('renders Hero image', () => {
-    (usePracticeStore as any).mockReturnValue({
+    vi.mocked(usePracticeStore).mockReturnValue({
       ...mockStore,
       state: { subject: 'first_s' },
-    });
+    } as unknown as ReturnType<typeof usePracticeStore>);
     render(<PracticeBattleArea />);
     expect(screen.getByAltText('Hero')).toBeDefined();
     expect(screen.getByAltText('Hero').getAttribute('src')).toBe(
@@ -259,10 +259,10 @@ describe('BattleArea', () => {
   });
 
   it('renders plural Hero images', () => {
-    (usePracticeStore as any).mockReturnValue({
+    vi.mocked(usePracticeStore).mockReturnValue({
       ...mockStore,
       state: { subject: 'first_p' },
-    });
+    } as unknown as ReturnType<typeof usePracticeStore>);
     render(<PracticeBattleArea />);
     expect(screen.getByAltText('Hero')).toBeDefined();
     expect(screen.getByAltText('Hero Second')).toBeDefined();
@@ -277,22 +277,22 @@ describe('BattleArea', () => {
   });
 
   it('renders Item image when present', () => {
-    (usePracticeDerivedState as any).mockReturnValue({
+    vi.mocked(usePracticeDerivedState).mockReturnValue({
       ...mockDerivedState,
       battleImages: {
         ...mockDerivedState.battleImages,
         itemImg: '/item.png',
       },
-    });
+    } as unknown as ReturnType<typeof usePracticeDerivedState>);
     render(<PracticeBattleArea />);
     expect(screen.getByAltText('Item')).toBeDefined();
     });
 
     it('sets defeated animation props when monster is defeated', () => {
-      (useBattleStore as any).mockReturnValue({
+      vi.mocked(useBattleStore).mockReturnValue({
         ...mockBattleStore,
         monsterState: 'defeated',
-      });
+      } as unknown as ReturnType<typeof useBattleStore>);
       
       render(<PracticeBattleArea />);
       

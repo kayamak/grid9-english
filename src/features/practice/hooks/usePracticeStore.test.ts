@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { usePracticeStore } from './usePracticeStore';
 import { SentencePattern } from '@/domain/practice/vo/SentencePattern';
+import { QuestSession } from '@/domain/practice/entities/QuestSession';
 
 describe('usePracticeStore', () => {
   beforeEach(() => {
@@ -101,7 +102,7 @@ describe('usePracticeStore', () => {
   });
 
   it('setQuestSessionが正しく動作すること', () => {
-    const mockSession = { id: 'test' } as any;
+    const mockSession = { id: 'test' } as unknown as QuestSession;
     usePracticeStore.getState().setQuestSession(mockSession);
     expect(usePracticeStore.getState().questSession).toBe(mockSession);
   });

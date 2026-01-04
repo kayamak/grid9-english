@@ -24,11 +24,11 @@ describe('NineKeyPanel', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (usePracticeStore as any).mockReturnValue({
+    vi.mocked(usePracticeStore).mockReturnValue({
       state: mockState,
       isOnboardingMode: false,
-    });
-    (usePracticeActions as any).mockReturnValue(mockActions);
+    } as unknown as ReturnType<typeof usePracticeStore>);
+    vi.mocked(usePracticeActions).mockReturnValue(mockActions as unknown as ReturnType<typeof usePracticeActions>);
   });
 
   it('renders correctly with default state', () => {

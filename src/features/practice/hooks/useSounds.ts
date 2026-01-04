@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useBattleStore } from './useBattleStore';
+
 import { usePracticeStore } from './usePracticeStore';
 import { getAssetPath } from '@/lib/assets';
 
@@ -8,7 +8,7 @@ import { getAssetPath } from '@/lib/assets';
  * Safe to call in any component as it contains no side effects.
  */
 export function useSounds() {
-  const heroAction = useBattleStore((s) => s.heroAction);
+
   const subject = usePracticeStore((s) => s.state.subject);
 
   const playSound = useCallback((soundFile: string) => {

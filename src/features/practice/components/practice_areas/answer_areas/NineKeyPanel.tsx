@@ -1,5 +1,5 @@
 import React from 'react';
-import { SentenceType, Subject, Tense } from '@/domain/practice/types';
+import { Subject } from '@/domain/practice/types';
 import { OnboardingBubble } from './OnboardingBubble';
 import { usePracticeStore } from '../../../hooks/usePracticeStore';
 import { usePracticeActions } from '../../../hooks/usePracticeActions';

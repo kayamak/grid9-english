@@ -18,13 +18,14 @@ vi.mock('@/lib/assets', () => ({
 
 // Mock next/image
 vi.mock('next/image', () => ({
-  default: (props: any) => <img {...props} />,
+  // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
 }));
 
 // Mock framer-motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, animate, transition, ...props }: any) => (
+    div: ({ children, animate, transition, ...props }: { children?: React.ReactNode, animate?: Record<string, unknown>, transition?: Record<string, unknown> }) => (
       <div 
         {...props} 
         data-animate={JSON.stringify(animate)} 
@@ -53,9 +54,9 @@ describe('BattleObjectArea', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (usePracticeStore as any).mockReturnValue(mockStore);
-    (useBattleStore as any).mockReturnValue(mockBattleStore);
-    (usePracticeDerivedState as any).mockReturnValue(mockDerivedState);
+    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
+    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as unknown as ReturnType<typeof useBattleStore>);
+    vi.mocked(usePracticeDerivedState).mockReturnValue(mockDerivedState as unknown as ReturnType<typeof usePracticeDerivedState>);
   });
 
   it('アイテムの画像が正しく表示されること', () => {
@@ -65,17 +66,17 @@ describe('BattleObjectArea', () => {
   });
 
   it('itemImgがない場合は何も表示されないこと', () => {
-    (usePracticeDerivedState as any).mockReturnValue({
+    vi.mocked(usePracticeDerivedState).mockReturnValue({
       battleImages: { itemImg: null },
-    });
+    } as unknown as ReturnType<typeof usePracticeDerivedState>);
     render(<BattleObjectArea attackDistance={100} />);
     expect(screen.queryByAltText('Item')).toBeNull();
   });
 
   it('モンスターがダメージ状態の時にアニメーションが設定されること', () => {
-    (useBattleStore as any).mockReturnValue({
+    vi.mocked(useBattleStore).mockReturnValue({
       monsterState: 'damaged',
-    });
+    } as unknown as ReturnType<typeof useBattleStore>);
     render(<BattleObjectArea attackDistance={100} />);
     
     const itemContainer = screen.getByAltText('Item').closest('div[data-animate]');

@@ -32,12 +32,30 @@ export const useBattleStore = create<BattleState>((set) => ({
   setScreenFlashing: (isScreenFlashing) => set({ isScreenFlashing }),
 
   triggerVictoryEffect: () => {
-    set({ isScreenFlashing: true });
-    setTimeout(() => set({ isScreenFlashing: false }), 150);
-    set({ isScreenShaking: true });
-    setTimeout(() => set({ isScreenShaking: false }), 500);
-    set({ monsterState: 'defeated' });
-    set({ showVictoryEffect: true });
+    // 1. Attack Start
+    set({ heroAction: 'attack' });
+
+    // 2. Hit Effect & Monster Defeated (delayed to match attack)
+    setTimeout(() => {
+      set({ isScreenShaking: true });
+      set({ isScreenFlashing: true });
+      
+      set(() => ({
+        monsterState: 'defeated'
+      }));
+      set({ showVictoryEffect: true });
+      
+      // Stop shaking/flashing
+      setTimeout(() => set({ isScreenFlashing: false }), 150);
+      setTimeout(() => set({ isScreenShaking: false }), 500);
+    }, 150);
+
+    // 3. Hero Back to Idle
+    setTimeout(() => {
+      set((state) => ({
+        heroAction: state.heroAction === 'attack' ? 'idle' : state.heroAction
+      }));
+    }, 300);
   },
 
   triggerAttackAnim: () => {

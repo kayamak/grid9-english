@@ -26,7 +26,6 @@ export function PracticeAnswerArea({
 }: PracticeAnswerAreaProps) {
   const {
     activeTab,
-    isAdmin,
     currentLevel,
     questSession,
     state,

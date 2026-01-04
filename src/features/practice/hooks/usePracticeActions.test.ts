@@ -10,7 +10,7 @@ import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
 
 // Mock all dependency hooks
 vi.mock('./usePracticeStore', () => {
-  const mockfn = vi.fn() as any;
+  const mockfn = vi.fn() as unknown as { setState: unknown };
   mockfn.setState = vi.fn();
   return { usePracticeStore: mockfn };
 });
@@ -55,10 +55,10 @@ describe('usePracticeActions', () => {
   };
 
   beforeEach(() => {
-    vi.mocked(usePracticeStore).mockReturnValue(mockStore as any);
-    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as any);
-    vi.mocked(useTimer).mockReturnValue(mockTimer as any);
-    vi.mocked(useSounds).mockReturnValue(mockSounds as any);
+    vi.mocked(usePracticeStore).mockReturnValue(mockStore as unknown as ReturnType<typeof usePracticeStore>);
+    vi.mocked(useBattleStore).mockReturnValue(mockBattleStore as unknown as ReturnType<typeof useBattleStore>);
+    vi.mocked(useTimer).mockReturnValue(mockTimer as unknown as ReturnType<typeof useTimer>);
+    vi.mocked(useSounds).mockReturnValue(mockSounds as unknown as ReturnType<typeof useSounds>);
     vi.clearAllMocks();
   });
 
@@ -167,7 +167,7 @@ describe('usePracticeActions', () => {
       vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,
         questSession: mockQuestSession,
-      } as any);
+      } as unknown as ReturnType<typeof usePracticeStore>);
 
       const { result } = renderHook(() => usePracticeActions());
       result.current.setCorrectCountInLevel((prev) => prev + 1);
@@ -190,7 +190,7 @@ describe('usePracticeActions', () => {
         ...mockStore,
         isQuestMode: true,
         questSession: mockQuestSession,
-      } as any);
+      } as unknown as ReturnType<typeof usePracticeStore>);
 
       const { result } = renderHook(() => usePracticeActions());
       result.current.handleNextDrill();
@@ -217,19 +217,19 @@ describe('usePracticeActions', () => {
       const mockDrills = [
         { sentencePattern: 'DO_SV', id: '1' },
          { sentencePattern: 'DO_SV', id: '2' }
-      ] as any[];
+      ] as unknown as SentenceDrill[];
       
       const sessionStartSpy = vi.spyOn(QuestSession, 'start').mockReturnValue({
         getTimeLimit: () => 30,
-      } as any);
+      } as unknown as QuestSession);
       
-      const sentenceDrillMock = vi.spyOn(SentenceDrill, 'reconstruct').mockImplementation((d) => d as any);
+      vi.spyOn(SentenceDrill, 'reconstruct').mockImplementation((d) => d as unknown as SentenceDrill);
 
       vi.mocked(usePracticeStore).mockReturnValue({
         ...mockStore,
         currentLevel: 1,
         allDrills: mockDrills,
-      } as any);
+      } as unknown as ReturnType<typeof usePracticeStore>);
 
       const { result } = renderHook(() => usePracticeActions());
       result.current.handleRetryLevel();

@@ -14,7 +14,7 @@ const mockDrills = [
   { english: 'Dog runs', japanese: '犬は走る' },
   { english: 'Cat runs', japanese: '猫は走る' },
   { english: 'Bird runs', japanese: '鳥は走る' },
-].map(d => ({ ...d, sentencePattern: 'SV', id: '1', sortOrder: 1 } as any as SentenceDrill));
+].map(d => ({ ...d, sentencePattern: 'SV', id: '1', sortOrder: 1 } as unknown as SentenceDrill));
 
 describe('QuestSession', () => {
   describe('start', () => {

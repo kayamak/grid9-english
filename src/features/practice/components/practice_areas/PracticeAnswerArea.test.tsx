@@ -1,6 +1,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { PracticeAnswerArea } from './PracticeAnswerArea';
 import { usePracticeStore } from '../../hooks/usePracticeStore';
 import { usePracticeDerivedState } from '../../hooks/usePracticeDerivedState';
