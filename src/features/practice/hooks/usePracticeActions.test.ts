@@ -187,7 +187,7 @@ describe('usePracticeActions', () => {
       } as unknown as ReturnType<typeof usePracticeStore>);
 
       const { result } = renderHook(() => usePracticeActions());
-      result.current.setCorrectCountInLevel((prev) => prev + 1);
+      result.current.setCorrectCountInLevel((prev: number) => prev + 1);
 
       expect(mockQuestSession.withResults).toHaveBeenCalledWith([
         'correct',
@@ -263,6 +263,125 @@ describe('usePracticeActions', () => {
       expect(mockStore.setCurrentDrillIndex).toHaveBeenCalledWith(0);
       expect(mockTimer.resetTimer).toHaveBeenCalledWith(30);
       expect(mockBattleStore.setHeroAction).toHaveBeenCalledWith('idle');
+    });
+
+    it('handleRetryLevelがlevel 2でDO_SVOパターンをフィルタすること', () => {
+      const mockDrills = [
+        { sentencePattern: 'DO_SV', id: '1' },
+        { sentencePattern: 'DO_SVO', id: '2' },
+        { sentencePattern: 'DO_SVO', id: '3' },
+      ];
+
+      vi.spyOn(QuestSession, 'start').mockReturnValue({
+        getTimeLimit: () => 30,
+      } as unknown as QuestSession);
+
+      vi.spyOn(SentenceDrill, 'reconstruct').mockImplementation(
+        (d) => d as unknown as SentenceDrill
+      );
+
+      vi.mocked(usePracticeStore).mockReturnValue({
+        ...mockStore,
+        currentLevel: 2,
+        allDrills: mockDrills,
+      } as unknown as ReturnType<typeof usePracticeStore>);
+
+      const { result } = renderHook(() => usePracticeActions());
+      result.current.handleRetryLevel();
+
+      expect(mockStore.setQuestSession).toHaveBeenCalled();
+    });
+
+    it('handleRetryLevelがlevel 3でBE_SVCパターンをフィルタすること', () => {
+      const mockDrills = [
+        { sentencePattern: 'DO_SV', id: '1' },
+        { sentencePattern: 'BE_SVC', id: '2' },
+        { sentencePattern: 'BE_SVC', id: '3' },
+      ];
+
+      vi.spyOn(QuestSession, 'start').mockReturnValue({
+        getTimeLimit: () => 30,
+      } as unknown as QuestSession);
+
+      vi.spyOn(SentenceDrill, 'reconstruct').mockImplementation(
+        (d) => d as unknown as SentenceDrill
+      );
+
+      vi.mocked(usePracticeStore).mockReturnValue({
+        ...mockStore,
+        currentLevel: 3,
+        allDrills: mockDrills,
+      } as unknown as ReturnType<typeof usePracticeStore>);
+
+      const { result } = renderHook(() => usePracticeActions());
+      result.current.handleRetryLevel();
+
+      expect(mockStore.setQuestSession).toHaveBeenCalled();
+    });
+
+    it('handleRetryLevelがlevel 4以上でランダム選択すること', () => {
+      const mockDrills = Array.from({ length: 20 }, (_, i) => ({
+        sentencePattern: 'DO_SV',
+        id: String(i),
+      }));
+
+      vi.spyOn(QuestSession, 'start').mockReturnValue({
+        getTimeLimit: () => 30,
+      } as unknown as QuestSession);
+
+      vi.spyOn(SentenceDrill, 'reconstruct').mockImplementation(
+        (d) => d as unknown as SentenceDrill
+      );
+
+      vi.mocked(usePracticeStore).mockReturnValue({
+        ...mockStore,
+        currentLevel: 4,
+        allDrills: mockDrills,
+      } as unknown as ReturnType<typeof usePracticeStore>);
+
+      const { result } = renderHook(() => usePracticeActions());
+      result.current.handleRetryLevel();
+
+      expect(mockStore.setQuestSession).toHaveBeenCalled();
+    });
+
+    it('handleRetryLevelがlevel 10で全パターンを使用すること', () => {
+      const mockDrills = [
+        { sentencePattern: 'DO_SV', id: '1' },
+        { sentencePattern: 'DO_SVO', id: '2' },
+        { sentencePattern: 'BE_SVC', id: '3' },
+      ];
+
+      vi.spyOn(QuestSession, 'start').mockReturnValue({
+        getTimeLimit: () => 30,
+      } as unknown as QuestSession);
+
+      vi.spyOn(SentenceDrill, 'reconstruct').mockImplementation(
+        (d) => d as unknown as SentenceDrill
+      );
+
+      vi.mocked(usePracticeStore).mockReturnValue({
+        ...mockStore,
+        currentLevel: 10,
+        allDrills: mockDrills,
+      } as unknown as ReturnType<typeof usePracticeStore>);
+
+      const { result } = renderHook(() => usePracticeActions());
+      result.current.handleRetryLevel();
+
+      expect(mockStore.setQuestSession).toHaveBeenCalled();
+    });
+
+    it('handleLevelUpが正しく動作すること', () => {
+      vi.mocked(usePracticeStore).mockReturnValue({
+        ...mockStore,
+        currentLevel: 5,
+      } as unknown as ReturnType<typeof usePracticeStore>);
+
+      const { result } = renderHook(() => usePracticeActions());
+      result.current.handleLevelUp();
+
+      expect(mockStore.setCurrentLevel).toHaveBeenCalledWith(6);
     });
   });
 });

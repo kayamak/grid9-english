@@ -125,4 +125,32 @@ describe('VerbTypeSelector', () => {
     expect(screen.getByText('Doどうし')).toHaveProperty('disabled', true);
     expect(screen.getByText('Beどうし')).toHaveProperty('disabled', true);
   });
+
+  it('calls handleTabChange with "do" when Do button is clicked', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      activeTab: 'be',
+      isAdmin: false,
+      isQuestMode: false,
+      timeLeft: 10,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    render(<VerbTypeSelector />);
+
+    fireEvent.click(screen.getByText('Doどうし'));
+    expect(mockHandleTabChange).toHaveBeenCalledWith('do');
+  });
+
+  it('calls handleTabChange with "admin" when Admin button is clicked', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      activeTab: 'do',
+      isAdmin: true,
+      isQuestMode: false,
+      timeLeft: 10,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    render(<VerbTypeSelector />);
+
+    fireEvent.click(screen.getByText('管理'));
+    expect(mockHandleTabChange).toHaveBeenCalledWith('admin');
+  });
 });

@@ -57,4 +57,32 @@ describe('Word Entity', () => {
       });
     });
   });
+
+  describe('getters', () => {
+    it('should access all properties via getters', () => {
+      const wordWithAllProps = Word.create({
+        id: '2',
+        value: 'sing',
+        label: '歌う',
+        type: 'verb',
+        numberForm: 'none',
+        pastForm: 'sang',
+        thirdPersonForm: 'sings',
+        adverb: 'loudly',
+        sentencePattern: 'SV',
+        sortOrder: 2,
+      });
+
+      expect(wordWithAllProps.id).toBe('2');
+      expect(wordWithAllProps.value).toBe('sing');
+      expect(wordWithAllProps.label).toBe('歌う');
+      expect(wordWithAllProps.type).toBe('verb');
+      expect(wordWithAllProps.numberForm).toBe('none');
+      expect(wordWithAllProps.pastForm).toBe('sang');
+      expect(wordWithAllProps.thirdPersonForm).toBe('sings');
+      expect(wordWithAllProps.adverb).toBe('loudly');
+      expect(wordWithAllProps.sentencePattern).toBe('SV');
+      expect(wordWithAllProps.sortOrder).toBe(2);
+    });
+  });
 });

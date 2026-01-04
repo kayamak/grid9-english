@@ -29,7 +29,9 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({ children }) => {
     return (
       showAllExceptSomething
         ? nounWords.filter((option) => option.value !== 'something')
-        : nounWords.filter((option) => option.numberForm === numberForm)
+        : nounWords.filter(
+            (option) => option.numberForm === (numberForm || 'a')
+          )
     ).sort((a, b) => a.value.localeCompare(b.value));
   }, [numberForm, nounWords]);
 

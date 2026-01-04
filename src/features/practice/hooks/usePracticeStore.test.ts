@@ -138,4 +138,60 @@ describe('usePracticeStore', () => {
     usePracticeStore.getState().rotateSubject('second');
     expect(usePracticeStore.getState().state.subject).toBe('second');
   });
+
+  it('setInitialStateでinitialWordsを渡した場合、Wordが正しく再構築されること', () => {
+    const initialWords = {
+      nouns: [
+        {
+          id: '1',
+          value: 'cat',
+          label: '猫',
+          type: 'noun' as const,
+        },
+      ],
+      verbs: [
+        {
+          id: '2',
+          value: 'run',
+          label: '走る',
+          type: 'verb' as const,
+        },
+      ],
+      adjectives: [
+        {
+          id: '3',
+          value: 'happy',
+          label: '幸せな',
+          type: 'adjective' as const,
+        },
+      ],
+      adverbs: [
+        {
+          id: '4',
+          value: 'quickly',
+          label: '素早く',
+          type: 'adverb' as const,
+        },
+      ],
+    };
+
+    usePracticeStore.getState().setInitialState({
+      isQuestMode: false,
+      isFreeMode: true,
+      isOnboardingMode: false,
+      isAdmin: false,
+      currentLevel: 1,
+      allDrills: [],
+      initialWords,
+    });
+
+    const state = usePracticeStore.getState();
+    expect(state.words.nouns).toHaveLength(1);
+    expect(state.words.verbs).toHaveLength(1);
+    expect(state.words.adjectives).toHaveLength(1);
+    expect(state.words.adverbs).toHaveLength(1);
+    expect(state.words.nouns[0].value).toBe('cat');
+    expect(state.words.verbs[0].value).toBe('run');
+    expect(state.isLoadingWords).toBe(false);
+  });
 });

@@ -76,4 +76,59 @@ describe('useBattleStore', () => {
     expect(useBattleStore.getState().heroAction).toBe('idle');
     expect(useBattleStore.getState().monsterState).toBe('idle');
   });
+
+  it('残りのsetterが正しく動作すること', () => {
+    useBattleStore.getState().setMonsterState('defeated');
+    expect(useBattleStore.getState().monsterState).toBe('defeated');
+
+    useBattleStore.getState().setShowVictoryEffect(true);
+    expect(useBattleStore.getState().showVictoryEffect).toBe(true);
+
+    useBattleStore.getState().setScreenShaking(true);
+    expect(useBattleStore.getState().isScreenShaking).toBe(true);
+
+    useBattleStore.getState().setScreenFlashing(true);
+    expect(useBattleStore.getState().isScreenFlashing).toBe(true);
+  });
+
+  it('攻撃アニメーション中にアクションが変わった場合、idleに戻さないこと', () => {
+    useBattleStore.getState().triggerAttackAnim();
+    // 150ms経過 (attack中)
+    vi.advanceTimersByTime(150);
+
+    // 強制的にstateを変更 (例: 逃げる)
+    useBattleStore.getState().setHeroAction('run-away');
+
+    // 300ms経過 (本来ならidleに戻るタイミング)
+    vi.advanceTimersByTime(150);
+
+    // idleに戻らず、run-awayのままであるべき
+    expect(useBattleStore.getState().heroAction).toBe('run-away');
+  });
+
+  it('モンスターがすでにidleでない場合、damagedにならないこと', () => {
+    // モンスターが既に倒されている場合など
+    useBattleStore.getState().setMonsterState('defeated');
+
+    useBattleStore.getState().triggerAttackAnim();
+    vi.advanceTimersByTime(150);
+
+    // defaultのdamagedにはならない
+    expect(useBattleStore.getState().monsterState).toBe('defeated');
+  });
+
+  it('モンスターがdamagedでない場合、idleに戻さないこと（ダメージ復帰時）', () => {
+    useBattleStore.getState().triggerAttackAnim();
+    vi.advanceTimersByTime(150);
+    expect(useBattleStore.getState().monsterState).toBe('damaged');
+
+    // ダメージ中に状態変化 (例: 倒された)
+    useBattleStore.getState().setMonsterState('defeated');
+
+    // ダメージ復帰タイミング
+    vi.advanceTimersByTime(300);
+
+    // idleに戻らずdefeatedのまま
+    expect(useBattleStore.getState().monsterState).toBe('defeated');
+  });
 });

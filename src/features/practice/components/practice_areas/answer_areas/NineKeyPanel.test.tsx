@@ -71,4 +71,71 @@ describe('NineKeyPanel', () => {
     fireEvent.click(pastBtn);
     expect(mockActions.handleTenseChange).toHaveBeenCalledWith('past');
   });
+
+  it('calls handleTenseChange for future tense', () => {
+    render(<NineKeyPanel />);
+    const futureBtn = screen.getByText('↪');
+    fireEvent.click(futureBtn);
+    expect(mockActions.handleTenseChange).toHaveBeenCalledWith('future');
+  });
+
+  it('toggles second person subject correctly', () => {
+    // Current state is second Person
+    vi.mocked(usePracticeStore).mockReturnValue({
+      state: { ...mockState, subject: 'second' },
+      isOnboardingMode: false,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const { rerender } = render(<NineKeyPanel />);
+    const secondPersonBtn = screen.getByText('2');
+    fireEvent.click(secondPersonBtn);
+    expect(mockActions.handleSubjectChange).toHaveBeenCalledWith('second_p');
+
+    // Test reverse: second_p -> second
+    vi.mocked(usePracticeStore).mockReturnValue({
+      state: { ...mockState, subject: 'second_p' },
+      isOnboardingMode: false,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    rerender(<NineKeyPanel />);
+    const secondPersonPluralBtn = screen.getByText('22');
+    fireEvent.click(secondPersonPluralBtn);
+    expect(mockActions.handleSubjectChange).toHaveBeenCalledWith('second');
+  });
+
+  it('toggles third person subject correctly', () => {
+    // Current state is third Person
+    vi.mocked(usePracticeStore).mockReturnValue({
+      state: { ...mockState, subject: 'third_s' },
+      isOnboardingMode: false,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const { rerender } = render(<NineKeyPanel />);
+    const thirdPersonBtn = screen.getByText('3');
+    fireEvent.click(thirdPersonBtn);
+    expect(mockActions.handleSubjectChange).toHaveBeenCalledWith('third_p');
+
+    // Test reverse: third_p -> third_s
+    vi.mocked(usePracticeStore).mockReturnValue({
+      state: { ...mockState, subject: 'third_p' },
+      isOnboardingMode: false,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    rerender(<NineKeyPanel />);
+    const thirdPersonPluralBtn = screen.getByText('33');
+    fireEvent.click(thirdPersonPluralBtn);
+    expect(mockActions.handleSubjectChange).toHaveBeenCalledWith('third_s');
+  });
+
+  it('toggles first person subject correctly (plural back to singular)', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      state: { ...mockState, subject: 'first_p' },
+      isOnboardingMode: false,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    render(<NineKeyPanel />);
+    const firstPersonPluralBtn = screen.getByText('11');
+    fireEvent.click(firstPersonPluralBtn);
+    expect(mockActions.handleSubjectChange).toHaveBeenCalledWith('first_s');
+  });
 });

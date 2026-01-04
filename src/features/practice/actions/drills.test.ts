@@ -130,6 +130,146 @@ describe('drills actions', () => {
 
       expect(findAllSpy).toHaveBeenCalled();
     });
+
+    it('should return DO_SVO pattern for level 2', async () => {
+      const mockDrills = Array.from({ length: 15 }, (_, i) =>
+        SentenceDrill.reconstruct({
+          id: String(i),
+          sentencePattern: 'DO_SVO',
+          english: `English ${i}`,
+          japanese: `Japanese ${i}`,
+          sortOrder: i,
+        })
+      );
+      const findByPatternSpy = vi
+        .spyOn(PrismaSentenceDrillRepository.prototype, 'findByPattern')
+        .mockResolvedValue(mockDrills);
+
+      const result = await getDrillQuestQuestions(2);
+
+      expect(findByPatternSpy).toHaveBeenCalledWith('DO_SVO');
+      expect(result).toHaveLength(10);
+    });
+
+    it('should return BE_SVC pattern for level 3', async () => {
+      const mockDrills = Array.from({ length: 15 }, (_, i) =>
+        SentenceDrill.reconstruct({
+          id: String(i),
+          sentencePattern: 'BE_SVC',
+          english: `English ${i}`,
+          japanese: `Japanese ${i}`,
+          sortOrder: i,
+        })
+      );
+      const findByPatternSpy = vi
+        .spyOn(PrismaSentenceDrillRepository.prototype, 'findByPattern')
+        .mockResolvedValue(mockDrills);
+
+      const result = await getDrillQuestQuestions(3);
+
+      expect(findByPatternSpy).toHaveBeenCalledWith('BE_SVC');
+      expect(result).toHaveLength(10);
+    });
+
+    it('should return DO_SVO pattern for level 5', async () => {
+      const mockDrills = Array.from({ length: 15 }, (_, i) =>
+        SentenceDrill.reconstruct({
+          id: String(i),
+          sentencePattern: 'DO_SVO',
+          english: `English ${i}`,
+          japanese: `Japanese ${i}`,
+          sortOrder: i,
+        })
+      );
+      vi.spyOn(
+        PrismaSentenceDrillRepository.prototype,
+        'findByPattern'
+      ).mockResolvedValue(mockDrills);
+
+      const result = await getDrillQuestQuestions(5);
+
+      expect(result).toHaveLength(10);
+    });
+
+    it('should return BE_SVC pattern for level 6', async () => {
+      const mockDrills = Array.from({ length: 15 }, (_, i) =>
+        SentenceDrill.reconstruct({
+          id: String(i),
+          sentencePattern: 'BE_SVC',
+          english: `English ${i}`,
+          japanese: `Japanese ${i}`,
+          sortOrder: i,
+        })
+      );
+      vi.spyOn(
+        PrismaSentenceDrillRepository.prototype,
+        'findByPattern'
+      ).mockResolvedValue(mockDrills);
+
+      const result = await getDrillQuestQuestions(6);
+
+      expect(result).toHaveLength(10);
+    });
+
+    it('should return DO_SV pattern for level 7', async () => {
+      const mockDrills = Array.from({ length: 15 }, (_, i) =>
+        SentenceDrill.reconstruct({
+          id: String(i),
+          sentencePattern: 'DO_SV',
+          english: `English ${i}`,
+          japanese: `Japanese ${i}`,
+          sortOrder: i,
+        })
+      );
+      vi.spyOn(
+        PrismaSentenceDrillRepository.prototype,
+        'findByPattern'
+      ).mockResolvedValue(mockDrills);
+
+      const result = await getDrillQuestQuestions(7);
+
+      expect(result).toHaveLength(10);
+    });
+
+    it('should return DO_SVO pattern for level 8', async () => {
+      const mockDrills = Array.from({ length: 15 }, (_, i) =>
+        SentenceDrill.reconstruct({
+          id: String(i),
+          sentencePattern: 'DO_SVO',
+          english: `English ${i}`,
+          japanese: `Japanese ${i}`,
+          sortOrder: i,
+        })
+      );
+      vi.spyOn(
+        PrismaSentenceDrillRepository.prototype,
+        'findByPattern'
+      ).mockResolvedValue(mockDrills);
+
+      const result = await getDrillQuestQuestions(8);
+
+      expect(result).toHaveLength(10);
+    });
+
+    it('should return BE_SVC pattern for level 9', async () => {
+      const mockDrills = Array.from({ length: 15 }, (_, i) =>
+        SentenceDrill.reconstruct({
+          id: String(i),
+          sentencePattern: 'BE_SVC',
+          english: `English ${i}`,
+          japanese: `Japanese ${i}`,
+          sortOrder: i,
+        })
+      );
+      vi.spyOn(
+        PrismaSentenceDrillRepository.prototype,
+        'findByPattern'
+      ).mockResolvedValue(mockDrills);
+
+      const result = await getDrillQuestQuestions(9);
+
+      expect(result).toHaveLength(10);
+    });
   });
 
   describe('getUniquePatterns', () => {

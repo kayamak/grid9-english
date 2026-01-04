@@ -114,4 +114,124 @@ describe('usePracticeDerivedState', () => {
     expect(result2.current.heroOpacity).toBe(1);
     expect(result2.current.monsterOpacity).toBe(0.5);
   });
+
+  it('battleImages: BE動詞のSV/SVCでbit_golemが表示されること', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      ...mockStore,
+      state: SentencePattern.create({
+        verbType: 'be',
+        verb: 'be',
+        subject: 'first_s',
+        tense: 'present',
+        sentenceType: 'positive',
+        fiveSentencePattern: 'SV',
+        object: '',
+      }),
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const { result } = renderHook(() => usePracticeDerivedState());
+    expect(result.current.battleImages.monsterImg).toBe(
+      '/assets/monsters/bit_golem.png'
+    );
+  });
+
+  it('battleImages: BE動詞のSVCでbit_golemとcrescent_beastが表示されること', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      ...mockStore,
+      state: SentencePattern.create({
+        verbType: 'be',
+        verb: 'be',
+        subject: 'first_s',
+        tense: 'present',
+        sentenceType: 'positive',
+        fiveSentencePattern: 'SVC',
+        beComplement: 'happy',
+      }),
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const { result } = renderHook(() => usePracticeDerivedState());
+    expect(result.current.battleImages.monsterImg).toBe(
+      '/assets/monsters/bit_golem.png'
+    );
+    expect(result.current.battleImages.itemImg).toBe(
+      '/assets/monsters/crescent_beast.png'
+    );
+  });
+
+  it('battleImages: DO動詞のSV/SVOでvoid_dragonが表示されること', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      ...mockStore,
+      state: SentencePattern.create({
+        verbType: 'do',
+        verb: 'run',
+        subject: 'first_s',
+        tense: 'present',
+        sentenceType: 'positive',
+        fiveSentencePattern: 'SV',
+        object: '',
+      }),
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const { result } = renderHook(() => usePracticeDerivedState());
+    expect(result.current.battleImages.monsterImg).toBe(
+      '/assets/monsters/void_dragon_v2.png'
+    );
+    expect(result.current.battleImages.monsterScale).toBe(1.7);
+  });
+
+  it('battleImages: SVOでo_slimeが表示されること', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      ...mockStore,
+      state: SentencePattern.create({
+        verbType: 'do',
+        verb: 'eat',
+        subject: 'first_s',
+        tense: 'present',
+        sentenceType: 'positive',
+        fiveSentencePattern: 'SVO',
+        object: 'apple',
+      }),
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const { result } = renderHook(() => usePracticeDerivedState());
+    expect(result.current.battleImages.itemImg).toBe(
+      '/assets/monsters/o_slime.png'
+    );
+  });
+
+  it('battleImages: have/see/get動詞でdragonが表示されること', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      ...mockStore,
+      state: SentencePattern.create({
+        verbType: 'do',
+        verb: 'have',
+        subject: 'first_s',
+        tense: 'present',
+        sentenceType: 'positive',
+        fiveSentencePattern: 'SVOO',
+        object: 'book',
+      }),
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const { result } = renderHook(() => usePracticeDerivedState());
+    expect(result.current.battleImages.monsterImg).toBe(
+      '/assets/monsters/dragon.png'
+    );
+    expect(result.current.battleImages.monsterScale).toBe(1.7);
+  });
+
+  it('battleImages: second/second_pでmageが表示されること', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      ...mockStore,
+      state: SentencePattern.create({
+        ...mockStore.state.toObject(),
+        subject: 'second_p',
+      }),
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const { result } = renderHook(() => usePracticeDerivedState());
+    expect(result.current.battleImages.subjectImg).toBe(
+      '/assets/heroes/mage.png'
+    );
+  });
 });

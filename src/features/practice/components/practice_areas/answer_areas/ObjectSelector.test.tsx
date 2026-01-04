@@ -163,4 +163,55 @@ describe('ObjectSelector', () => {
     render(<ObjectSelector />);
     expect(screen.getByRole('combobox')).toHaveProperty('disabled', true);
   });
+
+  it('defaults to "a" behavior when numberForm is undefined', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      state: { object: 'apple', numberForm: undefined },
+      words: { nouns: mockNounWords },
+      isLoadingWords: false,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    render(<ObjectSelector />);
+
+    // Should behave like 'a' -> filters out 'something' if 'a' (wait, 'a' filters out 'books' actually, keeps 'something')
+    // let's re-verify logic.
+    // 'a' is NOT in list -> showAllExceptSomething = false.
+    // filter: option.numberForm === numberForm ('a').
+    // So 'something' (a) IS kept. 'books' (plural) is filtered out.
+
+    const options = screen.getAllByRole('option');
+    const values = options.map((o) => (o as HTMLOptionElement).value);
+
+    expect(values).toContain('apple');
+    expect(values).not.toContain('books');
+  });
+
+  it('does nothing if filtered options are empty', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      state: { object: 'apple', numberForm: 'plural' },
+      words: { nouns: [] }, // Empty words
+      isLoadingWords: false,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    render(<ObjectSelector />);
+
+    expect(mockHandleObjectChange).not.toHaveBeenCalled();
+    // Verify no options rendered (except maybe placeholder if any? code says just filteredOptions)
+    expect(screen.queryAllByRole('option')).toHaveLength(0);
+  });
+
+  it('defaults value to "something" if selectedObject is null', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      state: { object: null, numberForm: 'a' },
+      words: { nouns: mockNounWords },
+      isLoadingWords: false,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    render(<ObjectSelector />);
+
+    // Value should be 'something'
+    expect((screen.getByRole('combobox') as HTMLSelectElement).value).toBe(
+      'something'
+    );
+  });
 });

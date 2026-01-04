@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { QuestSession } from './QuestSession';
+import { QuestSession, AnswerResult } from './QuestSession';
 import { SentenceDrill } from './SentenceDrill';
 
 // Mock SentenceDrill
@@ -144,6 +144,89 @@ describe('QuestSession', () => {
       expect(QuestSession.checkAnswer('i run', 'I run')).toBe(true); // case
       expect(QuestSession.checkAnswer('  I   run  ', 'I run')).toBe(true); // spaces
       expect(QuestSession.checkAnswer('I walk', 'I run')).toBe(false);
+    });
+
+    it('currentDrillがundefinedの場合、isCorrectはfalseを返すこと', () => {
+      const session = QuestSession.start(1, []);
+      expect(session.isCorrect('I run')).toBe(false);
+    });
+
+    it('isCorrectメソッドが正しく動作すること', () => {
+      const session = QuestSession.start(1, mockDrills);
+      expect(session.isCorrect('I run')).toBe(true);
+      expect(session.isCorrect('I walk')).toBe(false);
+    });
+  });
+
+  describe('withResults', () => {
+    it('結果を更新した新しいセッションを返すこと', () => {
+      const session = QuestSession.start(1, mockDrills);
+      const newResults = [
+        'correct',
+        'wrong',
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+      ] as AnswerResult[];
+      const updatedSession = session.withResults(newResults);
+
+      expect(updatedSession.results).toEqual(newResults);
+      expect(updatedSession.correctCount).toBe(1);
+      expect(updatedSession.level).toBe(1);
+      expect(updatedSession.currentIndex).toBe(0);
+    });
+  });
+
+  describe('currentDrill', () => {
+    it('現在のドリルを返すこと', () => {
+      const session = QuestSession.start(1, mockDrills);
+      expect(session.currentDrill).toBe(mockDrills[0]);
+    });
+
+    it('インデックスが範囲外の場合undefinedを返すこと', () => {
+      const session = QuestSession.start(1, []);
+      expect(session.currentDrill).toBeUndefined();
+    });
+  });
+
+  describe('submitAnswer with non-playing status', () => {
+    it('playing状態でない場合は変更されないこと', () => {
+      let session = QuestSession.start(1, mockDrills);
+      // Complete the session
+      for (let i = 0; i < 10; i++) {
+        session = session.submitAnswer(true);
+        if (i < 9) session = session.nextDrill();
+      }
+      session = session.nextDrill();
+      expect(session.status).toBe('result');
+
+      // Try to submit answer when status is 'result'
+      const beforeResults = session.results;
+      session = session.submitAnswer(true);
+      expect(session.results).toEqual(beforeResults);
+    });
+  });
+
+  describe('nextDrill with non-playing status', () => {
+    it('playing状態でない場合は変更されないこと', () => {
+      let session = QuestSession.start(1, mockDrills);
+      // Complete the session
+      for (let i = 0; i < 10; i++) {
+        session = session.submitAnswer(true);
+        if (i < 9) session = session.nextDrill();
+      }
+      session = session.nextDrill();
+      expect(session.status).toBe('result');
+
+      // Try to advance when status is 'result'
+      const beforeIndex = session.currentIndex;
+      session = session.nextDrill();
+      expect(session.currentIndex).toBe(beforeIndex);
     });
   });
 });

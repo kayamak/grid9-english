@@ -98,4 +98,105 @@ describe('MainMenu', () => {
     expect(screen.getByRole('button', { name: /たたかう/i })).toBeDefined();
     expect(screen.queryByText('ドリルクエスト')).toBeNull();
   });
+
+  it('updates description when hovering "にげる" button', () => {
+    render(<MainMenu />);
+    const nigeruBtn = screen.getByText('にげる');
+
+    // Initial description check (optional, but good for validity)
+    // We can't easily check initial state unless we mock useMainMenu to return specific state,
+    // but here we use the real hook implicitly (implied by previous tests not mocking it? Wait.)
+
+    // MainMenu uses `useMainMenu` hook.
+    // Is `useMainMenu` mocked in THIS test file?
+    // No, MainMenu is imported. useMainMenu is used inside.
+    // The previous tests didn't mock useMainMenu, but they mocked next/navigation and next/link.
+    // MainMenu.tsx imports `useMainMenu`.
+    // If we haven't mocked `useMainMenu`, it uses the real one.
+    // The real one sets 'コマンドを　えらんでください。' initially.
+
+    fireEvent.mouseEnter(nigeruBtn);
+    expect(
+      screen.getByText(
+        (content) =>
+          content.includes('レベルを') &&
+          content.includes('しょきか') &&
+          content.includes('できるぞ')
+      )
+    ).toBeDefined();
+  });
+
+  it('opens clear level menu when clicking "にげる"', () => {
+    render(<MainMenu />);
+    const nigeruBtn = screen.getByText('にげる');
+
+    fireEvent.click(nigeruBtn);
+
+    expect(screen.getByText('メニュー')).toBeDefined();
+    expect(screen.getByText('レベルクリア')).toBeDefined();
+    expect(screen.getByText('とじる')).toBeDefined();
+  });
+
+  it('closes clear level menu when clicking "とじる"', () => {
+    render(<MainMenu />);
+    const nigeruBtn = screen.getByText('にげる');
+    fireEvent.click(nigeruBtn);
+
+    const closeBtn = screen.getByText('とじる');
+    fireEvent.click(closeBtn);
+
+    expect(screen.queryByText('メニュー')).toBeNull();
+  });
+
+  it('clears level when clicking "レベルクリア"', () => {
+    // We need to verify if cookie is set or state updated.
+    // Since we are using real hook, we can check if "レベルを　しょきか　しました。" appears in bottom message.
+    render(<MainMenu />);
+    const nigeruBtn = screen.getByText('にげる');
+    fireEvent.click(nigeruBtn);
+
+    const clearBtn = screen.getByText('レベルクリア');
+    fireEvent.click(clearBtn);
+
+    // Check for updated bottom message. Bottom message is displayed in "▼ ..."
+    expect(
+      screen.getByText(
+        (content) =>
+          content.includes('レベルを') &&
+          content.includes('しょきか') &&
+          content.includes('しました')
+      )
+    ).toBeDefined();
+  });
+
+  it('updates description when hovering items', () => {
+    render(<MainMenu />);
+    const tatakauBtn = screen.getByRole('button', { name: /たたかう/i });
+    fireEvent.click(tatakauBtn);
+
+    const drillQuestBtn = screen.getByText('ドリルクエスト');
+    fireEvent.mouseEnter(drillQuestBtn);
+
+    // Check if description updated.
+    // We need to know the description of Drill Quest.
+    // In MENU_DATA: 'せまりくる　せいげんじかんないに　あまたの　もんだいを　ときあかせ！'
+    expect(
+      screen.getByText(
+        (content) =>
+          content.includes('せまりくる') &&
+          content.includes('せいげんじかんないに')
+      )
+    ).toBeDefined();
+
+    fireEvent.mouseLeave(drillQuestBtn);
+
+    // Should revert to category description
+    // 'きびしい　しれんに　いどみ、おのれの　スキルを　みがきあげろ！'
+    expect(
+      screen.getByText(
+        (content) =>
+          content.includes('きびしい') && content.includes('しれんに')
+      )
+    ).toBeDefined();
+  });
 });

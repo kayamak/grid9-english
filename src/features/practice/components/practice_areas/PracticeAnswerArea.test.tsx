@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { PracticeAnswerArea } from './PracticeAnswerArea';
 import { usePracticeStore } from '../../hooks/usePracticeStore';
 import { usePracticeDerivedState } from '../../hooks/usePracticeDerivedState';
@@ -122,5 +122,99 @@ describe('PracticeAnswerArea', () => {
 
     expect(wrapperDiv?.classList.contains('pointer-events-none')).toBe(false);
     expect(wrapperDiv?.classList.contains('grayscale')).toBe(false);
+  });
+
+  describe('Admin Tab', () => {
+    beforeEach(() => {
+      mockUsePracticeStore.mockReturnValue({
+        ...defaultStoreState,
+        activeTab: 'admin',
+        currentLevel: 5,
+        questSession: { correctCount: 5 },
+      });
+    });
+
+    it('renders admin interface', () => {
+      render(<PracticeAnswerArea />);
+      expect(screen.getByText('デバッグ管理')).toBeDefined();
+      expect(screen.getByText('Lv 5')).toBeDefined();
+      expect(screen.getByText('5 / 10')).toBeDefined();
+    });
+
+    it('can increment and decrement level', async () => {
+      const setCurrentLevel = vi.fn();
+      mockUsePracticeStore.mockReturnValue({
+        ...defaultStoreState,
+        activeTab: 'admin',
+        currentLevel: 5,
+        setCurrentLevel,
+      });
+
+      render(<PracticeAnswerArea />);
+
+      // Find buttons by text "-" and "+"
+      // There are two sets of "-" and "+" buttons.
+      // 1st set is for Level (index 0 and 1)
+      const decrementButtons = screen.getAllByText('-');
+      const incrementButtons = screen.getAllByText('+');
+
+      // Click Level -
+      fireEvent.click(decrementButtons[0]);
+      expect(setCurrentLevel).toHaveBeenCalledWith(4);
+
+      // Click Level +
+      fireEvent.click(incrementButtons[0]);
+      expect(setCurrentLevel).toHaveBeenCalledWith(6);
+    });
+
+    it('can increment and decrement correct count', () => {
+      const setCorrectCountInLevel = vi.fn();
+      mockUsePracticeActions.mockReturnValue({
+        setCorrectCountInLevel,
+      });
+
+      render(<PracticeAnswerArea />);
+
+      const decrementButtons = screen.getAllByText('-');
+      const incrementButtons = screen.getAllByText('+');
+
+      // Click Correct Count - (2nd set)
+      fireEvent.click(decrementButtons[1]);
+      expect(setCorrectCountInLevel).toHaveBeenCalledWith(4);
+
+      // Click Correct Count + (2nd set)
+      fireEvent.click(incrementButtons[1]);
+      expect(setCorrectCountInLevel).toHaveBeenCalledWith(6);
+    });
+
+    it('limits level range', () => {
+      const setCurrentLevel = vi.fn();
+      // Test lower bound
+      mockUsePracticeStore.mockReturnValue({
+        ...defaultStoreState,
+        activeTab: 'admin',
+        currentLevel: 1,
+        setCurrentLevel,
+      });
+
+      const { unmount } = render(<PracticeAnswerArea />);
+      const decrementButtons = screen.getAllByText('-');
+      fireEvent.click(decrementButtons[0]);
+      expect(setCurrentLevel).toHaveBeenCalledWith(1); // Should not go below 1
+      unmount();
+
+      // Test upper bound
+      mockUsePracticeStore.mockReturnValue({
+        ...defaultStoreState,
+        activeTab: 'admin',
+        currentLevel: 10,
+        setCurrentLevel,
+      });
+
+      render(<PracticeAnswerArea />);
+      const incrementButtons = screen.getAllByText('+');
+      fireEvent.click(incrementButtons[0]);
+      expect(setCurrentLevel).toHaveBeenCalledWith(10); // Should not go above 10
+    });
   });
 });
