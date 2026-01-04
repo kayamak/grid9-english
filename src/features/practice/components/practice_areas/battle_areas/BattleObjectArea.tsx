@@ -2,20 +2,24 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { getAssetPath } from '@/lib/assets';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { useBattleStore } from '../../../hooks/useBattleStore';
+import { usePracticeDerivedState } from '../../../hooks/usePracticeDerivedState';
 
 interface BattleObjectAreaProps {
-  object: string;
-  monsterState: 'idle' | 'hit' | 'defeated' | 'damaged' | 'attack';
   attackDistance: number;
-  itemImg: string | null;
 }
 
 export function BattleObjectArea({
-  object,
-  monsterState,
   attackDistance,
-  itemImg,
 }: BattleObjectAreaProps) {
+  const { state } = usePracticeStore();
+  const { monsterState } = useBattleStore();
+  const { battleImages } = usePracticeDerivedState();
+  
+  const { object } = state;
+  const { itemImg } = battleImages;
+
   return (
     <div className="flex-1 flex flex-col items-center relative h-full justify-end min-w-[80px] pb-12 md:pb-16">
       {itemImg && (

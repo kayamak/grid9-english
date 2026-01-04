@@ -1,25 +1,19 @@
 import React from 'react';
-import { VerbType } from '@/domain/practice/types';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
-interface VerbTypeSelectorProps {
-  activeTab: VerbType | 'admin';
-  onChange: (tab: VerbType | 'admin') => void;
-  isAdmin?: boolean;
-  disabled?: boolean;
-}
+export const VerbTypeSelector: React.FC = () => {
+  const { activeTab, isAdmin, isQuestMode, timeLeft } = usePracticeStore();
+  const { handleTabChange } = usePracticeActions();
 
-export const VerbTypeSelector: React.FC<VerbTypeSelectorProps> = ({
-  activeTab,
-  onChange,
-  isAdmin,
-  disabled,
-}) => {
+  const disabled = isQuestMode && timeLeft === 0;
+
   return (
     <div
       className={`flex space-x-2 relative z-10 -mb-1 ${disabled ? 'opacity-50 pointer-events-none grayscale' : ''}`}
     >
       <button
-        onClick={() => onChange('do')}
+        onClick={() => handleTabChange('do')}
         disabled={disabled}
         className={`px-6 py-2 border-t-4 border-l-4 border-r-4 rounded-t-lg font-normal text-lg transition-all shadow-lg ${
           activeTab === 'do'
@@ -30,7 +24,7 @@ export const VerbTypeSelector: React.FC<VerbTypeSelectorProps> = ({
         Doどうし
       </button>
       <button
-        onClick={() => onChange('be')}
+        onClick={() => handleTabChange('be')}
         disabled={disabled}
         className={`px-6 py-2 border-t-4 border-l-4 border-r-4 rounded-t-lg font-normal text-lg transition-all shadow-lg ${
           activeTab === 'be'
@@ -42,7 +36,7 @@ export const VerbTypeSelector: React.FC<VerbTypeSelectorProps> = ({
       </button>
       {isAdmin && (
         <button
-          onClick={() => onChange('admin')}
+          onClick={() => handleTabChange('admin')}
           disabled={disabled}
           className={`px-6 py-2 border-t-4 border-l-4 border-r-4 rounded-t-lg font-normal text-lg transition-all shadow-lg ${
             activeTab === 'admin'

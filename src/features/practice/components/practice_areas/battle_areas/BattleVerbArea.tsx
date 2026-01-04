@@ -2,24 +2,23 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { getAssetPath } from '@/lib/assets';
 import { DragonVEffect } from './verb_areas/DragonVEffect';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { useBattleStore } from '../../../hooks/useBattleStore';
+import { usePracticeDerivedState } from '../../../hooks/usePracticeDerivedState';
 
 interface BattleVerbAreaProps {
-  currentDrillIndex: number;
-  monsterState: 'idle' | 'hit' | 'defeated' | 'damaged' | 'attack';
-  monsterOpacity: number;
-  monsterImg: string;
-  monsterScale: number;
   attackDistance: number;
 }
 
 export function VerbArea({
-  currentDrillIndex,
-  monsterState,
-  monsterOpacity,
-  monsterImg,
-  monsterScale,
   attackDistance,
 }: BattleVerbAreaProps) {
+  const { currentDrillIndex } = usePracticeStore();
+  const { monsterState } = useBattleStore();
+  const { battleImages, monsterOpacity } = usePracticeDerivedState();
+  
+  const { monsterImg, monsterScale } = battleImages;
+
   return (
     <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-12 md:pb-16">
       <div className="relative" style={{ transformOrigin: 'bottom' }}>

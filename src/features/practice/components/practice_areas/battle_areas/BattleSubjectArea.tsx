@@ -2,25 +2,24 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { getAssetPath } from '@/lib/assets';
-import { Subject } from '@/domain/practice/types';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { useBattleStore } from '../../../hooks/useBattleStore';
+import { usePracticeDerivedState } from '../../../hooks/usePracticeDerivedState';
 
 interface BattleSubjectAreaProps {
-  subject: Subject;
-  currentDrillIndex: number;
-  heroAction: 'idle' | 'run-away' | 'defeated' | 'attack' | 'damaged';
-  heroOpacity: number;
   attackDistance: number;
-  subjectImg: string;
 }
 
 export function BattleSubjectArea({
-  subject,
-  currentDrillIndex,
-  heroAction,
-  heroOpacity,
   attackDistance,
-  subjectImg,
 }: BattleSubjectAreaProps) {
+  const { state, currentDrillIndex } = usePracticeStore();
+  const { heroAction } = useBattleStore();
+  const { battleImages, heroOpacity } = usePracticeDerivedState();
+  
+  const { subject } = state;
+  const { subjectImg } = battleImages;
+
   return (
     <div className="flex-1 flex flex-col items-center relative h-full justify-end pb-12 md:pb-16">
       <div className="z-10 flex flex-col items-center">

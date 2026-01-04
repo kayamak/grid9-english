@@ -1,14 +1,11 @@
 import { create } from 'zustand';
 import {
   QuestSession,
-  AnswerResult,
 } from '@/domain/practice/entities/QuestSession';
-import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
 import {
   SentencePattern,
   WordProps,
   VerbType,
-  Verb,
   SentenceType,
   Subject,
   Tense,
@@ -55,6 +52,10 @@ interface PracticeState {
   state: SentencePattern;
   activeTab: VerbType | 'admin';
 
+  // Timer State
+  timeLeft: number;
+  isTimerActive: boolean;
+
   // Actions
   setInitialState: (params: {
     isQuestMode: boolean;
@@ -87,9 +88,15 @@ interface PracticeState {
   rotateSubject: (subject: Subject) => void;
   changeTense: (tense: Tense) => void;
   setActiveTab: (tab: VerbType | 'admin') => void;
+  
+  // Timer Actions
+  setTimeLeft: (update: number | ((prev: number) => number)) => void;
+  setIsTimerActive: (update: boolean | ((prev: boolean) => boolean)) => void;
+  resetTimer: (seconds: number) => void;
+  stopTimer: () => void;
 }
 
-export const usePracticeStore = create<PracticeState>((set, get) => ({
+export const usePracticeStore = create<PracticeState>((set) => ({
   isQuestMode: false,
   isFreeMode: false,
   isOnboardingMode: false,
@@ -114,6 +121,8 @@ export const usePracticeStore = create<PracticeState>((set, get) => ({
     beComplement: 'here',
   }),
   activeTab: 'do',
+  timeLeft: 30,
+  isTimerActive: false,
 
   setInitialState: ({ isQuestMode, isFreeMode, isOnboardingMode, isAdmin, currentLevel, allDrills, initialWords }) => {
     const sessionId = Math.random().toString(36).substring(2, 9).toUpperCase();
@@ -163,4 +172,13 @@ export const usePracticeStore = create<PracticeState>((set, get) => ({
   })),
 
   setActiveTab: (tab) => set({ activeTab: tab }),
+
+  setTimeLeft: (update) => set((state) => ({
+    timeLeft: typeof update === 'function' ? update(state.timeLeft) : update
+  })),
+  setIsTimerActive: (update) => set((state) => ({
+    isTimerActive: typeof update === 'function' ? update(state.isTimerActive) : update
+  })),
+  resetTimer: (seconds) => set({ timeLeft: seconds, isTimerActive: true }),
+  stopTimer: () => set({ isTimerActive: false }),
 }));

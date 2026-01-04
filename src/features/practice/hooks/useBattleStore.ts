@@ -14,7 +14,7 @@ interface BattleState {
   setScreenFlashing: (flashing: boolean) => void;
   
   triggerVictoryEffect: () => void;
-  triggerAttackAnim: (subject: string) => void;
+  triggerAttackAnim: () => void;
 }
 
 export const useBattleStore = create<BattleState>((set) => ({
@@ -40,7 +40,7 @@ export const useBattleStore = create<BattleState>((set) => ({
     set({ showVictoryEffect: true });
   },
 
-  triggerAttackAnim: (subject) => {
+  triggerAttackAnim: () => {
     set({ heroAction: 'attack' });
     setTimeout(() => {
       set({ monsterState: 'damaged' });

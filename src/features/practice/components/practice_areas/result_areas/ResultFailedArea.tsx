@@ -3,16 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { XCircle } from 'lucide-react';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
-interface ResultFailedAreaProps {
-  correctCountInLevel: number;
-  onRetry: () => void;
-}
+export function ResultFailedArea() {
+  const { questSession } = usePracticeStore();
+  const { handleRetryLevel } = usePracticeActions();
+  
+  const correctCountInLevel = questSession?.correctCount || 0;
 
-export function ResultFailedArea({
-  correctCountInLevel,
-  onRetry,
-}: ResultFailedAreaProps) {
   return (
     <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
       <div className="dq-window p-10 border-red-500 flex flex-col items-center gap-6 text-center max-w-md w-full">
@@ -32,7 +31,7 @@ export function ResultFailedArea({
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-full">
-          <button onClick={onRetry} className="dq-button py-2">
+          <button onClick={handleRetryLevel} className="dq-button py-2">
             さいちょうせん
           </button>
           <Link href="/" className="w-full">

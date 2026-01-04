@@ -1,15 +1,10 @@
 import React from 'react';
 import { SentenceType, Subject, Tense } from '@/domain/practice/types';
 import { OnboardingBubble } from './OnboardingBubble';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
 interface NineKeyPanelProps {
-  sentenceType: SentenceType;
-  subject: Subject;
-  tense: Tense;
-  onSentenceTypeChange: (type: SentenceType) => void;
-  onSubjectChange: (subj: Subject) => void;
-  onTenseChange: (tense: Tense) => void;
-  isOnboardingMode?: boolean;
   onboardingStep?: number;
   onOnboardingNext?: () => void;
 }
@@ -32,16 +27,14 @@ const RowContainer = ({
 );
 
 export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
-  sentenceType,
-  subject,
-  tense,
-  onSentenceTypeChange,
-  onSubjectChange,
-  onTenseChange,
-  isOnboardingMode,
   onboardingStep,
   onOnboardingNext,
 }) => {
+  const { state, isOnboardingMode } = usePracticeStore();
+  const { handleSentenceTypeChange, handleSubjectChange, handleTenseChange } = usePracticeActions();
+  
+  const { sentenceType, subject, tense } = state;
+
   const showBubble = (step: number) =>
     isOnboardingMode && onboardingStep === step;
 
@@ -74,19 +67,19 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
       <RowContainer title="しゅるい">
         <div
           className={getCellClass(sentenceType === 'negative')}
-          onClick={() => onSentenceTypeChange('negative')}
+          onClick={() => handleSentenceTypeChange('negative')}
         >
           X{renderTooltip('否定文')}
         </div>
         <div
           className={getCellClass(sentenceType === 'positive')}
-          onClick={() => onSentenceTypeChange('positive')}
+          onClick={() => handleSentenceTypeChange('positive')}
         >
           O{renderTooltip('肯定文')}
         </div>
         <div
           className={getCellClass(sentenceType === 'question')}
-          onClick={() => onSentenceTypeChange('question')}
+          onClick={() => handleSentenceTypeChange('question')}
         >
           ?{renderTooltip('疑問文')}
         </div>
@@ -106,7 +99,7 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
             subject === 'second' || subject === 'second_p'
           )}
           onClick={() =>
-            onSubjectChange(subject === 'second' ? 'second_p' : 'second')
+            handleSubjectChange(subject === 'second' ? 'second_p' : 'second')
           }
         >
           {renderSubjectContent(
@@ -120,7 +113,7 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
             subject === 'first_s' || subject === 'first_p'
           )}
           onClick={() =>
-            onSubjectChange(subject === 'first_s' ? 'first_p' : 'first_s')
+            handleSubjectChange(subject === 'first_s' ? 'first_p' : 'first_s')
           }
         >
           {renderSubjectContent(
@@ -134,7 +127,7 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
             subject === 'third_s' || subject === 'third_p'
           )}
           onClick={() =>
-            onSubjectChange(subject === 'third_s' ? 'third_p' : 'third_s')
+            handleSubjectChange(subject === 'third_s' ? 'third_p' : 'third_s')
           }
         >
           {renderSubjectContent(
@@ -156,20 +149,20 @@ export const NineKeyPanel: React.FC<NineKeyPanelProps> = ({
       <RowContainer title="じせい">
         <div
           className={getCellClass(tense === 'past')}
-          onClick={() => onTenseChange('past')}
+          onClick={() => handleTenseChange('past')}
         >
           &#8617;
           {renderTooltip('過去形')}
         </div>
         <div
           className={getCellClass(tense === 'present')}
-          onClick={() => onTenseChange('present')}
+          onClick={() => handleTenseChange('present')}
         >
           O{renderTooltip('現在形')}
         </div>
         <div
           className={getCellClass(tense === 'future')}
-          onClick={() => onTenseChange('future')}
+          onClick={() => handleTenseChange('future')}
         >
           &#8618;
           {renderTooltip('未来形')}

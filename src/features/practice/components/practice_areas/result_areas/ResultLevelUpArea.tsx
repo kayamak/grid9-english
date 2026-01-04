@@ -3,18 +3,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { Trophy } from 'lucide-react';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
-interface ResultLevelUpAreaProps {
-  correctCountInLevel: number;
-  currentLevel: number;
-  onLevelUp: () => void;
-}
+export function ResultLevelUpArea() {
+  const { currentLevel, questSession } = usePracticeStore();
+  const { handleLevelUp } = usePracticeActions();
+  
+  const correctCountInLevel = questSession?.correctCount || 0;
 
-export function ResultLevelUpArea({
-  correctCountInLevel,
-  currentLevel,
-  onLevelUp,
-}: ResultLevelUpAreaProps) {
   return (
     <div className="mb-8 w-full flex flex-col items-center animate-in zoom-in duration-500">
       <div className="dq-window p-10 flex flex-col items-center gap-6 text-center max-w-md w-full">
@@ -40,7 +37,7 @@ export function ResultLevelUpArea({
           </div>
         </div>
 
-        <button onClick={onLevelUp} className="dq-button w-full py-4 text-xl">
+        <button onClick={handleLevelUp} className="dq-button w-full py-4 text-xl">
           Lv {currentLevel + 1} に　すすむ
         </button>
         <div className="w-full mt-2">

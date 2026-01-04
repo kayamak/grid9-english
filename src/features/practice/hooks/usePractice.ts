@@ -1,27 +1,20 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { QuestSession } from '@/domain/practice/entities/QuestSession';
 import { SentenceDrill } from '@/domain/practice/entities/SentenceDrill';
 import {
-  SentencePattern,
   WordProps,
-  VerbType,
-  Verb,
-  SentenceType,
-  Subject,
-  Tense,
-  FiveSentencePattern,
-  Object as ObjectType,
-  NumberForm,
-  BeComplement,
 } from '@/domain/practice/types';
-import { PatternGenerator } from '@/domain/practice/services/PatternGenerator';
 
 import { usePracticeStore } from '../hooks/usePracticeStore';
 import { useBattleStore } from '../hooks/useBattleStore';
 import { useTimer } from '../hooks/useTimer';
-import { useSounds } from '../hooks/useSounds';
+import { usePracticeDerivedState } from './usePracticeDerivedState';
 
+/**
+ * Manager hook for the practice lifecycle side effects.
+ * SHOULD ONLY BE CALLED ONCE in PracticeContainer.
+ */
 export function usePractice(
   initialWords?: {
     nouns: WordProps[];
@@ -47,8 +40,8 @@ export function usePractice(
 
   const store = usePracticeStore();
   const battleStore = useBattleStore();
-  const { timeLeft, resetTimer, stopTimer, setIsTimerActive } = useTimer();
-  const { playAttackSound } = useSounds();
+  const { resetTimer, stopTimer } = useTimer();
+  const { isCorrect } = usePracticeDerivedState();
 
   // Initialization
   useEffect(() => {
@@ -85,6 +78,9 @@ export function usePractice(
 
   // Session & Drills Initialization
   useEffect(() => {
+    // Avoid double initialization if allDrills is empty (sub-component call mitigation)
+    if (allDrills.length === 0 && store.allDrills.length > 0) return;
+
     let selectedDrills = [];
     if (isQuestMode) {
       let pattern = '';
@@ -106,11 +102,13 @@ export function usePractice(
           .slice(0, 10);
       }
 
+      if (selectedDrills.length === 0) return;
+
       const drillEntities = selectedDrills.map((d) => SentenceDrill.reconstruct(d));
       const session = QuestSession.start(store.currentLevel, drillEntities);
       
       store.setQuestSession(session);
-      usePracticeStore.setState({ drills: selectedDrills }); // Update drills in store
+      usePracticeStore.setState({ drills: selectedDrills });
       store.setCurrentDrillIndex(0);
       resetTimer(session.getTimeLimit());
     } else {
@@ -128,18 +126,6 @@ export function usePractice(
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isQuestMode, store.currentLevel, selectedPattern, allDrills]);
-
-  // Derived State
-  const generatedText = useMemo(
-    () => PatternGenerator.generate(store.state, store.words.nouns, store.words.verbs),
-    [store.state, store.words.nouns, store.words.verbs]
-  );
-
-  const currentDrill = usePracticeStore((s) => s.drills[s.currentDrillIndex]);
-  const isCorrect = useMemo(() => {
-    if (!currentDrill) return false;
-    return QuestSession.checkAnswer(generatedText, currentDrill.english);
-  }, [generatedText, currentDrill]);
 
   // Handle Correct Answer
   useEffect(() => {
@@ -166,172 +152,4 @@ export function usePractice(
     }, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store.currentDrillIndex, store.state.subject, store.state.verb, store.state.object]);
-
-  // Handlers
-  const handleNextDrill = useCallback(async (isEscape?: boolean) => {
-    if (isEscape === true) {
-      battleStore.setHeroAction('run-away');
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    }
-
-    if (isQuestMode && store.questSession) {
-      const nextSession = store.questSession.nextDrill();
-      store.setQuestSession(nextSession);
-      if (nextSession.status === 'playing') {
-        store.setCurrentDrillIndex(nextSession.currentIndex);
-        resetTimer(nextSession.getTimeLimit());
-      }
-    } else {
-      store.setCurrentDrillIndex((prev) => (prev + 1) % store.drills.length);
-    }
-    battleStore.setHeroAction('idle');
-  }, [isQuestMode, store, battleStore, resetTimer]);
-
-  const handleRetryLevel = useCallback(() => {
-    const filtered = store.currentLevel === 10
-      ? allDrills
-      : allDrills.filter((d) => {
-          let p = '';
-          if ([1, 4, 7].includes(store.currentLevel)) p = 'DO_SV';
-          else if ([2, 5, 8].includes(store.currentLevel)) p = 'DO_SVO';
-          else if ([3, 6, 9].includes(store.currentLevel)) p = 'BE_SVC';
-          return d.sentencePattern === p;
-        });
-
-    const selectedDrills = store.currentLevel <= 3
-      ? filtered.slice(0, 10)
-      : [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
-
-    const drillEntities = selectedDrills.map((d) => SentenceDrill.reconstruct(d));
-    const session = QuestSession.start(store.currentLevel, drillEntities);
-    
-    store.setQuestSession(session);
-    usePracticeStore.setState({ drills: selectedDrills });
-    store.setCurrentDrillIndex(0);
-    resetTimer(session.getTimeLimit());
-    battleStore.setHeroAction('idle');
-  }, [store, allDrills, resetTimer, battleStore]);
-
-  const setCorrectCountInLevel = useCallback(
-    (update: number | ((prev: number) => number)) => {
-      if (!store.questSession) return;
-      const currentCount = store.questSession.correctCount;
-      const nextCount = typeof update === 'function' ? update(currentCount) : update;
-
-      const newResults = new Array(store.questSession.drills.length).fill(null);
-      for (let i = 0; i < nextCount; i++) {
-        newResults[i] = 'correct';
-      }
-      store.setQuestSession(store.questSession.withResults(newResults));
-    },
-    [store]
-  );
-
-  // Pattern Handlers (Wrapped with Attack Anim)
-  const wrapWithAnim = (fn: Function) => (...args: any[]) => {
-    playAttackSound();
-    battleStore.triggerAttackAnim(store.state.subject);
-    fn(...args);
-  };
-
-  const battleImages = useMemo(() => {
-    let subjectImg = '/assets/heroes/hero.png';
-    const { subject, verbType, fiveSentencePattern, verb } = store.state;
-    
-    if (subject === 'second' || subject === 'second_p') subjectImg = '/assets/heroes/mage.png';
-    else if (subject === 'third_s' || subject === 'third_p') subjectImg = '/assets/heroes/warrior.png';
-
-    let monsterImg = '/assets/monsters/slime.png';
-    let monsterScale = 1.0;
-    
-    if (verbType === 'be' && (fiveSentencePattern === 'SV' || fiveSentencePattern === 'SVC')) {
-      monsterImg = '/assets/monsters/bit_golem.png';
-    } else if (fiveSentencePattern === 'SV' || fiveSentencePattern === 'SVO') {
-      monsterImg = '/assets/monsters/void_dragon_v2.png';
-      monsterScale = 1.7;
-    } else if (['have', 'see', 'get'].includes(verb)) {
-      monsterImg = '/assets/monsters/dragon.png';
-      monsterScale = 1.7;
-    }
-
-    let itemImg = null;
-    if (fiveSentencePattern === 'SVO') {
-      itemImg = '/assets/monsters/o_slime.png';
-    } else if (verbType === 'be' && fiveSentencePattern === 'SVC') {
-      itemImg = '/assets/monsters/crescent_beast.png';
-    }
-
-    return { subjectImg, monsterImg, itemImg, monsterScale };
-  }, [store.state]);
-
-  const { heroOpacity, monsterOpacity } = useMemo(() => {
-    if (!store.questSession) return { heroOpacity: 1, monsterOpacity: 1 };
-    const correct = store.questSession.results.filter((r) => r === 'correct').length;
-    const wrong = store.questSession.results.filter((r) => r === 'wrong').length;
-    return {
-      heroOpacity: correct < wrong ? 0.5 : 1,
-      monsterOpacity: correct > wrong ? 0.5 : 1,
-    };
-  }, [store.questSession]);
-
-  return {
-    ...store,
-    ...battleStore,
-    timeLeft,
-    generatedText,
-    isCorrect,
-    currentDrill,
-    handleNextDrill,
-    handleRetryLevel,
-    handleLevelUp: () => store.setCurrentLevel(store.currentLevel + 1),
-    setCorrectCountInLevel,
-    handleVerbTypeChange: (verbType: VerbType) => {
-      playAttackSound();
-      battleStore.triggerAttackAnim(store.state.subject);
-      store.setActiveTab(verbType);
-      store.updatePattern(verbType === 'be' ? {
-        verbType,
-        verb: 'be',
-        fiveSentencePattern: 'SV',
-        beComplement: 'here',
-        numberForm: 'a',
-      } : {
-        verbType,
-        verb: 'do',
-        fiveSentencePattern: 'SV',
-      });
-    },
-    handleVerbChange: wrapWithAnim((verb: Verb) => store.updatePattern({ verb })),
-    handleSentenceTypeChange: wrapWithAnim((type: SentenceType) => store.toggleSentenceType(type)),
-    handleSubjectChange: (subj: Subject) => store.rotateSubject(subj),
-    handleTenseChange: wrapWithAnim((tense: Tense) => store.changeTense(tense)),
-    handleFiveSentencePatternChange: wrapWithAnim((fiveSentencePattern: FiveSentencePattern) => 
-      store.updatePattern({ fiveSentencePattern, verb: 'do' })
-    ),
-    handleObjectChange: wrapWithAnim((object: ObjectType) => store.updatePattern({ object })),
-    handleNumberFormChange: wrapWithAnim((numberForm: NumberForm) => store.updatePattern({ numberForm })),
-    handleBeComplementChange: wrapWithAnim((beComplement: BeComplement) => store.updatePattern({ beComplement })),
-    handleTabChange: (tab: VerbType | 'admin') => {
-      if (tab === 'admin') store.setActiveTab('admin');
-      else {
-        playAttackSound();
-        battleStore.triggerAttackAnim(store.state.subject);
-        store.setActiveTab(tab);
-        store.updatePattern(tab === 'be' ? {
-          verbType: 'be',
-          verb: 'be',
-          fiveSentencePattern: 'SV',
-          beComplement: 'here',
-          numberForm: 'a',
-        } : {
-          verbType: tab,
-          verb: 'do',
-          fiveSentencePattern: 'SV',
-        });
-      }
-    },
-    battleImages,
-    heroOpacity,
-    monsterOpacity,
-  };
 }

@@ -1,23 +1,22 @@
 import React from 'react';
-import { Object, NumberForm, Word } from '@/domain/practice/types';
+import { Object } from '@/domain/practice/types';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
 interface ObjectSelectorProps {
-  selectedObject: Object;
-  onChange: (object: Object) => void;
-  numberForm: NumberForm;
-  disabled?: boolean;
   children?: React.ReactNode;
-  nounWords: Word[];
 }
 
 export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
-  selectedObject,
-  onChange,
-  numberForm,
-  disabled,
   children,
-  nounWords,
 }) => {
+  const { state, words, isLoadingWords } = usePracticeStore();
+  const { handleObjectChange } = usePracticeActions();
+  
+  const { object: selectedObject, numberForm } = state;
+  const { nouns: nounWords } = words;
+  const disabled = isLoadingWords;
+
   const filteredOptions = React.useMemo(() => {
     const showAllExceptSomething = [
       'the',
@@ -28,7 +27,7 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
       'her',
       'their',
       'no_article',
-    ].includes(numberForm);
+    ].includes(numberForm || 'a');
     return (
       showAllExceptSomething
         ? nounWords.filter((option) => option.value !== 'something')
@@ -42,9 +41,9 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
       (option) => option.value === selectedObject
     );
     if (!isCurrentSelectionValid && filteredOptions.length > 0) {
-      onChange(filteredOptions[0].value as Object);
+      handleObjectChange(filteredOptions[0].value as Object);
     }
-  }, [selectedObject, onChange, filteredOptions]);
+  }, [selectedObject, handleObjectChange, filteredOptions]);
 
   return (
     <div className="flex items-center gap-3">
@@ -54,8 +53,8 @@ export const ObjectSelector: React.FC<ObjectSelectorProps> = ({
       {children}
       <div className="relative flex-1">
         <select
-          value={selectedObject}
-          onChange={(e) => onChange(e.target.value as Object)}
+          value={selectedObject || 'something'}
+          onChange={(e) => handleObjectChange(e.target.value as Object)}
           disabled={disabled}
           className="dq-button !p-2 !pr-8 w-full appearance-none disabled:opacity-30"
         >

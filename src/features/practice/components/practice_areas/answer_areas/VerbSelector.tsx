@@ -1,28 +1,18 @@
 import React, { useEffect, useMemo } from 'react';
 import {
   Verb,
-  VerbType,
-  FiveSentencePattern,
-  Word,
 } from '@/domain/practice/types';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
-interface VerbSelectorProps {
-  verbType: VerbType;
-  selectedVerb: Verb;
-  onChange: (verb: Verb) => void;
-  verbWords: Word[];
-  fiveSentencePattern?: FiveSentencePattern;
-  disabled?: boolean;
-}
+export const VerbSelector: React.FC = () => {
+  const { state, words } = usePracticeStore();
+  const { handleVerbChange } = usePracticeActions();
+  
+  const { verbType, verb: selectedVerb, fiveSentencePattern } = state;
+  const { verbs: verbWords } = words;
+  const disabled = verbType === 'be';
 
-export const VerbSelector: React.FC<VerbSelectorProps> = ({
-  verbType,
-  selectedVerb,
-  onChange,
-  verbWords,
-  fiveSentencePattern,
-  disabled,
-}) => {
   const options = useMemo(() => {
     const filtered = verbWords.filter((vw) => {
       // If be, technically we don't show selector but let's be safe
@@ -51,9 +41,9 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
       options.length > 0 &&
       !options.some((opt) => opt.value === selectedVerb)
     ) {
-      onChange(options[0].value);
+      handleVerbChange(options[0].value);
     }
-  }, [options, selectedVerb, onChange]);
+  }, [options, selectedVerb, handleVerbChange]);
 
   return (
     <div className="flex items-center gap-3">
@@ -61,7 +51,7 @@ export const VerbSelector: React.FC<VerbSelectorProps> = ({
       <div className="relative flex-1">
         <select
           value={selectedVerb}
-          onChange={(e) => onChange(e.target.value as Verb)}
+          onChange={(e) => handleVerbChange(e.target.value as Verb)}
           disabled={disabled}
           className="dq-button !p-2 !pr-8 w-full appearance-none disabled:opacity-30"
         >

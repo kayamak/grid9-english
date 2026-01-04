@@ -2,38 +2,30 @@ import React from 'react';
 import { OverlayTimerBar } from './overlay_areas/OverlayTimerBar';
 import { OverlayTopUiArea } from './overlay_areas/OverlayTopUiArea';
 import { OverlayBottomButtonArea } from './overlay_areas/OverlayBottomButtonArea';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
+import { usePracticeDerivedState } from '../../../hooks/usePracticeDerivedState';
 
-interface BattleOverlayAreaProps {
-  isQuestMode: boolean;
-  isOnboardingMode?: boolean;
-  isFreeMode?: boolean;
-  timeLeft: number;
-  timeLimit: number;
-  currentLevel: number;
-  currentDrillIndex: number;
-  totalDrills: number;
-  questResults: ('correct' | 'wrong' | null)[];
-  currentDrill?: { english: string; japanese: string };
-  displayEnglish: boolean;
-  isCorrect: boolean;
-  onNext: (isEscape?: boolean) => void;
-}
+export function BattleOverlayArea() {
+  const {
+    isQuestMode,
+    isOnboardingMode,
+    isFreeMode,
+    timeLeft,
+    currentLevel,
+    currentDrillIndex,
+    drills,
+    questSession,
+  } = usePracticeStore();
+  const { handleNextDrill } = usePracticeActions();
+  const { isCorrect, currentDrill } = usePracticeDerivedState();
 
-export function BattleOverlayArea({
-  isQuestMode,
-  isOnboardingMode,
-  isFreeMode,
-  timeLeft,
-  timeLimit,
-  currentLevel,
-  currentDrillIndex,
-  totalDrills,
-  questResults,
-  currentDrill,
-  displayEnglish,
-  isCorrect,
-  onNext,
-}: BattleOverlayAreaProps) {
+  const totalDrills = drills.length;
+  const questResults = questSession?.results || [];
+  const timeLimit =
+    currentLevel === 10 ? 10 : currentLevel < 4 ? 30 : 30 - currentLevel * 2;
+  const displayEnglish = !isQuestMode || (isQuestMode && timeLeft === 0);
+
   return (
     <div className="absolute top-0 left-0 right-0 bottom-0 z-20">
       <OverlayTimerBar
@@ -62,7 +54,7 @@ export function BattleOverlayArea({
         timeLeft={timeLeft}
         currentDrillIndex={currentDrillIndex}
         totalDrills={totalDrills}
-        onNext={onNext}
+        onNext={handleNextDrill}
         currentDrill={currentDrill}
       />
     </div>

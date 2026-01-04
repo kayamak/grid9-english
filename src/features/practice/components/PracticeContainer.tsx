@@ -6,6 +6,10 @@ import { PracticeBattleArea } from './practice_areas/PracticeBattleArea';
 import { PracticeAnswerArea } from './practice_areas/PracticeAnswerArea';
 import { PracticeResultArea } from './practice_areas/PracticeResultArea';
 import { usePractice } from '../hooks/usePractice';
+import { useTimerManager } from '../hooks/useTimerManager';
+import { useBGMManager } from '../hooks/useBGMManager';
+import { useBattleStore } from '../hooks/useBattleStore';
+import { usePracticeStore } from '../hooks/usePracticeStore';
 import { WordProps } from '@/domain/practice/types';
 
 export function PracticeContainer({
@@ -26,51 +30,12 @@ export function PracticeContainer({
     sortOrder: number;
   }[];
 }) {
-  const {
-    isQuestMode,
-    isFreeMode,
-    isOnboardingMode,
-    isAdmin,
-    currentLevel,
-    setCurrentLevel,
-    questSession,
-    heroAction,
-    monsterState,
-    showVictoryEffect,
-    isScreenShaking,
-    isScreenFlashing,
-    state,
-    words,
-    isLoadingWords,
-    drills,
-    currentDrillIndex,
-    timeLeft,
-    generatedText,
-    isCorrect,
-    currentDrill,
-    handleNextDrill,
-    handleRetryLevel,
-    handleLevelUp,
-    setCorrectCountInLevel,
-    handleSentenceTypeChange,
-    handleSubjectChange,
-    handleTenseChange,
-    handleFiveSentencePatternChange,
-    handleVerbChange,
-    handleObjectChange,
-    handleNumberFormChange,
-    handleBeComplementChange,
-    handleTabChange,
-    battleImages,
-    heroOpacity,
-    monsterOpacity,
-    activeTab,
-    sessionId,
-  } = usePractice(initialWords, allDrills);
-
-  const questStatus = questSession?.status || 'playing';
-  const questResults = questSession?.results || [];
-  const correctCountInLevel = questSession?.correctCount || 0;
+  usePractice(initialWords, allDrills);
+  useTimerManager();
+  useBGMManager();
+  
+  const { isScreenShaking, isScreenFlashing } = useBattleStore();
+  const { isOnboardingMode, sessionId } = usePracticeStore();
 
   // Onboarding Logic
   const [onboardingStep, setOnboardingStep] = React.useState(1);
@@ -93,71 +58,11 @@ export function PracticeContainer({
       )}
 
       <div className="w-full max-w-4xl relative flex flex-col gap-4">
-        <PracticeBattleArea
-          isQuestMode={isQuestMode}
-          isFreeMode={isFreeMode}
-          isOnboardingMode={isOnboardingMode}
-          state={state}
-          currentDrillIndex={currentDrillIndex}
-          heroAction={heroAction}
-          monsterState={monsterState}
-          battleImages={battleImages}
-          heroOpacity={heroOpacity}
-          monsterOpacity={monsterOpacity}
-          currentLevel={currentLevel}
-          currentDrill={currentDrill}
-          timeLeft={timeLeft}
-          questResults={questResults}
-          totalDrills={drills.length}
-          correctCountInLevel={correctCountInLevel}
-          isCorrect={isCorrect}
-          onNext={handleNextDrill}
-          showVictoryEffect={showVictoryEffect}
-          displayEnglish={!isQuestMode || (isQuestMode && timeLeft === 0)}
-          questStatus={questStatus}
-        />
+        <PracticeBattleArea />
 
-        <PracticeResultArea
-          isQuestMode={isQuestMode}
-          questStatus={questStatus}
-          correctCountInLevel={correctCountInLevel}
-          currentLevel={currentLevel}
-          onLevelUp={handleLevelUp}
-          onRetry={handleRetryLevel}
-        />
+        <PracticeResultArea />
 
         <PracticeAnswerArea
-          activeTab={activeTab}
-          onChangeTab={handleTabChange}
-          isAdmin={isAdmin}
-          currentLevel={currentLevel}
-          setCurrentLevel={(val) => {
-            if (typeof val === 'function') {
-              setCurrentLevel(val(currentLevel));
-            } else {
-              setCurrentLevel(val);
-            }
-          }}
-          correctCountInLevel={correctCountInLevel}
-          setCorrectCountInLevel={setCorrectCountInLevel}
-          state={state}
-          handleSentenceTypeChange={handleSentenceTypeChange}
-          handleSubjectChange={handleSubjectChange}
-          handleTenseChange={handleTenseChange}
-          handleFiveSentencePatternChange={handleFiveSentencePatternChange}
-          handleVerbChange={handleVerbChange}
-          handleObjectChange={handleObjectChange}
-          handleNumberFormChange={handleNumberFormChange}
-          handleBeComplementChange={handleBeComplementChange}
-          nounWords={words.nouns}
-          verbWords={words.verbs}
-          adjectiveWords={words.adjectives}
-          adverbWords={words.adverbs}
-          isLoadingNouns={isLoadingWords}
-          generatedText={generatedText}
-          isCorrect={isCorrect}
-          isQuestMode={isQuestMode}
-          timeLeft={timeLeft}
           isOnboardingMode={isOnboardingMode}
           onboardingStep={onboardingStep}
           onOnboardingNext={handleOnboardingNext}

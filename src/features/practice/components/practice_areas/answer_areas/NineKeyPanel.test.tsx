@@ -1,20 +1,38 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { NineKeyPanel } from './NineKeyPanel';
 import React from 'react';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
+
+// Mock the hooks
+vi.mock('../../../hooks/usePracticeStore');
+vi.mock('../../../hooks/usePracticeActions');
 
 describe('NineKeyPanel', () => {
-  const defaultProps = {
-    sentenceType: 'positive' as const,
-    subject: 'first_s' as const,
-    tense: 'present' as const,
-    onSentenceTypeChange: vi.fn(),
-    onSubjectChange: vi.fn(),
-    onTenseChange: vi.fn(),
+  const mockState = {
+    sentenceType: 'positive',
+    subject: 'first_s',
+    tense: 'present',
   };
 
-  it('renders correctly with default props', () => {
-    render(<NineKeyPanel {...defaultProps} />);
+  const mockActions = {
+    handleSentenceTypeChange: vi.fn(),
+    handleSubjectChange: vi.fn(),
+    handleTenseChange: vi.fn(),
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (usePracticeStore as any).mockReturnValue({
+      state: mockState,
+      isOnboardingMode: false,
+    });
+    (usePracticeActions as any).mockReturnValue(mockActions);
+  });
+
+  it('renders correctly with default state', () => {
+    render(<NineKeyPanel />);
 
     // Check if rows are rendered
     expect(screen.getByText('しゅるい')).toBeDefined();
@@ -27,25 +45,26 @@ describe('NineKeyPanel', () => {
     expect(screen.getByText('?')).toBeDefined();
   });
 
-  it('calls onSentenceTypeChange when a sentence type cell is clicked', () => {
-    render(<NineKeyPanel {...defaultProps} />);
+  it('calls handleSentenceTypeChange when a sentence type cell is clicked', () => {
+    render(<NineKeyPanel />);
     const negativeBtn = screen.getByText('X');
     fireEvent.click(negativeBtn);
-    expect(defaultProps.onSentenceTypeChange).toHaveBeenCalledWith('negative');
+    expect(mockActions.handleSentenceTypeChange).toHaveBeenCalledWith('negative');
   });
 
-  it('calls onSubjectChange with rotation logic when a subject cell is clicked', () => {
-    render(<NineKeyPanel {...defaultProps} />);
-    // Current subject is first_s, clicking middle cell in row 2 should trigger first_p
+  it('calls handleSubjectChange when a subject cell is clicked', () => {
+    render(<NineKeyPanel />);
+    // Current subject is first_s, clicking middle cell in row 2 should trigger first_p logic
+    // (The component calls handleSubjectChange(subject === 'first_s' ? 'first_p' : 'first_s'))
     const firstPersonBtn = screen.getByText('1');
     fireEvent.click(firstPersonBtn);
-    expect(defaultProps.onSubjectChange).toHaveBeenCalledWith('first_p');
+    expect(mockActions.handleSubjectChange).toHaveBeenCalledWith('first_p');
   });
 
-  it('calls onTenseChange when a tense cell is clicked', () => {
-    render(<NineKeyPanel {...defaultProps} />);
+  it('calls handleTenseChange when a tense cell is clicked', () => {
+    render(<NineKeyPanel />);
     const pastBtn = screen.getByText('↩');
     fireEvent.click(pastBtn);
-    expect(defaultProps.onTenseChange).toHaveBeenCalledWith('past');
+    expect(mockActions.handleTenseChange).toHaveBeenCalledWith('past');
   });
 });

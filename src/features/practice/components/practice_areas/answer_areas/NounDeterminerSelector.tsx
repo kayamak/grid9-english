@@ -1,10 +1,9 @@
 import React from 'react';
 import { NumberForm } from '@/domain/practice/types';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
 interface NounDeterminerSelectorProps {
-  selectedNumberForm: NumberForm;
-  onChange: (numberForm: NumberForm) => void;
-  disabled?: boolean;
   isAdjective?: boolean;
 }
 
@@ -48,16 +47,19 @@ export const SVC_COMPLEMENT_OPTIONS = [
 ];
 
 export const NounDeterminerSelector: React.FC<NounDeterminerSelectorProps> = ({
-  selectedNumberForm,
-  onChange,
-  disabled,
   isAdjective,
 }) => {
+  const { state, isLoadingWords } = usePracticeStore();
+  const { handleNumberFormChange } = usePracticeActions();
+  
+  const { numberForm: selectedNumberForm } = state;
+  const disabled = isLoadingWords;
+
   return (
     <div className="relative inline-block">
       <select
-        value={selectedNumberForm}
-        onChange={(e) => onChange(e.target.value as NumberForm)}
+        value={selectedNumberForm || 'a'}
+        onChange={(e) => handleNumberFormChange(e.target.value as NumberForm)}
         disabled={disabled}
         className="dq-button !py-2 !px-2 appearance-none !pr-8 min-w-0 disabled:opacity-30"
       >

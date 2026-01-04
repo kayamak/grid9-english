@@ -3,32 +3,32 @@ import {
   BeComplement,
   FiveSentencePattern,
   NumberForm,
-  Word,
 } from '@/domain/practice/types';
+import { usePracticeStore } from '../../../hooks/usePracticeStore';
+import { usePracticeActions } from '../../../hooks/usePracticeActions';
 
 interface ComplementSelectorProps {
-  selectedComplement: BeComplement;
-  onChange: (complement: BeComplement) => void;
-  pattern: FiveSentencePattern;
-  numberForm?: NumberForm;
-  disabled?: boolean;
   children?: React.ReactNode;
-  nounWords: Word[];
-  adjectiveWords: Word[];
-  adverbWords: Word[];
 }
 
 export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
-  selectedComplement,
-  onChange,
-  pattern,
-  numberForm,
-  disabled,
   children,
-  nounWords,
-  adjectiveWords,
-  adverbWords,
 }) => {
+  const { state, words, isLoadingWords } = usePracticeStore();
+  const { handleBeComplementChange } = usePracticeActions();
+  
+  const {
+    beComplement: selectedComplement,
+    fiveSentencePattern: pattern,
+    numberForm,
+  } = state;
+  const {
+    nouns: nounWords,
+    adjectives: adjectiveWords,
+    adverbs: adverbWords,
+  } = words;
+  const disabled = isLoadingWords;
+
   const options = React.useMemo(() => {
     let opts: { value: BeComplement; label: string; numberForm?: NumberForm }[];
 
@@ -80,20 +80,20 @@ export const ComplementSelector: React.FC<ComplementSelectorProps> = ({
       (option) => option.value === selectedComplement
     );
     if (!isCurrentSelectionValid && options.length > 0) {
-      onChange(options[0].value);
+      handleBeComplementChange(options[0].value);
     }
-  }, [selectedComplement, onChange, options]);
+  }, [selectedComplement, handleBeComplementChange, options]);
 
   return (
     <div className="flex items-center gap-3">
       <label className="text-white font-normal whitespace-nowrap">
-        {pattern === 'SV' ? 'ばしょ・じょうたい' : 'ほご'}
+        {pattern === 'SV' ? 'ば場所・じょう状態' : 'ほご'}
       </label>
       {children}
       <div className="relative flex-1">
         <select
-          value={selectedComplement}
-          onChange={(e) => onChange(e.target.value as BeComplement)}
+          value={selectedComplement || ''}
+          onChange={(e) => handleBeComplementChange(e.target.value as BeComplement)}
           disabled={disabled}
           className="dq-button !py-2 !px-2 appearance-none !pr-8 w-full disabled:opacity-30"
         >

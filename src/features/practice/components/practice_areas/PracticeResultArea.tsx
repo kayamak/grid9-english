@@ -4,44 +4,24 @@ import React from 'react';
 import { ResultLevelUpArea } from './result_areas/ResultLevelUpArea';
 import { ResultFailedArea } from './result_areas/ResultFailedArea';
 import { ResultAllClearedArea } from './result_areas/ResultAllClearedArea';
+import { usePracticeStore } from '../../hooks/usePracticeStore';
 
-interface PracticeResultAreaProps {
-  isQuestMode: boolean;
-  questStatus: string;
-  correctCountInLevel: number;
-  currentLevel: number;
-  onLevelUp: () => void;
-  onRetry: () => void;
-}
+export function PracticeResultArea() {
+  const { questSession } = usePracticeStore();
 
-export function PracticeResultArea({
-  isQuestMode,
-  questStatus,
-  correctCountInLevel,
-  currentLevel,
-  onLevelUp,
-  onRetry,
-}: PracticeResultAreaProps) {
-  if (!isQuestMode) return null;
+  const questStatus = questSession?.status || 'playing';
+
+  if (questStatus === 'playing') return null;
 
   return (
-    <>
+    <div className="w-full flex flex-col items-center px-4">
       {questStatus === 'result' && (
-        <ResultLevelUpArea
-          correctCountInLevel={correctCountInLevel}
-          currentLevel={currentLevel}
-          onLevelUp={onLevelUp}
-        />
+        <ResultLevelUpArea />
       )}
-
       {questStatus === 'failed' && (
-        <ResultFailedArea
-          correctCountInLevel={correctCountInLevel}
-          onRetry={onRetry}
-        />
+        <ResultFailedArea />
       )}
-
       {questStatus === 'all-cleared' && <ResultAllClearedArea />}
-    </>
+    </div>
   );
 }

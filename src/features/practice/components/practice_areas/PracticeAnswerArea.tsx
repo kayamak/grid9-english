@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { NineKeyPanel } from './answer_areas/NineKeyPanel';
 import { OnboardingBubble } from './answer_areas/OnboardingBubble';
@@ -7,81 +9,40 @@ import { VerbSelector } from './answer_areas/VerbSelector';
 import { ObjectSelector } from './answer_areas/ObjectSelector';
 import { NounDeterminerSelector } from './answer_areas/NounDeterminerSelector';
 import { ComplementSelector } from './answer_areas/ComplementSelector';
-import {
-  SentencePattern,
-  SentenceType,
-  Subject,
-  Tense,
-  VerbType,
-  Verb,
-  FiveSentencePattern,
-  Object as ObjectType,
-  NumberForm,
-  BeComplement,
-  Word,
-} from '@/domain/practice/types';
+import { usePracticeStore } from '../../hooks/usePracticeStore';
+import { usePracticeDerivedState } from '../../hooks/usePracticeDerivedState';
+import { usePracticeActions } from '../../hooks/usePracticeActions';
 
 interface PracticeAnswerAreaProps {
-  activeTab: VerbType | 'admin';
-  onChangeTab: (tab: VerbType | 'admin') => void;
-  isAdmin: boolean;
-  currentLevel: number;
-  setCurrentLevel: React.Dispatch<React.SetStateAction<number>>;
-  correctCountInLevel: number;
-  setCorrectCountInLevel: React.Dispatch<React.SetStateAction<number>>;
-  state: SentencePattern;
-  handleSentenceTypeChange: (type: SentenceType) => void;
-  handleSubjectChange: (sub: Subject) => void;
-  handleTenseChange: (tense: Tense) => void;
-  handleFiveSentencePatternChange: (p: FiveSentencePattern) => void;
-  handleVerbChange: (v: Verb) => void;
-  handleObjectChange: (o: ObjectType) => void;
-  handleNumberFormChange: (n: NumberForm) => void;
-  handleBeComplementChange: (c: BeComplement) => void;
-  nounWords: Word[];
-  verbWords: Word[]; // Actually internal usage but required for selectors if used
-  adjectiveWords: Word[];
-  adverbWords: Word[];
-  isLoadingNouns: boolean;
-  generatedText: string;
-  isCorrect: boolean;
-  isQuestMode: boolean;
-  timeLeft: number;
   isOnboardingMode?: boolean;
   onboardingStep?: number;
   onOnboardingNext?: () => void;
 }
 
 export function PracticeAnswerArea({
-  activeTab,
-  onChangeTab,
-  isAdmin,
-  currentLevel,
-  setCurrentLevel,
-  correctCountInLevel,
-  setCorrectCountInLevel,
-  state,
-  handleSentenceTypeChange,
-  handleSubjectChange,
-  handleTenseChange,
-  handleFiveSentencePatternChange,
-  handleVerbChange,
-  handleObjectChange,
-  handleNumberFormChange,
-  handleBeComplementChange,
-  nounWords,
-  verbWords,
-  adjectiveWords,
-  adverbWords,
-  isLoadingNouns,
-  generatedText,
-  isCorrect,
-  isQuestMode,
-  timeLeft,
   isOnboardingMode,
   onboardingStep,
   onOnboardingNext,
 }: PracticeAnswerAreaProps) {
+  const {
+    activeTab,
+    isAdmin,
+    currentLevel,
+    questSession,
+    state,
+    isQuestMode,
+    setCurrentLevel,
+    timeLeft,
+  } = usePracticeStore();
+
+  const {
+    setCorrectCountInLevel,
+  } = usePracticeActions();
+
+  const { generatedText, isCorrect } = usePracticeDerivedState();
+
+  const correctCountInLevel = questSession?.correctCount || 0;
+
   const showBubble = (step: number) =>
     isOnboardingMode && onboardingStep === step;
 
@@ -89,12 +50,7 @@ export function PracticeAnswerArea({
     <div className="flex flex-col items-center w-full">
       <div className="w-full px-4 md:px-8 flex justify-start">
         <div className="relative">
-          <VerbTypeSelector
-            activeTab={activeTab}
-            onChange={onChangeTab}
-            isAdmin={isAdmin}
-            disabled={isQuestMode && timeLeft === 0}
-          />
+          <VerbTypeSelector />
           {showBubble(1) && onOnboardingNext && (
             <OnboardingBubble
               message="まずは動詞の種類を選びます。&#10;タブの「Doどうし」か「Beどうし」の&#10;どちらかを選択してください。"
@@ -125,7 +81,7 @@ export function PracticeAnswerArea({
                 <div className="flex gap-4">
                   <button
                     onClick={() =>
-                      setCurrentLevel((prev) => Math.max(1, prev - 1))
+                      setCurrentLevel(Math.max(1, currentLevel - 1))
                     }
                     className="dq-button !py-2 !px-6 text-2xl"
                   >
@@ -133,7 +89,7 @@ export function PracticeAnswerArea({
                   </button>
                   <button
                     onClick={() =>
-                      setCurrentLevel((prev) => Math.min(10, prev + 1))
+                      setCurrentLevel(Math.min(10, currentLevel + 1))
                     }
                     className="dq-button !py-2 !px-6 text-2xl"
                   >
@@ -152,7 +108,7 @@ export function PracticeAnswerArea({
                 <div className="flex gap-4">
                   <button
                     onClick={() =>
-                      setCorrectCountInLevel((prev) => Math.max(0, prev - 1))
+                      setCorrectCountInLevel(Math.max(0, correctCountInLevel - 1))
                     }
                     className="dq-button !py-2 !px-6 text-2xl"
                   >
@@ -160,7 +116,7 @@ export function PracticeAnswerArea({
                   </button>
                   <button
                     onClick={() =>
-                      setCorrectCountInLevel((prev) => Math.min(10, prev + 1))
+                      setCorrectCountInLevel(Math.min(10, correctCountInLevel + 1))
                     }
                     className="dq-button !py-2 !px-6 text-2xl"
                   >
@@ -186,13 +142,6 @@ export function PracticeAnswerArea({
             >
               <div className="w-full max-w-xl">
                 <NineKeyPanel
-                  sentenceType={state.sentenceType}
-                  subject={state.subject}
-                  tense={state.tense}
-                  onSentenceTypeChange={handleSentenceTypeChange}
-                  onSubjectChange={handleSubjectChange}
-                  onTenseChange={handleTenseChange}
-                  isOnboardingMode={isOnboardingMode}
                   onboardingStep={onboardingStep}
                   onOnboardingNext={onOnboardingNext}
                 />
@@ -203,14 +152,7 @@ export function PracticeAnswerArea({
                 <div className="mt-6 w-full max-w-xl flex flex-col gap-4 relative z-20">
                   <div className="flex flex-col md:flex-row gap-4">
                     <div className="relative w-fit">
-                      <FiveSentencePatternSelector
-                        selectedPattern={
-                          state.fiveSentencePattern ||
-                          (state.verbType === 'do' ? 'SVO' : 'SV')
-                        }
-                        onChange={handleFiveSentencePatternChange}
-                        verbType={state.verbType}
-                      />
+                      <FiveSentencePatternSelector />
                       {showBubble(5) && onOnboardingNext && (
                         <OnboardingBubble
                           message="リストから「ぶんけい」を選びます。&#10;Sは主語、Vは動詞、&#10;Oは目的語、Cは補語を表します。"
@@ -221,14 +163,7 @@ export function PracticeAnswerArea({
                       )}
                     </div>
                     <div className="flex-1 relative">
-                      <VerbSelector
-                        verbType={state.verbType}
-                        selectedVerb={state.verb}
-                        onChange={handleVerbChange}
-                        verbWords={verbWords}
-                        fiveSentencePattern={state.fiveSentencePattern}
-                        disabled={state.verbType === 'be'}
-                      />
+                      <VerbSelector />
                       {showBubble(6) && onOnboardingNext && (
                         <OnboardingBubble
                           message="リストから「どうし」を選びます。&#10;問題文の動詞と同じものを&#10;探して選択してください。"
@@ -240,47 +175,19 @@ export function PracticeAnswerArea({
                   </div>
                   {state.verbType === 'do' &&
                     state.fiveSentencePattern === 'SVO' && (
-                      <ObjectSelector
-                        selectedObject={state.object || 'something'}
-                        onChange={handleObjectChange}
-                        numberForm={state.numberForm || 'a'}
-                        nounWords={nounWords}
-                        disabled={isLoadingNouns}
-                      >
-                        <NounDeterminerSelector
-                          selectedNumberForm={state.numberForm || 'a'}
-                          onChange={handleNumberFormChange}
-                        />
+                      <ObjectSelector>
+                        <NounDeterminerSelector />
                       </ObjectSelector>
                     )}
                   {state.verbType === 'be' &&
                     (state.fiveSentencePattern === 'SVC' ? (
-                      <ComplementSelector
-                        selectedComplement={state.beComplement || 'warrior'}
-                        onChange={handleBeComplementChange}
-                        pattern={state.fiveSentencePattern || 'SV'}
-                        numberForm={state.numberForm || 'a'}
-                        nounWords={nounWords}
-                        adjectiveWords={adjectiveWords}
-                        adverbWords={adverbWords}
-                        disabled={isLoadingNouns}
-                      >
+                      <ComplementSelector>
                         <NounDeterminerSelector
-                          selectedNumberForm={state.numberForm || 'a'}
-                          onChange={handleNumberFormChange}
                           isAdjective={true}
                         />
                       </ComplementSelector>
                     ) : (
-                      <ComplementSelector
-                        selectedComplement={state.beComplement || 'here'}
-                        onChange={handleBeComplementChange}
-                        pattern={state.fiveSentencePattern || 'SV'}
-                        nounWords={nounWords}
-                        adjectiveWords={adjectiveWords}
-                        adverbWords={adverbWords}
-                        disabled={isLoadingNouns}
-                      />
+                      <ComplementSelector />
                     ))}
                 </div>
               )}
