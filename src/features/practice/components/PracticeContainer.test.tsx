@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { useRouter } from 'next/navigation';
 import { PracticeContainer } from './PracticeContainer';
 import { usePracticeStore } from '../hooks/usePracticeStore';
 import { useBattleStore } from '../hooks/useBattleStore';
@@ -11,7 +12,7 @@ import { usePractice } from '../hooks/usePractice';
 
 // Mock everything that PracticeContainer uses
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: vi.fn(() => ({ push: vi.fn() })),
 }));
 
 vi.mock('../hooks/usePracticeStore');
@@ -200,5 +201,54 @@ describe('PracticeContainer Interaction Spec', () => {
     // Ensure its touch/click is not blocked by a parent.
     // Its parent has `pointer-events-auto` class: <div className="flex items-center gap-2 pointer-events-auto">
     expect(backButton.closest('.pointer-events-auto')).not.toBeNull();
+  });
+
+  it('spec: follows onboarding steps correctly', () => {
+    vi.mocked(usePracticeStore).mockReturnValue({
+      ...mockStoreState,
+      isOnboardingMode: true,
+    } as unknown as ReturnType<typeof usePracticeStore>);
+
+    const push = vi.fn();
+    vi.mocked(useRouter).mockReturnValue({ push } as unknown as ReturnType<
+      typeof useRouter
+    >);
+
+    render(
+      <PracticeContainer
+        initialWords={{ nouns: [], verbs: [], adjectives: [], adverbs: [] }}
+        allDrills={[]}
+      />
+    );
+
+    // Initial step (1)
+    let bubble = screen.getByText(/\(クリックしてすすむ\)/);
+    fireEvent.click(bubble); // 1 -> 2
+
+    // Step 2
+    bubble = screen.getByText(/\(クリックしてすすむ\)/);
+    fireEvent.click(bubble); // 2 -> 3
+
+    // Step 3
+    bubble = screen.getByText(/\(クリックしてすすむ\)/);
+    fireEvent.click(bubble); // 3 -> 4
+
+    // Step 4
+    bubble = screen.getByText(/\(クリックしてすすむ\)/);
+    fireEvent.click(bubble); // 4 -> 5
+
+    // Step 5
+    bubble = screen.getByText(/\(クリックしてすすむ\)/);
+    fireEvent.click(bubble); // 5 -> 6
+
+    // Step 6
+    bubble = screen.getByText(/\(クリックしてすすむ\)/);
+    fireEvent.click(bubble); // 6 -> 7
+
+    // Step 7
+    bubble = screen.getByText(/\(クリックしてすすむ\)/);
+    fireEvent.click(bubble); // 7 -> Finish
+
+    expect(push).toHaveBeenCalledWith('/');
   });
 });

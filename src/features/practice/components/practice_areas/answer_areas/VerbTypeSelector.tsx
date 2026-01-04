@@ -8,7 +8,8 @@ export const VerbTypeSelector: React.FC = () => {
   const { handleTabChange } = usePracticeActions();
   const { monsterState } = useBattleStore();
 
-  const disabled = (isQuestMode && timeLeft === 0) || monsterState === 'defeated';
+  const disabled =
+    (isQuestMode && timeLeft === 0) || monsterState === 'defeated';
 
   return (
     <div
