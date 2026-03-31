@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 export type MenuItem = {
   label: string;
   href?: string;
+  externalUrl?: string;
   descriptions: string[];
   items?: MenuItem[];
 };
@@ -96,6 +97,14 @@ export const MENU_DATA: Record<string, CategoryData> = {
           'まずは　ここから　はじめて　えいごの　せかいに　なれよう！',
         ],
       },
+      {
+        label: 'さくしゃじょうほう',
+        externalUrl: 'https://direct-dev.kayamak.workers.dev/profile',
+        descriptions: [
+          'このゲームを　つくった　ひとの　じょうほうを　みてみよう。',
+          'さくしゃの　プロフィールを　かくにんできるぞ！',
+        ],
+      },
     ],
   },
 };
@@ -172,6 +181,8 @@ export const useMainMenu = () => {
     if (item.items) {
       setSelectedSubMenu(item);
       setDescMessage(item.descriptions[0]);
+    } else if (item.externalUrl) {
+      window.open(item.externalUrl, '_blank', 'noopener,noreferrer');
     } else if (item.href) {
       updateMotivation();
       router.push(item.href);
